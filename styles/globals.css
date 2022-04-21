@@ -14,3 +14,42 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.search {
+  margin-bottom: 1.5rem;
+}
+
+.main {
+  background-color: rgb(12, 12, 12);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: relative;
+}
+
+.AutocompletePlace input {
+  padding: 12px 16px;
+  width: 300px;
+  font-size: 16px;
+}
+
+.AutocompletePlace-results {
+  background-color: white;
+  padding: 16px;
+}
+
+.results {
+  color: white;
+  position: absolute;
+  left: 128px;
+}
+
+.AutocompletePlace-items {
+  list-style: none;
+}
+
+.AutocompletePlace-results li {
+  padding: 0px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
