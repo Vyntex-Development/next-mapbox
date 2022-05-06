@@ -1,0 +1,37 @@
+.footer {
+  margin-top: auto;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.footer > div {
+  display: flex;
+  align-items: center;
+  padding: 1.75rem 3.89em;
+  justify-content: space-between;
+}
+
+.rights {
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: rgba(33, 22, 70, 0.4);
+  font-size: 0.875rem;
+  line-height: 100%;
+}
+
+.links {
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 140%;
+  color: rgba(33, 22, 70, 0.4);
+}
+
+.links a {
+  margin-right: 2rem;
+}
+
+.links a:last-of-type {
+  margin-right: 0rem;
+}

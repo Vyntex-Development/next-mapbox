@@ -1,0 +1,45 @@
+.blue {
+  background: #5568f1;
+  border-radius: 0.25rem;
+  padding: 0.625rem 1rem;
+}
+.transparent a,
+.blue a {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.93rem;
+  line-height: 140%;
+}
+
+.blue a {
+  color: #ffffff;
+}
+
+.transparent a {
+  color: #5568f1;
+}
+
+.comunityLink {
+  background: #fcfcfc;
+  border: 1px solid rgba(85, 104, 241, 0.2);
+  border-radius: 8px;
+}
+
+.comunityLink a {
+  display: flex;
+  align-items: center;
+  padding: 1.06rem 1.5rem;
+}
+
+.citiesLink {
+  background: rgba(189, 206, 255, 0.3);
+  border-radius: 8px;
+  font-family: "VCR OSD Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 140%;
+  color: #5568f1;
+  padding: 0.25rem 1rem;
+}

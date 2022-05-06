@@ -1,0 +1,16 @@
+.blue {
+  background: #5568f1;
+  border-radius: 0.25rem;
+  padding: 0.625rem 1rem;
+  color: #ffffff;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.93rem;
+  line-height: 140%;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
