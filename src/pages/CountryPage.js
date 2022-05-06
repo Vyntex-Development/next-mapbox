@@ -115,7 +115,7 @@ const CountryPage = ({ countryDetails, cityDetails }) => {
               {countryDetails.fields["Twitter"] && (
                 <a
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noReferrer"
                   className={classes.comunityLink}
                   href={`https://${countryDetails.fields["Twitter"]}`}
                 >
@@ -126,7 +126,7 @@ const CountryPage = ({ countryDetails, cityDetails }) => {
               {countryDetails.fields["Discord"] && (
                 <a
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noReferrer"
                   className={classes.comunityLink}
                   href={`https://${countryDetails.fields["Discord"]}`}
                 >
@@ -137,7 +137,7 @@ const CountryPage = ({ countryDetails, cityDetails }) => {
               {countryDetails.fields["Telegram"] && (
                 <a
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noReferrer"
                   className={classes.comunityLink}
                   href={`https://${countryDetails.fields["Telegram"]}`}
                 >
