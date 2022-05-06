@@ -2,8 +2,8 @@ import CountryPage from "../src/pages/CountryPage";
 import { getSingleCountry } from "../src/utils/utils";
 
 const country = (props) => {
-  let countryDetails = props.data[0].records[0];
-  let cityDetails = props.data[1].records;
+  let countryDetails = props.data[0]?.records[0];
+  let cityDetails = props.data[1]?.records;
   return (
     <CountryPage countryDetails={countryDetails} cityDetails={cityDetails} />
   );
@@ -42,7 +42,7 @@ export async function getStaticPaths() {
   // });
   return {
     paths: [{ params: { country: "afghanistan" } }],
-    fallback: true, // false or 'blocking'
+    fallback: false, // false or 'blocking'
   };
 }
 

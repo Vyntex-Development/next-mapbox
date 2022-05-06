@@ -20,7 +20,6 @@ const CountryPage = ({ countryDetails, cityDetails }) => {
     setIsInitial(true);
     setCoordinates(JSON.parse(localStorage.getItem("place")));
     setContainerHeight(countryRef.current.clientHeight);
-    console.log(countryRef.current.clientHeight);
   }, []);
 
   return (
@@ -57,6 +56,7 @@ const CountryPage = ({ countryDetails, cityDetails }) => {
                   src={countryDetails.fields["Flag"]}
                   width="25"
                   height="16"
+                  alt="flag"
                 />
               </span>
             </div>
@@ -145,7 +145,6 @@ const CountryPage = ({ countryDetails, cityDetails }) => {
             <h2>CITIES</h2>
             <div>
               {cityDetails.map((city, index) => {
-                console.log(city);
                 return (
                   <LinkButton key={index} href="/" type="cities-link">
                     {city.fields.city_ascii}
