@@ -174,7 +174,7 @@ const CountryPage = ({ countryDetails, cityDetails }) => {
             }}
             style={{ width: 600, height: 400 }}
             mapStyle="mapbox://styles/mapbox/streets-v9"
-            mapboxAccessToken="pk.eyJ1IjoiYWRhbW92aWM2NjY2IiwiYSI6ImNsMHdpY3E4YTB2YmUzanBlcDhqdWd6YnoifQ.Ig2Am8BZiQE9tDlM_vC8-g"
+            mapboxAccessToken="pk.eyJ1IjoiYWRhbW92aWM2NjY2IiwiYSI6ImNsMnVlaG1hdTAxYWYzanBodWZqZXl6aGwifQ.tdvOdH7JOqVZbI5PMdzNJg"
           />
         )}
       </div>

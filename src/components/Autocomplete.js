@@ -1,5 +1,5 @@
 const MAPBOX_TOKEN =
-  "pk.eyJ1IjoiYWRhbW92aWM2NjY2IiwiYSI6ImNsMjkxbmJvZzBmMTUzbnQzYXdwdnB3OHYifQ.LTT2pJ0amuVHLeDB1yjHDQ";
+  "pk.eyJ1IjoiYWRhbW92aWM2NjY2IiwiYSI6ImNsMnVlaG1hdTAxYWYzanBodWZqZXl6aGwifQ.tdvOdH7JOqVZbI5PMdzNJg";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
