@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap");
 @font-face {
   font-family: "VCR OSD";
-  src: url("../src/assets/fonts/VCR_OSD_MONO_1.001.ttf");
+  src: url("../public/VCR_OSD_MONO_1.001.ttf");
   font-weight: 400;
   font-style: normal;
 }
