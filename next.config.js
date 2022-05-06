@@ -8,6 +8,19 @@ const nextConfig = {
     loader: "default",
     domains: ["www.worldatlas.com"],
   },
+  async headers() {
+    return [
+      {
+        source: "/public/VCR_OSD_MONO_1.001.ttf",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
