@@ -190,7 +190,7 @@ const Autocomplete = () => {
       )}
       {error && (
         <span className={classes.error}>
-          For this destination we don't have coresponding DAO
+          For this destination we dont have coresponding DAO
         </span>
       )}
     </div>
