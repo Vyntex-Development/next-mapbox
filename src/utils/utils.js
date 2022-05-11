@@ -2,6 +2,7 @@ const AIRTABLE_ACCESS_KEY = process.env.AIRTABLE_ACCESS_KEY;
 const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
 
 const fetchData = async (URL, data, method) => {
+  console.log("");
   const options = {
     endpoint: URL,
     method: method,
