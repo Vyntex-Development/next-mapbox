@@ -27,7 +27,7 @@ const Autocomplete = () => {
         return;
       }
       place.place_type[0] === "country"
-        ? router.push(`/${airtableData[0].id}`)
+        ? router.push(`/${airtableData.records[0].id}`)
         : router.push(
             `${
               airtableData[1].id
@@ -40,8 +40,9 @@ const Autocomplete = () => {
             }`
           );
       setSearchResult(false);
-      setError(false);
     }
+    setError(false);
+
     setSearchResult(false);
   }, [searchResult]);
 
@@ -89,7 +90,6 @@ const Autocomplete = () => {
       );
       setCountryID(response.records[0].id);
       setAirtableData(response);
-      setIsVisble(false);
     } else {
       let searchData = {
         lng: place.geometry.coordinates[0],
@@ -106,13 +106,13 @@ const Autocomplete = () => {
       setAirtableData(response);
     }
     setSearch(place.place_name);
-    setResults([]);
     setPlace(place);
+    setIsVisble(false);
   };
 
   const searchHandler = async () => {
     let searchData;
-    if (!isVisible && search !== "") {
+    if (results.length === 0 && search !== "") {
       searchData = {
         lng: null,
         lat: null,
@@ -157,7 +157,7 @@ const Autocomplete = () => {
       <Button onClick={searchHandler} type="blue">
         SEARCH
       </Button>
-      {results.length !== 0 && isVisible && (
+      {isVisible && (
         <ul className={classes.results}>
           {results.map((place) => {
             let splittedResult = place.place_name.split(",");
