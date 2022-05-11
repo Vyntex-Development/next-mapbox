@@ -3,12 +3,11 @@ import { getSingleDestiantion } from "../src/utils/utils";
 import { getAllCities } from "../src/utils/utils";
 import { capitalizeFirstLetter } from "../src/utils/utils";
 
-const city = ({ data }) => {
+const City = ({ data }) => {
   return <CityPage countryDetails={data[1]} cityDetails={data[0].records[0]} />;
 };
 
 export async function getStaticProps(context) {
-  console.log(context.params);
   let cityParams = context.params.city[1];
   let splittedQuery = cityParams.split("&");
   let name = splittedQuery[0];
@@ -60,4 +59,4 @@ export async function getStaticPaths() {
   };
 }
 
-export default city;
+export default City;

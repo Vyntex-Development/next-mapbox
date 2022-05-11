@@ -3,7 +3,7 @@ import { getSingleDestiantion } from "../src/utils/utils";
 import { getAllCountries } from "../src/utils/utils";
 import SEO from "../src/components/SEO/SEO";
 
-const country = ({ country }) => {
+const Country = ({ country }) => {
   console.log(country);
   return (
     <>
@@ -53,4 +53,4 @@ export async function getStaticPaths() {
   };
 }
 
-export default country;
+export default Country;
