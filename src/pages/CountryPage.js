@@ -1,6 +1,6 @@
-import Map from "react-map-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import { getCountryCoordinates } from "../utils/utils";
 import classes from "./CountryPage.module.css";
 import Button from "../components/UI/Button";
 import LinkButton from "../components/UI/Link";
@@ -8,18 +8,29 @@ import DiscordIcon from "../assets/images/DiscordIcon";
 import TwitterIcon from "../assets/images/TwitterIcon";
 import TelegramIcon from "../assets/images/TelegramIcon";
 import Image from "next/image";
+import FavouriteIcon from "../assets/images/FavouriteIcon";
+import CustomMap from "../components/CustomMap";
 
-const CountryPage = ({ countryDetails, cityDetails }) => {
+const CountryPage = ({ countryDetails, listOfCities }) => {
   const [isInitial, setIsInitial] = useState(false);
-  const [coordinates, setCoordinates] = useState({});
   const [containerHeight, setContainerHeight] = useState({});
+  const [coordinates, setCoordinates] = useState({});
 
   const countryRef = useRef();
+  const router = useRouter();
 
   useEffect(() => {
     setIsInitial(true);
-    setCoordinates(JSON.parse(localStorage.getItem("place")));
     setContainerHeight(countryRef.current.clientHeight);
+    let countryName = countryDetails.fields["Name"].split(" ")[0].toLowerCase();
+    const getCoordinates = async () => {
+      let coordinates = await getCountryCoordinates(countryName);
+      setCoordinates({
+        lat: coordinates[1],
+        lng: coordinates[0],
+      });
+    };
+    getCoordinates();
   }, []);
 
   return (
@@ -27,18 +38,7 @@ const CountryPage = ({ countryDetails, cityDetails }) => {
       <div ref={countryRef}>
         <h1>{countryDetails.fields["Name"]}</h1>
         <Button type="blue">
-          <svg
-            width="1.25rem"
-            height="1.125rem"
-            viewBox="0 0 20 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.94668e-08 5.40093C-0.000248434 3.95126 0.582385 2.56238 1.61681 1.54676C2.65124 0.531135 4.05058 -0.0259184 5.5 0.000927231C7.21732 -0.00819277 8.85599 0.720102 10 2.00093C11.144 0.720102 12.7827 -0.00819277 14.5 0.000927231C15.9494 -0.0259184 17.3488 0.531135 18.3832 1.54676C19.4176 2.56238 20.0002 3.95126 20 5.40093C20 10.7569 13.621 14.8009 10 18.0009C6.387 14.7739 7.94668e-08 10.7609 7.94668e-08 5.40093Z"
-              fill="white"
-            />
-          </svg>
+          <FavouriteIcon />
           ADD TO FAVORITE
         </Button>
         <div className={classes.countryDetails}>
@@ -144,40 +144,35 @@ const CountryPage = ({ countryDetails, cityDetails }) => {
           <div className={classes.cityLinks}>
             <h2>CITIES</h2>
             <div>
-              {cityDetails.map((city, index) => {
-                return (
-                  <LinkButton key={index} href="/" type="cities-link">
-                    {city.fields.city_ascii}
-                  </LinkButton>
-                );
-              })}
+              {listOfCities &&
+                listOfCities.map((city, index) => {
+                  return (
+                    <LinkButton
+                      key={index}
+                      href={`/${router.query.countryID}/${city.fields.city_ascii
+                        .replace("`", "")
+                        .toLowerCase()
+                        .split(" ")
+                        .join("-")}&lat=${city.fields.lat}&lng=${
+                        city.fields.lng
+                      }`}
+                      type="cities-link"
+                    >
+                      {city.fields.city_ascii}
+                    </LinkButton>
+                  );
+                })}
             </div>
           </div>
         </div>
       </div>
-      <div
-        style={{
-          height: `${containerHeight}px`,
-          width: "100%",
-          maxWidth: "34rem",
-          overflow: "hidden",
-          borderRadius: "1rem",
-          position: "relative",
-        }}
-      >
-        {isInitial && (
-          <Map
-            initialViewState={{
-              longitude: coordinates.lng,
-              latitude: coordinates.lat,
-              zoom: 6,
-            }}
-            style={{ width: 600, height: 400 }}
-            mapStyle="mapbox://styles/mapbox/streets-v9"
-            mapboxAccessToken="pk.eyJ1IjoiYWRhbW92aWM2NjY2IiwiYSI6ImNsMnVlaG1hdTAxYWYzanBodWZqZXl6aGwifQ.tdvOdH7JOqVZbI5PMdzNJg"
-          />
-        )}
-      </div>
+      {isInitial && (
+        <CustomMap
+          height={containerHeight}
+          coordinates={coordinates}
+          zoom={6}
+        />
+      )}
     </div>
   );
 };
