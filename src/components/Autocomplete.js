@@ -1,5 +1,5 @@
-const MAPBOX_TOKEN_LOCAL = process.env.MAPBOX_TOKEN_LOCAL;
-//const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
+//const MAPBOX_TOKEN_LOCAL = process.env.MAPBOX_TOKEN_LOCAL;
+const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
 const AIRTABLE_ACCESS_KEY = process.env.AIRTABLE_ACCESS_KEY;
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -68,7 +68,7 @@ const Autocomplete = () => {
     }
 
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${search}.json?types=country&types=place&access_token=${MAPBOX_TOKEN_LOCAL}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${search}.json?types=country&types=place&access_token=${MAPBOX_TOKEN_PRODUCTION}`
     );
     const { features } = await response.json();
     setResults(features);
