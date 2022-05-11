@@ -21,6 +21,7 @@ const Autocomplete = () => {
 
   useEffect(() => {
     if (searchResult) {
+      console.log(airtableData);
       if (airtableData.length === 2) {
         setError(true);
         return;

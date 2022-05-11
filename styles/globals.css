@@ -136,7 +136,7 @@ p {
 }
 
 .map-image {
-  background-image: url("../public/map.png");
+  background-image: url("/map.png");
   height: 100%;
   width: 100%;
   background-repeat: no-repeat;
