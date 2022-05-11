@@ -39,7 +39,6 @@ export async function getStaticProps(context) {
 
 export async function getStaticPaths() {
   const allCountries = await getAllCountries();
-  console.log(allCountries);
   const paths = allCountries.map((country) => {
     return {
       params: {

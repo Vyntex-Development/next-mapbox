@@ -38,7 +38,6 @@ export async function getStaticPaths() {
   const allCities = await getAllCities();
   const allPaths = [];
   allCities.forEach((city) => {
-    console.log(city);
     allPaths.push({
       params: {
         city: [
