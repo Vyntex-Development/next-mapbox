@@ -88,3 +88,14 @@
 .countries:hover {
   background: #f7f7fb;
 }
+
+.error {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-size: 0.875rem;
+  line-height: 140%;
+  color: #ff0033;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  padding-left: 1.5rem;
+}

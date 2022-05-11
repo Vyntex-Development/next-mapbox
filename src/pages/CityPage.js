@@ -6,7 +6,6 @@ import LinkButton from "../components/UI/Link";
 import FavouriteIcon from "../assets/images/FavouriteIcon";
 
 const CityPage = ({ cityDetails, countryDetails }) => {
-  console.log(cityDetails);
   const [isInitial, setIsInitial] = useState(false);
 
   useEffect(() => {

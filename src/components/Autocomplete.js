@@ -1,4 +1,4 @@
-//const MAPBOX_TOKEN_LOCAL = process.env.MAPBOX_TOKEN_LOCAL;
+const MAPBOX_TOKEN_LOCAL = process.env.MAPBOX_TOKEN_LOCAL;
 const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
 const AIRTABLE_ACCESS_KEY = process.env.AIRTABLE_ACCESS_KEY;
 import { useState, useEffect } from "react";
@@ -14,15 +14,17 @@ const Autocomplete = () => {
   const [airtableData, setAirtableData] = useState(null);
   const [results, setResults] = useState([]);
   const [place, setPlace] = useState(null);
+  const [error, setError] = useState(false);
   const [isVisible, setIsVisble] = useState(false);
   const [searchResult, setSearchResult] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     if (searchResult) {
-      console.log(place);
-      console.log(airtableData);
-
+      if (airtableData.length === 2) {
+        setError(true);
+        return;
+      }
       place.place_type[0] === "country"
         ? router.push(`/${airtableData[0].id}`)
         : router.push(
@@ -37,6 +39,7 @@ const Autocomplete = () => {
             }`
           );
       setSearchResult(false);
+      setError(false);
     }
     setSearchResult(false);
   }, [searchResult]);
@@ -49,6 +52,7 @@ const Autocomplete = () => {
       return;
     }
     setIsVisble(true);
+    setError(false);
 
     // setIsLoading(true);
 
@@ -68,7 +72,7 @@ const Autocomplete = () => {
     }
 
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${search}.json?types=country&types=place&access_token=${MAPBOX_TOKEN_PRODUCTION}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${search}.json?types=country&types=place&access_token=${MAPBOX_TOKEN_LOCAL}`
     );
     const { features } = await response.json();
     setResults(features);
@@ -84,11 +88,12 @@ const Autocomplete = () => {
       );
       setCountryID(response.records[0].id);
       setAirtableData(response);
+      setIsVisble(false);
     } else {
       let searchData = {
         lng: place.geometry.coordinates[0],
         lat: place.geometry.coordinates[1],
-        name: place.matching_text,
+        name: place.matching_text || place.text,
         type: place.place_type[0],
       };
       const response = await getSingleDestiantion(
@@ -180,8 +185,12 @@ const Autocomplete = () => {
               );
             }
           })}
-          {/* {isLoading && <li className="AutocompletePlace-items">Loading...</li>} */}
         </ul>
+      )}
+      {error && (
+        <span className={classes.error}>
+          For this destination we don't have coresponding DAO
+        </span>
       )}
     </div>
   );
