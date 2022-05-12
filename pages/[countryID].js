@@ -4,10 +4,8 @@ import { getAllCountries } from "../src/utils/utils";
 import SEO from "../src/components/SEO/SEO";
 
 const Country = ({ country }) => {
-  console.log(country);
   return (
     <>
-      {/* <div>Drzava</div> */}
       <SEO title={country[0].fields["Name"]} />
       <CountryPage
         countryDetails={country[0]}

@@ -4,24 +4,27 @@ const AIRTABLE_ACCESS_KEY = process.env.AIRTABLE_ACCESS_KEY;
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import classes from "./Autocomplete.module.css";
-import { getSingleDestiantion } from "../utils/utils";
 import Button from "./UI/Button";
+import Spinner from "./UI/Spinner";
 import { capitalizeFirstLetter } from "../utils/utils";
+import { getMapboxSearchResults } from "../utils/utils";
+import { getCountrID } from "../utils/utils";
+import { getSingleDestiantion } from "../utils/utils";
 
 const Autocomplete = () => {
   const [search, setSearch] = useState("");
-  const [countryID, setCountryID] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [airtableData, setAirtableData] = useState(null);
   const [results, setResults] = useState([]);
   const [place, setPlace] = useState(null);
   const [error, setError] = useState(false);
   const [isVisible, setIsVisble] = useState(false);
   const [searchResult, setSearchResult] = useState(false);
+  const [timer, setTimer] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
     if (searchResult) {
-      console.log(airtableData);
       if (airtableData.length === 2) {
         setError(true);
         return;
@@ -47,71 +50,73 @@ const Autocomplete = () => {
   }, [searchResult]);
 
   //   const handleSearchChangeHandler = (searchValue) => {};
-  const handleSearchChangeHandler = (e) => {
+  const destinationChangeHadler = (e) => {
     setSearch(capitalizeFirstLetter(e.target.value));
     if (e.target.value.trim() === "") {
       setIsVisble(false);
       return;
     }
-    setIsVisble(true);
+
     setError(false);
-
-    // setIsLoading(true);
-
     // Stop the previous setTimeout if there is one in progress
-    clearTimeout(timeoutId);
+    clearTimeout(timer);
 
     // Launch a new request in 1000ms
     let timeoutId = setTimeout(() => {
-      performSearch();
+      performMapboxSearch();
     }, 1000);
+    setTimer(timeoutId);
   };
 
-  const performSearch = async () => {
+  const performMapboxSearch = async () => {
     if (search === "") {
       setResults([]);
       return;
     }
 
-    const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${search}.json?types=country&types=place&access_token=${MAPBOX_TOKEN_PRODUCTION}`
+    const features = await getMapboxSearchResults(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${search}.json?types=country&types=place&access_token=${MAPBOX_TOKEN_PRODUCTION}`,
+      null,
+      "GET"
     );
-    const { features } = await response.json();
     setResults(features);
+    setIsVisble(true);
     features.length === 0 && setIsVisble(false);
   };
 
   const handleItemClickedHandler = async (place) => {
-    if (place.place_type[0] === "country") {
-      const response = await getSingleDestiantion(
-        `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Countries?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=Name="${place.place_name} DAO"`,
-        null,
-        "GET"
-      );
-      setCountryID(response.records[0].id);
-      setAirtableData(response);
-    } else {
-      let searchData = {
-        lng: place.geometry.coordinates[0],
-        lat: place.geometry.coordinates[1],
-        name: place.matching_text || place.text,
-        type: place.place_type[0],
-      };
-      const response = await getSingleDestiantion(
-        `https://nearestdao.herokuapp.com`,
-        searchData,
-        "POST"
-      );
-      setCountryID(response[1]?.id);
-      setAirtableData(response);
-    }
     setSearch(place.place_name);
     setPlace(place);
     setIsVisble(false);
   };
 
   const searchHandler = async () => {
+    let countryId;
     let searchData;
+    setIsLoading(true);
+    if (place.place_type[0] === "country") {
+      const response = await getCountrID(
+        `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Countries?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=Name="${place.place_name} DAO"`,
+        null,
+        "GET"
+      );
+      setAirtableData(response);
+      countryId = response.records[0].id;
+    } else {
+      let response = await getCountrID(
+        `https://nearestdao.herokuapp.com`,
+        {
+          lng: place.geometry.coordinates[0],
+          lat: place.geometry.coordinates[1],
+          name: place.matching_text || place.text,
+          type: place.place_type[0],
+        },
+        "POST"
+      );
+      setAirtableData(response);
+      countryId = response[1]?.id;
+    }
+
     if (results.length === 0 && search !== "") {
       searchData = {
         lng: null,
@@ -124,7 +129,7 @@ const Autocomplete = () => {
         lng: place.geometry.coordinates[0],
         lat: place.geometry.coordinates[1],
         [place.place_type[0] === "country" ? "id" : "name"]:
-          place.place_type[0] === "country" ? countryID : place.place_name,
+          place.place_type[0] === "country" ? countryId : place.place_name,
         type: place.place_type[0],
       };
     }
@@ -136,11 +141,12 @@ const Autocomplete = () => {
         "POST"
       );
       response && setSearchResult(true);
+      setIsLoading(false);
       if (results.length === 0 && search !== "") {
         setAirtableData(response);
       }
     } catch (error) {
-      console.log(error);
+      setIsLoading(false);
     }
   };
 
@@ -150,7 +156,7 @@ const Autocomplete = () => {
         className={classes.input}
         type="text"
         value={search}
-        onChange={handleSearchChangeHandler}
+        onChange={destinationChangeHadler}
         placeholder="Search by country, region or City...
         "
       />
@@ -193,6 +199,7 @@ const Autocomplete = () => {
           For this destination we dont have coresponding DAO
         </span>
       )}
+      {isLoading && <Spinner />}
     </div>
   );
 };

@@ -89,7 +89,8 @@
   background: #f7f7fb;
 }
 
-.error {
+.error,
+.spinner {
   font-family: "Open Sans";
   font-style: normal;
   font-size: 0.875rem;

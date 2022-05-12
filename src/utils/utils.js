@@ -93,3 +93,13 @@ export const getCountryCoordinates = async (destination) => {
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+export const getCountrID = async (URL, data, mathod) => {
+  const response = await getSingleDestiantion(URL, data, mathod);
+  return response;
+};
+
+export const getMapboxSearchResults = async (URL, data, method) => {
+  const { features } = await fetchData(URL, data, method);
+  return features ? features : [];
+};
