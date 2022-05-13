@@ -27,25 +27,26 @@ const Autocomplete = () => {
     if (searchResult) {
       if (airtableData.length === 2) {
         setError(true);
-        return;
+        setSearchResult(false);
+      } else {
+        place.place_type[0] === "country"
+          ? router.push(`/${airtableData.records[0].id}`)
+          : router.push(
+              `${
+                airtableData[1].id
+              }/${airtableData[0].records[0].fields.city_ascii
+                .replace("`", "")
+                .toLowerCase()
+                .split(" ")
+                .join("-")}&lat=${airtableData[0].records[0].fields.lat}&lng=${
+                airtableData[0].records[0].fields.lng
+              }`
+            );
+        setError(false);
       }
-      place.place_type[0] === "country"
-        ? router.push(`/${airtableData.records[0].id}`)
-        : router.push(
-            `${
-              airtableData[1].id
-            }/${airtableData[0].records[0].fields.city_ascii
-              .replace("`", "")
-              .toLowerCase()
-              .split(" ")
-              .join("-")}&lat=${airtableData[0].records[0].fields.lat}&lng=${
-              airtableData[0].records[0].fields.lng
-            }`
-          );
+
       setSearchResult(false);
     }
-    setError(false);
-
     setSearchResult(false);
   }, [searchResult]);
 

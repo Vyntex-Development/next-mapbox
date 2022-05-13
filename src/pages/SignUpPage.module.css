@@ -1,0 +1,29 @@
+.signUpPageWrapper {
+  padding: 0 3.89em;
+  padding-top: 13rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  max-width: 100em;
+  margin: 0 auto;
+}
+
+.signUpPageWrapper svg {
+  margin-right: 0.5rem;
+}
+
+.signUpPageWrapper h1 {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.signUpPageWrapper > div {
+  margin-top: 1rem;
+}
+
+.signUpPageWrapper button {
+  margin-bottom: 1rem;
+}

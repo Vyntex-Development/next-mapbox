@@ -26,7 +26,7 @@ const Header = () => {
           <Link href="/login" type="transparent">
             LOGIN
           </Link>
-          <Link href="/sign-up" type="blue">
+          <Link href="/signup" type="blue">
             SIGN UP
           </Link>
         </div>

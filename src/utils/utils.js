@@ -103,3 +103,8 @@ export const getMapboxSearchResults = async (URL, data, method) => {
   const { features } = await fetchData(URL, data, method);
   return features ? features : [];
 };
+
+export const getAuth = async (URL, data, method) => {
+  const response = await fetchData(URL, data, method);
+  return response ? response : [];
+};

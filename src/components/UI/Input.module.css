@@ -1,0 +1,40 @@
+.InputWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  position: relative;
+  align-items: center;
+}
+
+.InputWrapper label {
+  color: rgb(122, 150, 202);
+  width: 8rem;
+}
+
+.InputWrapper span {
+  margin-left: 1.2rem;
+  color: rgb(148, 178, 204);
+}
+
+.InputWrapper input {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(65, 117, 148, 0.473);
+  border-radius: 0.6rem;
+}
+
+.InputWrapper input:focus {
+  outline: 1px solid rgba(65, 117, 148, 0.774);
+}
+
+.InputWrapper input::placeholder {
+  color: rgb(170, 170, 170);
+}
+
+.InputWrapper p {
+  position: absolute;
+  color: rgb(226, 140, 140);
+  left: 12.8rem;
+  top: 2.6rem;
+  font-size: 1.4rem;
+}
