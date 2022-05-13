@@ -52,7 +52,7 @@ const Login = () => {
         {/* <UIMessage uiData={uiData} /> */}
       </Form>
       <p>
-        Don't have an account? Please <Link href="/signup">register.</Link>
+        Dont have an account? Please <Link href="/signup">register.</Link>
       </p>
     </div>
   );
