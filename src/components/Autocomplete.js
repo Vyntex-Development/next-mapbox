@@ -10,6 +10,7 @@ import { capitalizeFirstLetter } from "../utils/utils";
 import { getMapboxSearchResults } from "../utils/utils";
 import { getCountrID } from "../utils/utils";
 import { getSingleDestiantion } from "../utils/utils";
+import Link from "next/link";
 
 const Autocomplete = () => {
   const [search, setSearch] = useState("");
@@ -25,7 +26,9 @@ const Autocomplete = () => {
 
   useEffect(() => {
     if (searchResult) {
-      if (airtableData.length === 2) {
+      console.log(airtableData);
+      if (airtableData.length === 3 && airtableData[2].value === "false") {
+        console.log(airtableData);
         setError(true);
         setSearchResult(false);
       } else {
@@ -195,9 +198,13 @@ const Autocomplete = () => {
           })}
         </ul>
       )}
+
       {error && (
-        <span className={classes.error}>
-          For this destination we dont have coresponding DAO
+        <span className={classes.link}>
+          For this destination nearest DAO is -
+          <Link href={airtableData[1].id}>
+            {airtableData[1].fields["Name"]}
+          </Link>
         </span>
       )}
       {isLoading && <Spinner />}

@@ -100,3 +100,19 @@
   top: calc(100% + 0.5rem);
   padding-left: 1.5rem;
 }
+
+.link {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-size: 0.875rem;
+  line-height: 140%;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  padding-left: 1.5rem;
+}
+
+.link a {
+  color: #5568f1;
+  margin-left: 0.25rem;
+  text-decoration: underline;
+}
