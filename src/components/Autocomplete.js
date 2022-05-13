@@ -1,4 +1,3 @@
-const MAPBOX_TOKEN_LOCAL = process.env.MAPBOX_TOKEN_LOCAL;
 const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
 const AIRTABLE_ACCESS_KEY = process.env.AIRTABLE_ACCESS_KEY;
 import { useState, useEffect } from "react";
@@ -28,11 +27,10 @@ const Autocomplete = () => {
     if (searchResult) {
       console.log(airtableData);
       if (airtableData.length === 3 && airtableData[2].value === "false") {
-        console.log(airtableData);
         setError(true);
         setSearchResult(false);
       } else {
-        place.place_type[0] === "country"
+        place && place.place_type[0] === "country"
           ? router.push(`/${airtableData.records[0].id}`)
           : router.push(
               `${
@@ -51,6 +49,7 @@ const Autocomplete = () => {
       setSearchResult(false);
     }
     setSearchResult(false);
+    setPlace(null);
   }, [searchResult]);
 
   //   const handleSearchChangeHandler = (searchValue) => {};
@@ -98,27 +97,29 @@ const Autocomplete = () => {
     let countryId;
     let searchData;
     setIsLoading(true);
-    if (place.place_type[0] === "country") {
-      const response = await getCountrID(
-        `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Countries?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=Name="${place.place_name} DAO"`,
-        null,
-        "GET"
-      );
-      setAirtableData(response);
-      countryId = response.records[0].id;
-    } else {
-      let response = await getCountrID(
-        `https://nearestdao.herokuapp.com`,
-        {
-          lng: place.geometry.coordinates[0],
-          lat: place.geometry.coordinates[1],
-          name: place.matching_text || place.text,
-          type: place.place_type[0],
-        },
-        "POST"
-      );
-      setAirtableData(response);
-      countryId = response[1]?.id;
+    if (place) {
+      if (place.place_type[0] === "country") {
+        const response = await getCountrID(
+          `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Countries?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=Name="${place.place_name} DAO"`,
+          null,
+          "GET"
+        );
+        setAirtableData(response);
+        countryId = response.records[0].id;
+      } else {
+        let response = await getCountrID(
+          `https://nearestdao.herokuapp.com`,
+          {
+            lng: place.geometry.coordinates[0],
+            lat: place.geometry.coordinates[1],
+            name: place.matching_text || place.text,
+            type: place.place_type[0],
+          },
+          "POST"
+        );
+        setAirtableData(response);
+        countryId = response[1]?.id;
+      }
     }
 
     if (results.length === 0 && search !== "") {
