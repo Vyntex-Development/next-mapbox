@@ -16,6 +16,7 @@ const Autocomplete = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [airtableData, setAirtableData] = useState(null);
   const [results, setResults] = useState([]);
+  const [enabled, setEnabled] = useState(false);
   const [place, setPlace] = useState(null);
   const [error, setError] = useState(false);
   const [isVisible, setIsVisble] = useState(false);
@@ -57,6 +58,8 @@ const Autocomplete = () => {
     setSearch(capitalizeFirstLetter(e.target.value));
     if (e.target.value.trim() === "") {
       setIsVisble(false);
+      setEnabled(false);
+
       return;
     }
 
@@ -74,6 +77,7 @@ const Autocomplete = () => {
   const performMapboxSearch = async () => {
     if (search === "") {
       setResults([]);
+      setEnabled(false);
       return;
     }
 
@@ -91,6 +95,7 @@ const Autocomplete = () => {
     setSearch(place.place_name);
     setPlace(place);
     setIsVisble(false);
+    setEnabled(true);
   };
 
   const searchHandler = async () => {
@@ -165,7 +170,7 @@ const Autocomplete = () => {
         placeholder="Search by country, region or City...
         "
       />
-      <Button onClick={searchHandler} type="blue">
+      <Button onClick={searchHandler} type={enabled ? "blue" : "disabled"}>
         SEARCH
       </Button>
       {isVisible && (

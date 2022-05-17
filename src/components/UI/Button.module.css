@@ -1,5 +1,5 @@
-.blue {
-  background: #5568f1;
+.blue,
+.disabled {
   border-radius: 0.25rem;
   padding: 0.625rem 1rem;
   color: #ffffff;
@@ -13,4 +13,13 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+}
+
+.blue {
+  background: #5568f1;
+}
+
+.disabled {
+  pointer-events: none;
+  background-color: #d1d7e8b7;
 }

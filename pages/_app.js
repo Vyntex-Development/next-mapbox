@@ -1,11 +1,14 @@
 import "../styles/globals.css";
 import Layout from "../src/components/Layout";
+import { MetaMaskProvider } from "metamask-react";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <MetaMaskProvider>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </MetaMaskProvider>
   );
 }
 

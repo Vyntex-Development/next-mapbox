@@ -18,6 +18,14 @@
 .linksContainer {
   display: flex;
   align-items: center;
+  position: relative;
+}
+
+.linksContainer {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  width: 300px;
 }
 
 .iconsContainer span {
@@ -37,4 +45,56 @@
 .icons svg:last-of-type,
 .linksContainer > div:last-of-type {
   margin-right: 0rem;
+}
+
+.InputWrapper {
+  position: absolute;
+  margin: 0 auto;
+  width: 15rem;
+  height: 36px;
+  background: #f2f5ff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  top: 3rem;
+  overflow: hidden;
+}
+
+.InputWrapper input {
+  border: none;
+  padding: 0.3rem 0 0.3rem 1rem;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.85rem;
+  line-height: 140%;
+  color: #211646;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: #f2f5ff;
+  width: 200px;
+  height: 100%;
+  top: 3rem;
+}
+
+.input::placeholder {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.85rem;
+  line-height: 140%;
+  color: rgba(33, 22, 70, 0.5);
+}
+
+.input:focus {
+  outline: none;
+}
+
+.InputWrapper button {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
 }
