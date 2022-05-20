@@ -21,6 +21,8 @@ const Header = () => {
 
   const { login, isAuth } = useContext(AuthContext);
 
+  console.log("log");
+
   useEffect(() => {
     address && setShowAddressModal(true);
     !userData || (!address && setIsSubmitted(false));
