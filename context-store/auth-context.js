@@ -17,7 +17,7 @@ export const AuthContextProvider = ({ children }) => {
   const isAuth = !!token;
 
   useEffect(() => {
-    window.ethereum.on("accountsChanged", (accounts) => {
+    window.ethereum?.on("accountsChanged", (accounts) => {
       if (!accounts.length) {
         logoutHandler();
       }

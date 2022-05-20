@@ -14,7 +14,7 @@ const Modal = ({ show, onClose, children, title }) => {
   };
 
   useEffect(() => {
-    window.ethereum.on("accountsChanged", (accounts) => {
+    window.ethereum?.on("accountsChanged", (accounts) => {
       if (!accounts.length) {
         onClose();
       }
