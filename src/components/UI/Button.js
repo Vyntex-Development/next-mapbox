@@ -11,6 +11,10 @@ const Button = ({ children, type, onClick, id }) => {
     className = classes.transparent;
   }
 
+  if (type === "metamask") {
+    className = classes.metamask;
+  }
+
   if (type === "disabled") {
     className = classes.disabled;
   }

@@ -15,6 +15,7 @@ class CustomDocument extends Document {
         <Main />
         <NextScript />
         <div id="modal-root"></div>
+        <div id="address-modal-root"></div>
       </body>
     </Html>
   );

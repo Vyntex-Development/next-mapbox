@@ -12,11 +12,13 @@ const CityPage = ({ cityDetails, countryDetails }) => {
     setIsInitial(true);
   }, []);
 
+  const addToFavourites = () => {};
+
   return (
     <div className={classes.cityPageWrapper}>
       <div>
         <h1>{cityDetails?.fields["city"] || ""}</h1>
-        <Button type="blue">
+        <Button type="blue" onClick={addToFavourites}>
           <FavouriteIcon />
           ADD TO FAVORITE
         </Button>

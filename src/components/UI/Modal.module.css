@@ -7,30 +7,49 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(85, 104, 241, 0.1);
+  backdrop-filter: blur(10px);
   z-index: 1000;
 }
 
 .modal {
-  background: white;
   width: 500px;
   height: auto;
   border-radius: 15px;
-  padding: 15px;
+  background: #ffffff;
+  box-shadow: 0px 0px 20px rgba(85, 104, 241, 0.15);
+  border-radius: 16px;
 }
 
 .modalWrapper {
-  width: 500px;
-  height: 600px;
+  width: 27rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 140%;
+  color: #211646;
   display: flex;
-  justify-content: flex-end;
-  font-size: 25px;
+  justify-content: center;
+  align-items: center;
+  padding: 0.8125rem 0;
+  border-bottom: 1px solid rgba(33, 22, 70, 0.5);
+}
+
+.header h3 {
+  margin: 0;
 }
 
 .modalBody {
-  padding-top: 10px;
+  padding: 1.5rem 0;
   display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -1,18 +1,29 @@
 .blue,
-.disabled {
+.disabled,
+.metamask,
+.transparent {
   border-radius: 0.25rem;
   padding: 0.625rem 1rem;
   color: #ffffff;
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 600;
-  font-size: 0.93rem;
   line-height: 140%;
   outline: none;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
+}
+
+.blue,
+.disabled {
+  font-size: 0.875rem;
+}
+
+.metamask {
+  font-size: 16px;
+  color: #211646;
 }
 
 .blue {
@@ -22,4 +33,24 @@
 .disabled {
   pointer-events: none;
   background-color: #d1d7e8b7;
+}
+
+.metamask {
+  background: rgba(189, 206, 255, 0.3);
+  display: flex;
+  align-items: center;
+  padding-right: 3.875rem;
+}
+
+.metamask svg {
+  margin-right: 1.31rem;
+}
+
+.transparent {
+  font-size: 14px;
+  line-height: 140%;
+  color: #5568f1;
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
 }

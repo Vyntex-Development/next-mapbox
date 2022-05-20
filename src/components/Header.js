@@ -6,45 +6,75 @@ import TwitterIcon from "../assets/images/TwitterIcon";
 import RedditIcon from "../assets/images/RedditIcon";
 import Button from "./UI/Button";
 import Modal from "./UI/Modal";
-import Link from "./UI/Link";
-import { useMetaMask } from "metamask-react";
-import { useState } from "react";
+import AddressModal from "./UI/AddressModal";
+import { useState, useEffect, useContext } from "react";
+import MetamaskIcon from "../assets/images/MetamaskIcon";
+import AuthContext from "../../context-store/auth-context";
+import { ethers } from "ethers";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
-  const [address, setAddress] = useState("");
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [address, setAddress] = useState(null);
+  const [userData, setUserData] = useState(null);
 
-  const { status, connect, account, chainId, ethereum } = useMetaMask();
+  const { login, isAuth } = useContext(AuthContext);
 
-  const metamaskHandler = () => {
-    if (status === "unavailable") setShowModal(true);
-    if (status === "notConnected") connect();
+  useEffect(() => {
+    address && setShowAddressModal(true);
+    !userData || (!address && setIsSubmitted(false));
+  }, [address, userData]);
+
+  const connectMetamaskHandler = async () => {
+    if (!window.ethereum) {
+      window.open(
+        "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn",
+        "_blank"
+      );
+      return;
+    }
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+
+    const signer = provider.getSigner();
+    const walletAddress = await signer.getAddress();
+    console.log(walletAddress);
+    setAddress(walletAddress);
+    // const signature = await signer.signMessage("Hello world");
+    // console.log(signature, "signature");
+
+    let response = await fetch("/api/auth/nonce", {
+      method: "POST",
+      body: JSON.stringify({ walletAddress }),
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
+
+    const { nonce } = await response.json();
+    const signature = await signer.signMessage(nonce);
+
+    let walletResponse = await fetch("/api/auth/wallet", {
+      method: "POST",
+      body: JSON.stringify({ walletAddress, nonce, signature }),
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
+    const { data: userData, token } = await walletResponse.json();
+    login(token);
+    userData && setUserData(userData);
   };
 
-  const addAddressHandler = async () => {
-    let data = {
-      eht_address: account,
-      phy_address: address,
-      tweeter_handle: false,
-    };
-
-    const response = await fetch(
-      "https://nearestdao.herokuapp.com/create/user",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
-    const responseData = await response.json();
-    console.log(responseData);
+  const linkButtonHandler = () => {
+    isAuth ? setShowModal(false) : setShowModal(true);
+    isAuth && setShowAddressModal(true);
   };
 
-  const setAddressHandler = (ev) => {
-    setAddress(ev.target.value);
+  const onSubmitHandler = () => {
+    setIsSubmitted(true);
   };
 
   return (
@@ -63,32 +93,33 @@ const Header = () => {
           <Logo />
         </div>
         <div className={classes.linksContainer}>
-          <Button onClick={metamaskHandler} type="blue" id="connect">
-            {status === "connected" ? "Connected" : "Connect Metamask"}
+          <Button onClick={linkButtonHandler} type="blue" id="connect">
+            {!isAuth ? "CONNECT WALLET" : "DASHBOARD"}
           </Button>
-          {status === "connected" && (
-            <div className={classes.InputWrapper}>
-              <input
-                className={classes.input}
-                type="text"
-                placeholder="Add your address"
-                onChange={setAddressHandler}
-              />
-              <Button onClick={addAddressHandler} type="blue">
-                ADD
-              </Button>
-            </div>
-          )}
         </div>
       </div>
-      <Modal
-        onClose={() => setShowModal(false)}
-        show={showModal}
-        title="Plase install Metamask wallet on your computer!"
-      >
-        Got to &nbsp; <Link href="https://metamask.io/"> Metamask.IO</Link>{" "}
-        &nbsp; and install wallter or install extension on your browser
-      </Modal>
+      {!isAuth && (
+        <Modal
+          onClose={() => setShowModal(false)}
+          show={showModal}
+          title="Connect Wallet"
+        >
+          <Button type="metamask" onClick={connectMetamaskHandler}>
+            <MetamaskIcon />
+            Meta Mask
+          </Button>
+        </Modal>
+      )}
+      {isAuth && (
+        <AddressModal
+          onClose={() => setShowAddressModal(false)}
+          show={showAddressModal}
+          address={address}
+          onSubmit={onSubmitHandler}
+          isSubmitted={isSubmitted}
+          userData={userData}
+        ></AddressModal>
+      )}
     </header>
   );
 };

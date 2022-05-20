@@ -3,8 +3,8 @@ import ReactDOM from "react-dom";
 import classes from "./Modal.module.css";
 
 const Modal = ({ show, onClose, children, title }) => {
+  console.log(show);
   const [isBrowser, setIsBrowser] = useState(false);
-
   const modalWrapperRef = useRef();
 
   const backDropHandler = (e) => {
@@ -14,26 +14,22 @@ const Modal = ({ show, onClose, children, title }) => {
   };
 
   useEffect(() => {
+    window.ethereum.on("accountsChanged", (accounts) => {
+      if (!accounts.length) {
+        onClose();
+      }
+    });
     setIsBrowser(true);
     window.addEventListener("click", backDropHandler);
     return () => window.removeEventListener("click", backDropHandler);
   }, []);
 
-  const handleCloseClick = (e) => {
-    e.preventDefault();
-    onClose();
-  };
-
   const modalContent = show ? (
     <div className={classes.modalOverlay}>
       <div className={classes.modalWrapper} ref={modalWrapperRef}>
         <div className={classes.modal}>
-          <span className={classes.header}>
-            <a href="#" onClick={handleCloseClick}>
-              x
-            </a>
-          </span>
-          {title && <h2>{title}</h2>}
+          <div className={classes.header}>{title && <h3>{title}</h3>}</div>
+
           <div className={classes.modalBody}>{children}</div>
         </div>
       </div>

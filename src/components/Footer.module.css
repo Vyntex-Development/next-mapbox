@@ -21,6 +21,22 @@
   line-height: 100%;
 }
 
+.rights p {
+  font-family: "VCR OSD Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  /* identical to box height, or 14px */
+
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+
+  color: rgba(33, 22, 70, 0.4);
+}
+
 .links {
   font-weight: 400;
   font-size: 1rem;

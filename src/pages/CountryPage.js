@@ -10,6 +10,7 @@ import TelegramIcon from "../assets/images/TelegramIcon";
 import Image from "next/image";
 import FavouriteIcon from "../assets/images/FavouriteIcon";
 import CustomMap from "../components/CustomMap";
+import { useMetaMask } from "metamask-react";
 
 const CountryPage = ({ countryDetails, listOfCities }) => {
   const [isInitial, setIsInitial] = useState(false);
@@ -18,6 +19,7 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
 
   const countryRef = useRef();
   const router = useRouter();
+  const { account } = useMetaMask();
 
   useEffect(() => {
     setIsInitial(true);
@@ -33,11 +35,40 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
     getCoordinates();
   }, []);
 
+  const addToFavourites = async () => {
+    console.log(countryDetails);
+    let addToFavouritesData = {
+      eht_address: account,
+      data: {
+        dao_id: countryDetails.id,
+        name: countryDetails.fields["Name"],
+        iso2: countryDetails.fields["ISO Alpha-2"],
+        iso3: countryDetails.fields["ISO Alpha-3"],
+        lat: null,
+        lng: null,
+        countryID: countryDetails.id,
+      },
+    };
+    const response = await fetch(
+      "https://nearestdao.herokuapp.com/add/favorite",
+      {
+        method: "POST",
+        body: JSON.stringify(addToFavouritesData),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    const responseData = await response.json();
+    console.log(responseData);
+  };
+
   return (
     <div className={classes.countryPageWrapper}>
       <div ref={countryRef}>
         <h1>{countryDetails.fields["Name"]}</h1>
-        <Button type="blue">
+        <Button type="blue" onClick={addToFavourites}>
           <FavouriteIcon />
           ADD TO FAVORITE
         </Button>
