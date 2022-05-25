@@ -1,4 +1,4 @@
-export const joinNowConfig = [
+export const formConfig = [
   {
     id: "username",
     inputConfig: {

@@ -108,3 +108,12 @@ export const getAuth = async (URL, data, method) => {
   const response = await fetchData(URL, data, method);
   return response ? response : [];
 };
+
+export const shorten = (s, max) => {
+  if (!s) return;
+  return s.length > max
+    ? s.substring(0, max / 2 - 1) +
+        "..." +
+        s.substring(s.length - max / 2 + 2, s.length)
+    : s;
+};

@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import classes from "./Modal.module.css";
 
 const Modal = ({ show, onClose, children, title }) => {
-  console.log(show);
   const [isBrowser, setIsBrowser] = useState(false);
   const modalWrapperRef = useRef();
 

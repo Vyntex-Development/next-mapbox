@@ -1,7 +1,9 @@
 .blue,
 .disabled,
 .metamask,
-.transparent {
+.transparent,
+.white,
+.yellow {
   border-radius: 0.25rem;
   padding: 0.625rem 1rem;
   color: #ffffff;
@@ -53,4 +55,22 @@
   background-color: transparent;
   padding: 0;
   cursor: pointer;
+}
+
+.white {
+  background: #ffffff;
+  border: 1px solid #5568f1;
+  font-size: 14px;
+  color: #5568f1;
+}
+
+.yellow {
+  font-size: 14px;
+  color: #211646;
+  background: #fcc003;
+}
+
+.white,
+.yellow {
+  padding: 6px 16px;
 }

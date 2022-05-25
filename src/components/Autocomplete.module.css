@@ -9,6 +9,50 @@
   align-items: center;
 }
 
+.SearchResults {
+  width: 27rem;
+  background: #f2f5ff;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  border-radius: 8px;
+  padding: 0;
+  list-style: none;
+  padding: 0 16px;
+}
+
+.SearchResults li {
+  padding: 21px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.SearchResults li span img {
+  width: 24px;
+  height: 16px;
+  margin-right: 8px;
+}
+
+.SearchResults li {
+  font-family: "VCR OSD Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 120%;
+  text-align: center;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: #1a1745;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* .SearchResults li:nth-of-type(1) {
+  border-bottom: 1px solid rgba(32, 32, 32, 0.1);
+} */
+
 .input {
   border: none;
   padding: 1.0625rem 0 1.0625rem 1.5rem;
@@ -30,6 +74,12 @@
   position: absolute;
   right: 1rem;
   top: 0.5rem;
+}
+
+.SearchResults button {
+  position: relative;
+  right: 0;
+  top: 0;
 }
 
 .input::placeholder {

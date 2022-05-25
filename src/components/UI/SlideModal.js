@@ -5,17 +5,21 @@ import { useState, useEffect, useRef, useContext } from "react";
 import AuthContext from "../../../context-store/auth-context";
 import { capitalizeFirstLetter } from "../../utils/utils";
 import { getMapboxSearchResults } from "../../utils/utils";
-import classes from "./AddressModal.module.css";
+import classes from "./SlideModal.module.css";
 import AvatarIcon from "../../assets/images/AvatarIcon";
 import Button from "./Button";
+import { shorten } from "../../utils/utils";
+import { formConfig } from "../../config/formConfig";
+import Form from "../Form";
 
-const AddressModal = ({
+const SildeModal = ({
   show,
   address,
   onClose,
   onSubmit,
   isSubmitted,
   userData,
+  deploy,
 }) => {
   const [isBrowser, setIsBrowser] = useState(false);
   const [isVisible, setIsVisble] = useState(false);
@@ -28,6 +32,8 @@ const AddressModal = ({
   const [userAddress, setUserAddress] = useState("");
   const { logout, token } = useContext(AuthContext);
 
+  // console.log(show);
+
   const modalWrapperRef = useRef();
 
   const destinationChangeHadler = (e) => {
@@ -38,11 +44,8 @@ const AddressModal = ({
       return;
     }
 
-    //setError(false);
-    // Stop the previous setTimeout if there is one in progress
     clearTimeout(timer);
 
-    // Launch a new request in 1000ms
     let timeoutId = setTimeout(() => {
       performMapboxSearch(e.target.value);
     }, 1000);
@@ -73,7 +76,6 @@ const AddressModal = ({
 
   const handleItemClickedHandler = async (place) => {
     setSearch(place.place_name);
-    // setPlace(place);
     setIsVisble(false);
     setEnabled(true);
   };
@@ -114,13 +116,12 @@ const AddressModal = ({
     onSubmit(true);
   };
 
-  const shorten = (s, max) => {
-    if (!s) return;
-    return s.length > max
-      ? s.substring(0, max / 2 - 1) +
-          "..." +
-          s.substring(s.length - max / 2 + 2, s.length)
-      : s;
+  const onSubmitHandler = (formData) => {
+    let userDetails = {
+      user_name: formData.user_name,
+      password: formData.password,
+    };
+    httpClient.sendRequest("POST", "/token/", null, userDetails);
   };
 
   const modalContent = show ? (
@@ -149,7 +150,14 @@ const AddressModal = ({
               : classes.body
           }`}
         >
-          {isSubmitted || userData?.address || userAddress ? (
+          {deploy ? (
+            <Form
+              formConfig={formConfig.filter(
+                (config) => config.inputConfig.name !== "email"
+              )}
+              onSubmit={onSubmitHandler}
+            />
+          ) : isSubmitted || userData?.address || userAddress ? (
             <div className={classes.dashboardLastStage}>
               <div className={classes.dashboardInfoWrapper}>
                 <h4>User ID:</h4>
@@ -259,4 +267,4 @@ const AddressModal = ({
   }
 };
 
-export default AddressModal;
+export default SildeModal;

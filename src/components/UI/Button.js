@@ -19,6 +19,14 @@ const Button = ({ children, type, onClick, id }) => {
     className = classes.disabled;
   }
 
+  if (type === "white") {
+    className = classes.white;
+  }
+
+  if (type === "yellow") {
+    className = classes.yellow;
+  }
+
   return (
     <button onClick={onClick} id={id} className={className}>
       {children}

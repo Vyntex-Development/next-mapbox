@@ -16,6 +16,10 @@ const LinkButton = ({ href, type, children }) => {
     className = classes.transparent;
   }
 
+  if (type === "white") {
+    className = classes.white;
+  }
+
   return (
     <div className={className}>
       <Link href={href}>{children}</Link>

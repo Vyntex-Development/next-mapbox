@@ -4,11 +4,11 @@
   padding: 0.625rem 1rem;
 }
 .transparent a,
-.blue a {
+.blue a,
+.white a {
   font-family: "Open Sans";
   font-style: normal;
   font-weight: 600;
-  font-size: 0.93rem;
   line-height: 140%;
 }
 
@@ -42,4 +42,14 @@
   line-height: 140%;
   color: #5568f1;
   padding: 0.25rem 1rem;
+}
+
+.white {
+  font-size: 14px;
+  line-height: 140%;
+  color: #5568f1;
+  background: #ffffff;
+  border: 1px solid #5568f1;
+  border-radius: 4px;
+  padding: 6px 16px;
 }

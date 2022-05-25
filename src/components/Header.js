@@ -6,11 +6,11 @@ import TwitterIcon from "../assets/images/TwitterIcon";
 import RedditIcon from "../assets/images/RedditIcon";
 import Button from "./UI/Button";
 import Modal from "./UI/Modal";
-import AddressModal from "./UI/AddressModal";
 import { useState, useEffect, useContext } from "react";
 import MetamaskIcon from "../assets/images/MetamaskIcon";
 import AuthContext from "../../context-store/auth-context";
 import { ethers } from "ethers";
+import SildeModal from "./UI/SlideModal";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
@@ -20,8 +20,6 @@ const Header = () => {
   const [userData, setUserData] = useState(null);
 
   const { login, isAuth } = useContext(AuthContext);
-
-  console.log("log");
 
   useEffect(() => {
     address && setShowAddressModal(true);
@@ -113,14 +111,14 @@ const Header = () => {
         </Modal>
       )}
       {isAuth && (
-        <AddressModal
+        <SildeModal
           onClose={() => setShowAddressModal(false)}
           show={showAddressModal}
           address={address}
           onSubmit={onSubmitHandler}
           isSubmitted={isSubmitted}
           userData={userData}
-        ></AddressModal>
+        ></SildeModal>
       )}
     </header>
   );
