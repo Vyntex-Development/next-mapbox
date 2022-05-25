@@ -182,11 +182,7 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
                       key={index}
                       href={`/${router.query.countryID}/${city.fields.city_ascii
                         .replace("`", "")
-                        .toLowerCase()
-                        .split(" ")
-                        .join("-")}&lat=${city.fields.lat}&lng=${
-                        city.fields.lng
-                      }`}
+                        .toLowerCase()}`}
                       type="cities-link"
                     >
                       {city.fields.city_ascii}

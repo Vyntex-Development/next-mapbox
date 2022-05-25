@@ -21,16 +21,12 @@ export async function getStaticProps(context) {
   let splittedQuery = cityParams.split("&");
   let name = splittedQuery[0];
   let nameWithCapitalizedFirstLetter = capitalizeFirstLetter(name);
-  // let lat = splittedQuery[1].split("=")[1];
-  // let lng = splittedQuery[2].split("=")[1];
 
   const city = await getSingleDestiantion(
     "https://nearestdao.herokuapp.com",
     {
       name: nameWithCapitalizedFirstLetter,
       type: "place",
-      // lng,
-      // lat,
     },
     "POST"
   );
@@ -50,16 +46,11 @@ export async function getStaticPaths() {
   );
   const allPaths = [];
   modifiedCities.forEach((city) => {
-    console.log(city);
     allPaths.push({
       params: {
         city: [
           city.fields["Country"][0],
-          `${city.fields?.city_ascii
-            .replace("`", "")
-            .toLowerCase()
-            .split(" ")
-            .join("-")}&lat=${city.fields?.lat}&lng=${city.fields?.lng}`,
+          `${city.fields?.city_ascii.replace("`", "").toLowerCase()}`,
         ],
       },
     });

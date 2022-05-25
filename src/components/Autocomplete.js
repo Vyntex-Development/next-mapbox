@@ -78,11 +78,7 @@ const Autocomplete = () => {
             airtableData[1].id
           }/${airtableData[0].records[0].fields.city_ascii
             .replace("`", "")
-            .toLowerCase()
-            .split(" ")
-            .join("-")}&lat=${airtableData[0].records[0].fields.lat}&lng=${
-            airtableData[0].records[0].fields.lng
-          }`,
+            .toLowerCase()}`,
         });
         setCountryOption({
           name: airtableData[1].fields["Name"],
