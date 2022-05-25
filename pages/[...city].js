@@ -5,10 +5,11 @@ import { getAllCities } from "../src/utils/utils";
 import { capitalizeFirstLetter } from "../src/utils/utils";
 
 const City = ({ data }) => {
+  console.log(data);
   return (
     <>
       <SEO
-        title={`${data[1].fields?.["Name"]} - ${data[0].records?.[0].fields?.["city"]}`}
+        title={`${data[1].fields["Name"]} - ${data[0].records[0].fields.city}`}
       ></SEO>
       <CityPage countryDetails={data[1]} cityDetails={data[0].records?.[0]} />
     </>
@@ -53,7 +54,7 @@ export async function getStaticPaths() {
     allPaths.push({
       params: {
         city: [
-          city.fields?.["Country"][0],
+          city.fields["Country"][0],
           `${city.fields?.city_ascii
             .replace("`", "")
             .toLowerCase()
