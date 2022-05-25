@@ -5,7 +5,6 @@ import { getAllCities } from "../src/utils/utils";
 import { capitalizeFirstLetter } from "../src/utils/utils";
 
 const City = ({ data }) => {
-  console.log(data);
   return (
     <>
       <SEO
@@ -20,7 +19,9 @@ export async function getStaticProps(context) {
   let cityParams = context.params.city[1];
   let splittedQuery = cityParams.split("&");
   let name = splittedQuery[0];
-  let nameWithCapitalizedFirstLetter = capitalizeFirstLetter(name);
+  let nameWithCapitalizedFirstLetter = capitalizeFirstLetter(name)
+    .split("-")
+    .join(" ");
 
   const city = await getSingleDestiantion(
     "https://nearestdao.herokuapp.com",
@@ -50,7 +51,10 @@ export async function getStaticPaths() {
       params: {
         city: [
           city.fields["Country"][0],
-          `${city.fields?.city_ascii.replace("`", "").toLowerCase()}`,
+          `${city.fields?.city_ascii
+            .replace("`", "")
+            .toLowerCase()
+            .replace(" ", "-")}`,
         ],
       },
     });

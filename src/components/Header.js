@@ -9,7 +9,7 @@ import Modal from "./UI/Modal";
 import { useState, useEffect, useContext } from "react";
 import MetamaskIcon from "../assets/images/MetamaskIcon";
 import AuthContext from "../../context-store/auth-context";
-import { ethers } from "ethers";
+import { connectMetamaskHandler } from "../utils/utils";
 import SildeModal from "./UI/SlideModal";
 
 const Header = () => {
@@ -26,48 +26,6 @@ const Header = () => {
     !userData || (!address && setIsSubmitted(false));
   }, [address, userData]);
 
-  const connectMetamaskHandler = async () => {
-    if (!window.ethereum) {
-      window.open(
-        "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn",
-        "_blank"
-      );
-      return;
-    }
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-
-    const signer = provider.getSigner();
-    const walletAddress = await signer.getAddress();
-    console.log(walletAddress);
-    setAddress(walletAddress);
-    // const signature = await signer.signMessage("Hello world");
-    // console.log(signature, "signature");
-
-    let response = await fetch("/api/auth/nonce", {
-      method: "POST",
-      body: JSON.stringify({ walletAddress }),
-      headers: {
-        "Content-type": "application/json",
-      },
-    });
-
-    const { nonce } = await response.json();
-    const signature = await signer.signMessage(nonce);
-
-    let walletResponse = await fetch("/api/auth/wallet", {
-      method: "POST",
-      body: JSON.stringify({ walletAddress, nonce, signature }),
-      headers: {
-        "Content-type": "application/json",
-      },
-    });
-    const { data: userData, token } = await walletResponse.json();
-    login(token);
-    userData && setUserData(userData);
-  };
-
   const linkButtonHandler = () => {
     isAuth ? setShowModal(false) : setShowModal(true);
     isAuth && setShowAddressModal(true);
@@ -75,6 +33,13 @@ const Header = () => {
 
   const onSubmitHandler = () => {
     setIsSubmitted(true);
+  };
+
+  const connectToMetamask = async () => {
+    const { walletAddress, token, userData } = await connectMetamaskHandler();
+    setAddress(walletAddress);
+    login(token);
+    userData && setUserData(userData);
   };
 
   return (
@@ -104,7 +69,7 @@ const Header = () => {
           show={showModal}
           title="Connect Wallet"
         >
-          <Button type="metamask" onClick={connectMetamaskHandler}>
+          <Button type="metamask" onClick={connectToMetamask}>
             <MetamaskIcon />
             Meta Mask
           </Button>

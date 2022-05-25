@@ -37,6 +37,7 @@ const Autocomplete = () => {
 
   useEffect(() => {
     if (searchResult) {
+      console.log(airtableData);
       if (place && place.place_type[0] === "country") {
         setCountryOption({
           name: airtableData.records[0].fields["Name"],
@@ -47,9 +48,6 @@ const Autocomplete = () => {
       }
 
       if (airtableData && airtableData.value === false) {
-        console.log("ulazi ovde");
-        console.log(airtableData.country_data);
-
         setCityOption({
           name: `${place.matching_text || place.text} - ${
             airtableData.country
@@ -68,17 +66,16 @@ const Autocomplete = () => {
       }
 
       if (place && place.place_type[0] !== "country") {
-        console.log(airtableData[1]);
         if (airtableData && airtableData.value === false) return;
         setCityOption({
           name: `${airtableData[0].records[0].fields["city"]} - ${airtableData[1].fields["Name"]}`,
-          // flag: response[0].fields["Flag"],
           txt: "view",
           link: `${
             airtableData[1].id
           }/${airtableData[0].records[0].fields.city_ascii
             .replace("`", "")
-            .toLowerCase()}`,
+            .toLowerCase()
+            .replace(" ", "-")}`,
         });
         setCountryOption({
           name: airtableData[1].fields["Name"],
@@ -172,14 +169,11 @@ const Autocomplete = () => {
         let response = await getCountrID(
           `https://nearestdao.herokuapp.com`,
           {
-            // lng: place.geometry.coordinates[0],
-            // lat: place.geometry.coordinates[1],
-            name: place.matching_text || place.text,
+            name: place.text,
             type: place.place_type[0],
           },
           "POST"
         );
-        console.log(response);
         setAirtableData(response);
         countryId = response[1]?.id;
       }
@@ -187,19 +181,15 @@ const Autocomplete = () => {
 
     if (results.length === 0 && search !== "") {
       searchData = {
-        // lng: null,
-        // lat: null,
         name: search,
         type: "place",
       };
     } else {
       searchData = {
-        // lng: place.geometry.coordinates[0],
-        // lat: place.geometry.coordinates[1],
         [place.place_type[0] === "country" ? "id" : "name"]:
-          place.place_type[0] === "country"
-            ? countryId
-            : place.matching_text || place.text,
+          place.place_type[0] === "country" ? countryId : place.text,
+
+        // : place.matching_text || place.text,
         type: place.place_type[0],
       };
     }
@@ -266,9 +256,6 @@ const Autocomplete = () => {
         </ul>
       )}
       <ul className={classes.SearchResults}>
-        {/* <button id="deploy" onClick={deployHandler}>
-          Open
-        </button> */}
         {countryOption && (
           <li
             style={{

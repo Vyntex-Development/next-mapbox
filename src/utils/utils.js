@@ -1,5 +1,6 @@
 const AIRTABLE_ACCESS_KEY = process.env.AIRTABLE_ACCESS_KEY;
 const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
+import { ethers } from "ethers";
 
 const fetchData = async (URL, data, method) => {
   const options = {
@@ -116,4 +117,46 @@ export const shorten = (s, max) => {
         "..." +
         s.substring(s.length - max / 2 + 2, s.length)
     : s;
+};
+
+export const connectMetamaskHandler = async () => {
+  if (!window.ethereum) {
+    window.open(
+      "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn",
+      "_blank"
+    );
+    return;
+  }
+
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+
+  const signer = provider.getSigner();
+  const walletAddress = await signer.getAddress();
+
+  let response = await fetch("/api/auth/nonce", {
+    method: "POST",
+    body: JSON.stringify({ walletAddress }),
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+
+  const { nonce } = await response.json();
+  const signature = await signer.signMessage(nonce);
+
+  let walletResponse = await fetch("/api/auth/wallet", {
+    method: "POST",
+    body: JSON.stringify({ walletAddress, nonce, signature }),
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+  const { data: userData, token } = await walletResponse.json();
+
+  return {
+    walletAddress,
+    token,
+    userData,
+  };
 };
