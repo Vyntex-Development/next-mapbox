@@ -7,10 +7,10 @@ import { capitalizeFirstLetter } from "../src/utils/utils";
 const City = ({ data }) => {
   return (
     <>
-      {/* <SEO
-        title={`${data[1].fields?.["Name"]} - ${data[0].records[0]?.fields?.["city"]}`}
-      ></SEO> */}
-      <CityPage countryDetails={data[1]} cityDetails={data[0].records[0]} />
+      <SEO
+        title={`${data[1].fields?.["Name"]} - ${data[0].records?.[0]?.fields?.["city"]}`}
+      ></SEO>
+      <CityPage countryDetails={data[1]} cityDetails={data[0].records?.[0]} />
     </>
   );
 };
@@ -20,16 +20,16 @@ export async function getStaticProps(context) {
   let splittedQuery = cityParams.split("&");
   let name = splittedQuery[0];
   let nameWithCapitalizedFirstLetter = capitalizeFirstLetter(name);
-  let lat = splittedQuery[1].split("=")[1];
-  let lng = splittedQuery[2].split("=")[1];
+  // let lat = splittedQuery[1].split("=")[1];
+  // let lng = splittedQuery[2].split("=")[1];
 
   const city = await getSingleDestiantion(
     "https://nearestdao.herokuapp.com",
     {
       name: nameWithCapitalizedFirstLetter,
       type: "place",
-      lng,
-      lat,
+      // lng,
+      // lat,
     },
     "POST"
   );
