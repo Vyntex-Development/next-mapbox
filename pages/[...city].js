@@ -8,7 +8,7 @@ const City = ({ data }) => {
   return (
     <>
       <SEO
-        title={`${data[1].fields["Name"]} - ${data[0].records[0]?.fields["city"]}`}
+        title={`${data[1].fields?.["Name"]} - ${data[0].records[0]?.fields?.["city"]}`}
       ></SEO>
       <CityPage countryDetails={data[1]} cityDetails={data[0].records[0]} />
     </>
