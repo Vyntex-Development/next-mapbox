@@ -7,9 +7,9 @@ import { capitalizeFirstLetter } from "../src/utils/utils";
 const City = ({ data }) => {
   return (
     <>
-      <SEO
+      {/* <SEO
         title={`${data[1].fields?.["Name"]} - ${data[0].records[0]?.fields?.["city"]}`}
-      ></SEO>
+      ></SEO> */}
       <CityPage countryDetails={data[1]} cityDetails={data[0].records[0]} />
     </>
   );
