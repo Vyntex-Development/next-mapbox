@@ -44,8 +44,11 @@ export async function getStaticProps(context) {
 
 export async function getStaticPaths() {
   const allCities = await getAllCities();
+  const modifiedCities = allCities.filter(
+    (city) => !city.hasOwnProperty("value")
+  );
   const allPaths = [];
-  allCities.forEach((city) => {
+  modifiedCities.forEach((city) => {
     console.log(city);
     allPaths.push({
       params: {
