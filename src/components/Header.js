@@ -25,7 +25,7 @@ const Header = () => {
     address && setShowAddressModal(true);
     !userData || (!address && setIsSubmitted(false));
     !user?.address && setIsSubmitted(false);
-  }, [address, userData]);
+  }, [address, userData, user.address]);
 
   const linkButtonHandler = () => {
     isAuth ? setShowModal(false) : setShowModal(true);
