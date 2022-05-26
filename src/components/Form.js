@@ -80,7 +80,6 @@ const Form = ({
 
   const submitFormHandler = (ev) => {
     ev.preventDefault();
-    console.log(data);
     validateInputFields();
     close();
     //   if (!formIsValid()) return;
@@ -95,10 +94,7 @@ const Form = ({
   const submitHandler = async () => {
     const deplymentCountry = splittedArray(search);
     const userCountry = splittedArray(user.address);
-    console.log(deplymentCountry);
-    console.log(userCountry);
     if (deplymentCountry !== userCountry) {
-      console.log("error");
       setError(true);
       return;
     }

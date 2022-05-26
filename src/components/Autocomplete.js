@@ -56,7 +56,6 @@ const Autocomplete = () => {
       }
 
       if (airtableData && airtableData.value === false) {
-        console.log(airtableData.country);
         setCityOption({
           name: `${place.text} - ${airtableData.country_name}`,
           flag: airtableData.country.records[0].fields["Flag"],
@@ -74,7 +73,6 @@ const Autocomplete = () => {
 
       if (place && place.place_type[0] !== "country") {
         if (airtableData.value === false) return;
-        console.log(city);
         setCityOption({
           name: `${city.fields.city_ascii} - ${country.fields["Name"]}`,
           txt: "view",
@@ -177,7 +175,6 @@ const Autocomplete = () => {
         );
         cityExist = true;
         if (response.records.length === 0) {
-          console.log(place);
           cityExist = false;
           const response = await getSingleDestiantion(
             `https://nearestdao.herokuapp.com`,

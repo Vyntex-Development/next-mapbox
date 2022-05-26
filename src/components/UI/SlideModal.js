@@ -87,7 +87,6 @@ const SildeModal = ({
       !e.target.closest("#address-wrapper") &&
       !e.target.closest("#list")
     ) {
-      console.log("zatvori");
       onClose();
     }
   };

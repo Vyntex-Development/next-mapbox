@@ -38,7 +38,7 @@ const Header = () => {
 
   const connectToMetamask = async () => {
     const { walletAddress, token, userData } = await connectMetamaskHandler();
-    setAddress(walletAddress);
+    setAddress(walletAddress || "");
     login(token);
     userData && setUserData(userData);
   };

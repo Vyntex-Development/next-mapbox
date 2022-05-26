@@ -154,8 +154,6 @@ export const connectMetamaskHandler = async () => {
   });
   const { data: userData, token } = await walletResponse.json();
 
-  console.log(userData, token);
-
   return {
     walletAddress,
     token,
