@@ -46,7 +46,6 @@ const Autocomplete = () => {
   useEffect(() => {
     if (searchResult) {
       let { city, country } = airtableData;
-      console.log(airtableData);
       if (place && place.place_type[0] === "country") {
         setCountryOption({
           name: country.fields["Name"],
@@ -178,11 +177,12 @@ const Autocomplete = () => {
         );
         cityExist = true;
         if (response.records.length === 0) {
+          console.log(place);
           cityExist = false;
           const response = await getSingleDestiantion(
             `https://nearestdao.herokuapp.com`,
             {
-              name: place.matching_text,
+              name: place.matching_text || place.text,
               type: "place",
             },
             "POST"
@@ -202,13 +202,14 @@ const Autocomplete = () => {
       };
     } else {
       searchData = {
-        [!cityExist ? "name" : "id"]: !cityExist ? place.matching_text : id,
+        [!cityExist ? "name" : "id"]: !cityExist
+          ? place.matching_text || place.text
+          : id,
         type: place.place_type[0],
       };
     }
 
     try {
-      console.log(searchData);
       const response = await getSingleDestiantion(
         `https://nearestdao.herokuapp.com`,
         searchData,

@@ -180,10 +180,7 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
                   return (
                     <LinkButton
                       key={index}
-                      href={`/${router.query.countryID}/${city.fields.city_ascii
-                        .replace("`", "")
-                        .toLowerCase()
-                        .replace(" ", "-")}`}
+                      href={`/${router.query.countryID}/${city.id}`}
                       type="cities-link"
                     >
                       {city.fields.city_ascii}
