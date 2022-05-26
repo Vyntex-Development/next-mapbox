@@ -2,7 +2,8 @@ const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
 import useForm from "../hooks/useForm";
 import Input from "../components/UI/Input";
 import classes from "./Form.module.css";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
+import AuthContext from "../../context-store/auth-context";
 import Button from "./UI/Button";
 import { capitalizeFirstLetter, getMapboxSearchResults } from "../utils/utils";
 
@@ -19,8 +20,10 @@ const Form = ({
   const [timer, setTimer] = useState(null);
   const [results, setResults] = useState([]);
   const [place, setPlace] = useState(null);
+  const [error, setError] = useState(false);
   const [deploymentStage, setDeploymentStage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useContext(AuthContext);
 
   let content;
 
@@ -84,72 +87,23 @@ const Form = ({
     //   props.onSubmit(data);
   };
 
+  const splittedArray = (arr) => {
+    const splittedArray = arr.split(",");
+    return splittedArray[splittedArray.length - 1];
+  };
+
   const submitHandler = async () => {
-    let countryId;
-    let searchData;
-    // setIsLoading(true);
+    const deplymentCountry = splittedArray(search);
+    const userCountry = splittedArray(user.address);
+    console.log(deplymentCountry);
+    console.log(userCountry);
+    if (deplymentCountry !== userCountry) {
+      console.log("error");
+      setError(true);
+      return;
+    }
+    setError(false);
     setDeploymentStage(1);
-    // if (place) {
-    //   if (place.place_type[0] === "country") {
-    //     const response = await getCountrID(
-    //       `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Countries?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=Name="${place.place_name} DAO"`,
-    //       null,
-    //       "GET"
-    //     );
-    //     setAirtableData(response);
-    //     if (response.records.length === 0) {
-    //       setIsLoading(false);
-    //       return;
-    //     }
-    //     countryId = response.records[0].id;
-    //     if (!countryId) {
-    //       setIsLoading(false);
-    //       return;
-    //     }
-    //   } else {
-    //     let response = await getCountrID(
-    //       `https://nearestdao.herokuapp.com`,
-    //       {
-    //         name: place.text,
-    //         type: place.place_type[0],
-    //       },
-    //       "POST"
-    //     );
-    //     setAirtableData(response);
-    //     countryId = response[1]?.id;
-    //   }
-    // }
-
-    // if (results.length === 0 && search !== "") {
-    //   searchData = {
-    //     name: search,
-    //     type: "place",
-    //   };
-    // } else {
-    //   searchData = {
-    //     [place.place_type[0] === "country" ? "id" : "name"]:
-    //       place.place_type[0] === "country" ? countryId : place.text,
-
-    //     // : place.matching_text || place.text,
-    //     type: place.place_type[0],
-    //   };
-    // }
-
-    // try {
-    //   const response = await getSingleDestiantion(
-    //     `https://nearestdao.herokuapp.com`,
-    //     searchData,
-    //     "POST"
-    //   );
-    //   response && setSearchResult(true);
-    //   console.log(response);
-    //   setIsLoading(false);
-    //   if (results.length === 0 && search !== "") {
-    //     setAirtableData(response);
-    //   }
-    // } catch (error) {
-    //   setIsLoading(false);
-    // }
   };
 
   if (isLoading) {
@@ -215,6 +169,12 @@ const Form = ({
                   </ul>
                 )}
               </div>
+              {error && (
+                <div className={classes.importantNote}>
+                  The local DAO your are trying to deploy is not in your local
+                  area. Please try again.
+                </div>
+              )}
             </div>
           )}
 

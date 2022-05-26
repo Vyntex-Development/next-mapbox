@@ -31,9 +31,7 @@ const SildeModal = ({
   const [enabled, setEnabled] = useState(false);
   const [notcheckedError, setNotCheckedError] = useState(false);
   const [userAddress, setUserAddress] = useState("");
-  const { logout, isAuth } = useContext(AuthContext);
-
-  // console.log(show);
+  const { logout, isAuth, user } = useContext(AuthContext);
 
   const modalWrapperRef = useRef();
 
@@ -86,6 +84,7 @@ const SildeModal = ({
       !modalWrapperRef?.current?.contains(e.target) &&
       !e.target.id &&
       !e.target.closest("#wrapper") &&
+      !e.target.closest("#address-wrapper") &&
       !e.target.closest("#list")
     ) {
       console.log("zatvori");
@@ -142,7 +141,7 @@ const SildeModal = ({
               <AvatarIcon />
             </div>
             <div className={classes.accountWrapper}>
-              <p>delocal.xyz/{shorten(address, 20)}</p>
+              <p>delocal.xyz/{shorten(user?.walletAddress || address, 20)}</p>
               <Button onClick={() => logout()} type="transparent">
                 Logout
               </Button>
@@ -150,7 +149,7 @@ const SildeModal = ({
           </div>
           <div
             className={`${
-              userData?.address || userAddress
+              userData?.address || userAddress || (user?.address && !deploy)
                 ? classes.dashboardBody
                 : classes.body
             }`}
@@ -162,15 +161,20 @@ const SildeModal = ({
                 searchValue={searchValue}
                 close={() => onClose()}
               />
-            ) : isSubmitted || userData?.address || userAddress ? (
+            ) : isSubmitted ||
+              userData?.address ||
+              userAddress ||
+              user?.address ? (
               <div className={classes.dashboardLastStage}>
                 <div className={classes.dashboardInfoWrapper}>
                   <h4>User ID:</h4>
-                  <span>{address}</span>
+                  <span>{address || user.walletAddress}</span>
                 </div>
                 <div className={classes.dashboardInfoWrapper}>
                   <h4>Address:</h4>
-                  <span>{userData.address || userAddress}</span>
+                  <span>
+                    {userData?.address || userAddress || user?.address}
+                  </span>
                   <Button type="transparent">Change Address</Button>
                 </div>
                 <div>
@@ -205,7 +209,7 @@ const SildeModal = ({
                     SUBMIT
                   </Button>
                   {isVisible && (
-                    <ul className={classes.results}>
+                    <ul className={classes.results} id="address-wrapper">
                       {results.map((place) => {
                         let splittedResult = place.place_name.split(",");
                         if (splittedResult.length > 1) {

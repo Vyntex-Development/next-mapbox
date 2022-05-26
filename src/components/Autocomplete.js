@@ -325,7 +325,10 @@ const Autocomplete = () => {
         )}
       </ul>
       <SildeModal
-        onClose={() => setShowAddressModal(false)}
+        onClose={() => {
+          setShowAddressModal(false);
+          setUserData(null);
+        }}
         show={showAddressModal}
         deploy={deploy}
         searchValue={search}

@@ -1,16 +1,18 @@
 import { createContext, useEffect, useState } from "react";
+import jwt from "jsonwebtoken";
 // import useHTTP from "../components/hooks/use-http";
 
 const AuthContext = createContext({
   token: "",
   isAuth: false,
+  user: null,
   login: (token) => {},
   logout: () => {},
 });
 
 export const AuthContextProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-  //   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   //   const { httpClient, responseData: accessToken } = useHTTP();
 
@@ -54,11 +56,19 @@ export const AuthContextProvider = ({ children }) => {
     logout: logoutHandler,
     token: token,
     isAuth: isAuth,
+    user: user,
   };
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
       setToken(localStorage.getItem("token"));
+      const jwtToken = JSON.parse(localStorage.getItem("token"));
+      const { user_metadata } = jwt.decode(jwtToken);
+      console.log(user_metadata);
+      setUser({
+        walletAddress: user_metadata.user.walletAddress,
+        address: user_metadata.user.address,
+      });
     }
   }, []);
 

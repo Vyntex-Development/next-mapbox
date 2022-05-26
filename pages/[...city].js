@@ -4,7 +4,6 @@ import { getSingleDestiantion } from "../src/utils/utils";
 import { getAllCities } from "../src/utils/utils";
 
 const City = ({ data }) => {
-  console.log(data);
   const { city, country } = data;
   return (
     <>

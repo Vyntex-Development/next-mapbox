@@ -22,10 +22,9 @@ const walletApi = async (req, res) => {
       {
         aud: "authenticated",
         exp: Math.floor(Date.now() / 1000 + 60 * 60),
-        // sub: data.id,
-        // user_metadata: {
-        //   id: data.id,
-        // },
+        user_metadata: {
+          user: data,
+        },
         role: "authenticated",
       },
       process.env.SUPABASE_JWT_TOKEN_SECRET
