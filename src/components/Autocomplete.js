@@ -1,17 +1,18 @@
 const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
 const AIRTABLE_ACCESS_KEY = process.env.AIRTABLE_ACCESS_KEY;
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useState, useEffect, useContext } from "react";
 import classes from "./Autocomplete.module.css";
 import Button from "./UI/Button";
 import Spinner from "./UI/Spinner";
-import { capitalizeFirstLetter } from "../utils/utils";
+import { capitalizeFirstLetter, connectMetamaskHandler } from "../utils/utils";
 import { getMapboxSearchResults } from "../utils/utils";
 import { getCountrID } from "../utils/utils";
 import { getSingleDestiantion } from "../utils/utils";
-import Link from "next/link";
 import LinkButton from "./UI/Link";
 import SildeModal from "./UI/SlideModal";
+import Modal from "./UI/Modal";
+import AuthContext from "../../context-store/auth-context";
+import MetamaskIcon from "../assets/images/MetamaskIcon";
 
 const Autocomplete = () => {
   const [search, setSearch] = useState("");
@@ -20,20 +21,27 @@ const Autocomplete = () => {
   const [results, setResults] = useState([]);
   const [enabled, setEnabled] = useState(false);
   const [place, setPlace] = useState(null);
-  const [error, setError] = useState(false);
   const [isVisible, setIsVisble] = useState(false);
   const [searchResult, setSearchResult] = useState(false);
   const [timer, setTimer] = useState(null);
   const [countryOption, setCountryOption] = useState(null);
   const [cityOption, setCityOption] = useState(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [deploy, setDeploy] = useState(false);
-  const router = useRouter();
+  const { login, isAuth } = useContext(AuthContext);
+  const [address, setAddress] = useState(null);
+  const [userData, setUserData] = useState(null);
 
   const deployHandler = () => {
-    setShowAddressModal(true);
-    setDeploy(true);
+    !isAuth ? setShowModal(true) : setShowAddressModal(true);
+    !isAuth ? setDeploy(true) : setDeploy(true);
   };
+
+  useEffect(() => {
+    address && setShowAddressModal(true) && setShowModal(false);
+    !userData || (!address && setIsSubmitted(false));
+  }, [address, userData]);
 
   useEffect(() => {
     if (searchResult) {
@@ -102,8 +110,6 @@ const Autocomplete = () => {
 
       return;
     }
-
-    setError(false);
     // Stop the previous setTimeout if there is one in progress
     clearTimeout(timer);
 
@@ -179,6 +185,8 @@ const Autocomplete = () => {
       }
     }
 
+    console.log(place);
+
     if (results.length === 0 && search !== "") {
       searchData = {
         name: search,
@@ -209,6 +217,13 @@ const Autocomplete = () => {
     } catch (error) {
       setIsLoading(false);
     }
+  };
+
+  const connectToMetamask = async () => {
+    const { walletAddress, token, userData } = await connectMetamaskHandler();
+    setAddress(walletAddress);
+    login(token);
+    userData && setUserData(userData);
   };
 
   return (
@@ -300,7 +315,19 @@ const Autocomplete = () => {
         onClose={() => setShowAddressModal(false)}
         show={showAddressModal}
         deploy={deploy}
+        searchValue={search}
       />
+      <Modal
+        onClose={() => setShowModal(false)}
+        show={showModal}
+        title="Connect Wallet"
+      >
+        <Button type="metamask" onClick={connectToMetamask}>
+          <MetamaskIcon />
+          Meta Mask
+        </Button>
+      </Modal>
+
       {isLoading && <Spinner />}
     </div>
   );

@@ -28,7 +28,6 @@ const Modal = ({ show, onClose, children, title }) => {
       <div className={classes.modalWrapper} ref={modalWrapperRef}>
         <div className={classes.modal}>
           <div className={classes.header}>{title && <h3>{title}</h3>}</div>
-
           <div className={classes.modalBody}>{children}</div>
         </div>
       </div>

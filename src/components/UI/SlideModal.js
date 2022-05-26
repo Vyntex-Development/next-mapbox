@@ -20,6 +20,7 @@ const SildeModal = ({
   isSubmitted,
   userData,
   deploy,
+  searchValue,
 }) => {
   const [isBrowser, setIsBrowser] = useState(false);
   const [isVisible, setIsVisble] = useState(false);
@@ -30,7 +31,7 @@ const SildeModal = ({
   const [enabled, setEnabled] = useState(false);
   const [notcheckedError, setNotCheckedError] = useState(false);
   const [userAddress, setUserAddress] = useState("");
-  const { logout, token } = useContext(AuthContext);
+  const { logout, token, isAuth } = useContext(AuthContext);
 
   // console.log(show);
 
@@ -81,11 +82,14 @@ const SildeModal = ({
   };
 
   const backDropHandler = (e) => {
+    console.log(e.target.closest("#list"));
     if (
       !modalWrapperRef?.current?.contains(e.target) &&
       !e.target.id &&
-      !e.target.closest("#results")
+      !e.target.closest("#wrapper") &&
+      !e.target.closest("#list")
     ) {
+      console.log("zatvori");
       onClose();
     }
   };
@@ -124,138 +128,141 @@ const SildeModal = ({
     httpClient.sendRequest("POST", "/token/", null, userDetails);
   };
 
-  const modalContent = show ? (
-    <div className={classes.modalOverlay}>
-      <div
-        ref={modalWrapperRef}
-        className={`${show ? classes.open : classes.close} ${
-          classes.modalWrapper
-        }`}
-      >
-        <div className={classes.header}>
-          <div>
-            <AvatarIcon />
-          </div>
-          <div className={classes.accountWrapper}>
-            <p>delocal.xyz/{shorten(address, 20)}</p>
-            <Button onClick={() => logout()} type="transparent">
-              Logout
-            </Button>
-          </div>
-        </div>
+  const modalContent =
+    show && isAuth ? (
+      <div className={classes.modalOverlay}>
         <div
-          className={`${
-            userData?.address || userAddress
-              ? classes.dashboardBody
-              : classes.body
+          id="wrapper"
+          ref={modalWrapperRef}
+          className={`${show ? classes.open : classes.close} ${
+            classes.modalWrapper
           }`}
         >
-          {deploy ? (
-            <Form
-              formConfig={formConfig.filter(
-                (config) => config.inputConfig.name !== "email"
-              )}
-              onSubmit={onSubmitHandler}
-            />
-          ) : isSubmitted || userData?.address || userAddress ? (
-            <div className={classes.dashboardLastStage}>
-              <div className={classes.dashboardInfoWrapper}>
-                <h4>User ID:</h4>
-                <span>{address}</span>
-              </div>
-              <div className={classes.dashboardInfoWrapper}>
-                <h4>Address:</h4>
-                <span>{userData.address || userAddress}</span>
-                <Button type="transparent">Change Address</Button>
-              </div>
-              <div>
-                <h4>Saved DAOs:</h4>
-                <LinkButton href="/" type="cities-link">
-                  Manchester
-                </LinkButton>
-                <LinkButton href="/" type="cities-link">
-                  London
-                </LinkButton>
-              </div>
+          <div className={classes.header}>
+            <div>
+              <AvatarIcon />
             </div>
-          ) : (
-            <div className="wrapper">
-              <h2>You’re almost done!</h2>
-              <p>
-                Sumbit your physical address and start engaging your local DAOs
-                communities!
-              </p>
-              <div className={classes.AutocompleteWrapper}>
-                <input
-                  className={classes.input}
-                  type="text"
-                  value={search}
-                  onChange={destinationChangeHadler}
-                  placeholder="Address"
-                />
-                <Button
-                  onClick={searchHandler}
-                  type={enabled ? "blue" : "disabled"}
-                >
-                  SUBMIT
-                </Button>
-                {isVisible && (
-                  <ul className={classes.results} id="results">
-                    {results.map((place) => {
-                      let splittedResult = place.place_name.split(",");
-                      if (splittedResult.length > 1) {
-                        return (
-                          <li
-                            className={classes.address}
-                            key={place.id}
-                            onClick={() => handleItemClickedHandler(place)}
-                          >
-                            <span>{splittedResult[0]}</span>
-                            <span>
-                              {splittedResult
-                                .filter((_, index) => index !== 0)
-                                .join(",")}
-                            </span>
-                          </li>
-                        );
-                      } else {
-                        return (
-                          <li
-                            key={place.id}
-                            className={classes.countries}
-                            onClick={() => handleItemClickedHandler(place)}
-                          >
-                            {place.place_name}
-                          </li>
-                        );
-                      }
-                    })}
-                  </ul>
-                )}
-              </div>
-              <div className={classes.importantNote}>
-                Please note! You won’t be able to change your address in the
-                next
-                <span> 6 months.</span>
-              </div>
-              <div className={classes.radioButtonWrapper}>
-                <label className={classes.checkboxContainer}>
-                  <input type="checkbox" onChange={checkboxHandler} />
-                  <span className={classes.checkmark}></span>
-                </label>
-                <p>I understand</p>
-                {notcheckedError && (
-                  <span className={classes.error}>
-                    This field is required!!!
-                  </span>
-                )}
-              </div>
+            <div className={classes.accountWrapper}>
+              <p>delocal.xyz/{shorten(address, 20)}</p>
+              <Button onClick={() => logout()} type="transparent">
+                Logout
+              </Button>
             </div>
-          )}
+          </div>
+          <div
+            className={`${
+              userData?.address || userAddress
+                ? classes.dashboardBody
+                : classes.body
+            }`}
+          >
+            {deploy ? (
+              <Form
+                formConfig={formConfig.filter(
+                  (config) => config.inputConfig.name !== "email"
+                )}
+                onSubmit={onSubmitHandler}
+                searchValue={searchValue}
+              />
+            ) : isSubmitted || userData?.address || userAddress ? (
+              <div className={classes.dashboardLastStage}>
+                <div className={classes.dashboardInfoWrapper}>
+                  <h4>User ID:</h4>
+                  <span>{address}</span>
+                </div>
+                <div className={classes.dashboardInfoWrapper}>
+                  <h4>Address:</h4>
+                  <span>{userData.address || userAddress}</span>
+                  <Button type="transparent">Change Address</Button>
+                </div>
+                <div>
+                  <h4>Saved DAOs:</h4>
+                  <LinkButton href="/" type="cities-link">
+                    Manchester
+                  </LinkButton>
+                  <LinkButton href="/" type="cities-link">
+                    London
+                  </LinkButton>
+                </div>
+              </div>
+            ) : (
+              <div className="wrapper">
+                <h2>You’re almost done!</h2>
+                <p>
+                  Sumbit your physical address and start engaging your local
+                  DAOs communities!
+                </p>
+                <div className={classes.AutocompleteWrapper}>
+                  <input
+                    className={classes.input}
+                    type="text"
+                    value={search}
+                    onChange={destinationChangeHadler}
+                    placeholder="Address"
+                  />
+                  <Button
+                    onClick={searchHandler}
+                    type={enabled ? "blue" : "disabled"}
+                  >
+                    SUBMIT
+                  </Button>
+                  {isVisible && (
+                    <ul className={classes.results}>
+                      {results.map((place) => {
+                        let splittedResult = place.place_name.split(",");
+                        if (splittedResult.length > 1) {
+                          return (
+                            <li
+                              className={classes.address}
+                              key={place.id}
+                              onClick={() => handleItemClickedHandler(place)}
+                            >
+                              <span>{splittedResult[0]}</span>
+                              <span>
+                                {splittedResult
+                                  .filter((_, index) => index !== 0)
+                                  .join(",")}
+                              </span>
+                            </li>
+                          );
+                        } else {
+                          return (
+                            <li
+                              key={place.id}
+                              className={classes.countries}
+                              onClick={() => handleItemClickedHandler(place)}
+                            >
+                              {place.place_name}
+                            </li>
+                          );
+                        }
+                      })}
+                    </ul>
+                  )}
+                </div>
+                <div className={classes.importantNote}>
+                  Please note! You won’t be able to change your address in the
+                  next
+                  <span> 6 months.</span>
+                </div>
+                <div className={classes.radioButtonWrapper}>
+                  <label className={classes.checkboxContainer}>
+                    <input type="checkbox" onChange={checkboxHandler} />
+                    <span className={classes.checkmark}></span>
+                  </label>
+                  <p>I understand</p>
+                  {notcheckedError && (
+                    <span className={classes.error}>
+                      This field is required!!!
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  ) : null;
+    ) : null;
 
   if (isBrowser) {
     return ReactDOM.createPortal(
