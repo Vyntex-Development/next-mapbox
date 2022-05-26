@@ -93,7 +93,7 @@ const Form = ({
 
   const submitHandler = async () => {
     const deplymentCountry = splittedArray(search);
-    const userCountry = splittedArray(user.address);
+    const userCountry = splittedArray(user?.address);
     if (deplymentCountry !== userCountry) {
       setError(true);
       return;
