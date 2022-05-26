@@ -12,7 +12,7 @@ const AuthContext = createContext({
 
 export const AuthContextProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
 
   //   const { httpClient, responseData: accessToken } = useHTTP();
 
