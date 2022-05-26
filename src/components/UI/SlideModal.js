@@ -168,7 +168,7 @@ const SildeModal = ({
               <div className={classes.dashboardLastStage}>
                 <div className={classes.dashboardInfoWrapper}>
                   <h4>User ID:</h4>
-                  <span>{address || user.walletAddress}</span>
+                  <span>{address || user?.walletAddress}</span>
                 </div>
                 <div className={classes.dashboardInfoWrapper}>
                   <h4>Address:</h4>
