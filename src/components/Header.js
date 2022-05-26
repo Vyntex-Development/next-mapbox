@@ -19,13 +19,13 @@ const Header = () => {
   const [address, setAddress] = useState(null);
   const [userData, setUserData] = useState(null);
 
-  const { login, isAuth, user } = useContext(AuthContext);
+  const { login, isAuth } = useContext(AuthContext);
 
   useEffect(() => {
     address && setShowAddressModal(true);
     !userData || (!address && setIsSubmitted(false));
-    !user?.address && setIsSubmitted(false);
-  }, [address, userData, user.address]);
+    // !user?.address && setIsSubmitted(false);
+  }, [address, userData]);
 
   const linkButtonHandler = () => {
     isAuth ? setShowModal(false) : setShowModal(true);
