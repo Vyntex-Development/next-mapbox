@@ -95,7 +95,7 @@ export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-export const getCountrID = async (URL, data, mathod) => {
+export const getID = async (URL, data, mathod) => {
   const response = await getSingleDestiantion(URL, data, mathod);
   return response;
 };

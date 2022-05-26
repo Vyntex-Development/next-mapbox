@@ -1,16 +1,20 @@
 .InputWrapper {
   width: 100%;
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
+  justify-content: flex-start;
+  margin-bottom: 0.5rem;
   position: relative;
-  align-items: center;
+  flex-direction: column;
 }
 
-.InputWrapper label {
+.InputWrapper:last-of-type {
+  margin-bottom: 1rem;
+}
+
+/* .InputWrapper label {
   color: rgb(122, 150, 202);
   width: 8rem;
-}
+} */
 
 .InputWrapper span {
   margin-left: 1.2rem;
@@ -18,9 +22,14 @@
 }
 
 .InputWrapper input {
-  padding: 0.4rem 0.8rem;
+  padding: 1.06rem 1.5rem;
   border: 1px solid rgba(65, 117, 148, 0.473);
   border-radius: 0.6rem;
+  background: rgba(189, 206, 255, 0.2);
+  border-radius: 0.5rem;
+  width: 23.5rem;
+  border: none;
+  outline: none;
 }
 
 .InputWrapper input:focus {
@@ -28,13 +37,35 @@
 }
 
 .InputWrapper input::placeholder {
-  color: rgb(170, 170, 170);
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 140%;
+  /* or 22px */
+
+  color: rgba(33, 22, 70, 0.5);
 }
 
-.InputWrapper p {
+.InputWrapper span {
   position: absolute;
   color: rgb(226, 140, 140);
   left: 12.8rem;
   top: 2.6rem;
   font-size: 1.4rem;
+}
+
+.InputWrapper p {
+  margin: 0;
+  margin-bottom: 0.25rem;
+  font-family: "VCR OSD Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 140%;
+  color: #211646;
+}
+
+.InputWrapper:last-of-type p {
+  margin-top: 0.5rem;
 }

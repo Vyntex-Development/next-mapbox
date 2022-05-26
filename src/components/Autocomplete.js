@@ -6,7 +6,7 @@ import Button from "./UI/Button";
 import Spinner from "./UI/Spinner";
 import { capitalizeFirstLetter, connectMetamaskHandler } from "../utils/utils";
 import { getMapboxSearchResults } from "../utils/utils";
-import { getCountrID } from "../utils/utils";
+import { getID } from "../utils/utils";
 import { getSingleDestiantion } from "../utils/utils";
 import LinkButton from "./UI/Link";
 import SildeModal from "./UI/SlideModal";
@@ -45,51 +45,48 @@ const Autocomplete = () => {
 
   useEffect(() => {
     if (searchResult) {
+      let { city, country } = airtableData;
       console.log(airtableData);
       if (place && place.place_type[0] === "country") {
         setCountryOption({
-          name: airtableData.records[0].fields["Name"],
-          flag: airtableData.records[0].fields["Flag"],
+          name: country.fields["Name"],
+          flag: country.fields["Flag"],
           txt: "view",
-          link: airtableData.records[0].id,
+          link: country.id,
         });
       }
 
       if (airtableData && airtableData.value === false) {
+        console.log(airtableData.country);
         setCityOption({
-          name: `${place.matching_text || place.text} - ${
-            airtableData.country
-          }`,
-          // flag: response[0].fields["Flag"],
+          name: `${place.text} - ${airtableData.country_name}`,
+          flag: airtableData.country.records[0].fields["Flag"],
           txt: "deploy",
         });
         setCountryOption({
-          name: airtableData.country_data.records[0].fields["Name"],
-          flag: airtableData.country_data.records[0].fields["Flag"],
+          name: airtableData.country.records[0].fields["Name"],
+          flag: airtableData.country.records[0].fields["Flag"],
           txt: "view",
-          link: airtableData.country_data.records[0].id,
+          link: airtableData.country.records[0].id,
         });
         setSearchResult(false);
         return;
       }
 
       if (place && place.place_type[0] !== "country") {
-        if (airtableData && airtableData.value === false) return;
+        if (airtableData.value === false) return;
+        console.log(city);
         setCityOption({
-          name: `${airtableData[0].records[0].fields["city"]} - ${airtableData[1].fields["Name"]}`,
+          name: `${city.fields.city_ascii} - ${country.fields["Name"]}`,
           txt: "view",
-          link: `${
-            airtableData[1].id
-          }/${airtableData[0].records[0].fields.city_ascii
-            .replace("`", "")
-            .toLowerCase()
-            .replace(" ", "-")}`,
+          flag: country.fields["Flag"],
+          link: `${country.id}/${city.id}`,
         });
         setCountryOption({
-          name: airtableData[1].fields["Name"],
-          flag: airtableData[1].fields["Flag"],
+          name: country.fields["Name"],
+          flag: country.fields["Flag"],
           txt: "view",
-          link: airtableData[1].id,
+          link: country.id,
         });
       }
 
@@ -145,12 +142,14 @@ const Autocomplete = () => {
   };
 
   const searchHandler = async () => {
-    let countryId;
+    let id;
     let searchData;
+    let cityExist;
     setIsLoading(true);
     if (place) {
       if (place.place_type[0] === "country") {
-        const response = await getCountrID(
+        cityExist = true;
+        const response = await getID(
           `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Countries?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=Name="${place.place_name} DAO"`,
           null,
           "GET"
@@ -160,8 +159,8 @@ const Autocomplete = () => {
           setIsLoading(false);
           return;
         }
-        countryId = response.records[0].id;
-        if (!countryId) {
+        id = response.records[0].id;
+        if (!id) {
           setCountryOption({
             name: response.records[0].fields["Name"],
             flag: response.records[0].fields["Flag"],
@@ -172,20 +171,29 @@ const Autocomplete = () => {
           return;
         }
       } else {
-        let response = await getCountrID(
-          `https://nearestdao.herokuapp.com`,
-          {
-            name: place.text,
-            type: place.place_type[0],
-          },
-          "POST"
+        const response = await getID(
+          `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Cities?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=city="${place.text}"`,
+          null,
+          "GET"
         );
-        setAirtableData(response);
-        countryId = response[1]?.id;
+        cityExist = true;
+        if (response.records.length === 0) {
+          cityExist = false;
+          const response = await getSingleDestiantion(
+            `https://nearestdao.herokuapp.com`,
+            {
+              name: place.matching_text,
+              type: "place",
+            },
+            "POST"
+          );
+          setAirtableData(response);
+        } else {
+          setAirtableData(response);
+          id = response.records[0]?.id;
+        }
       }
     }
-
-    console.log(place);
 
     if (results.length === 0 && search !== "") {
       searchData = {
@@ -194,22 +202,20 @@ const Autocomplete = () => {
       };
     } else {
       searchData = {
-        [place.place_type[0] === "country" ? "id" : "name"]:
-          place.place_type[0] === "country" ? countryId : place.text,
-
-        // : place.matching_text || place.text,
+        [!cityExist ? "name" : "id"]: !cityExist ? place.matching_text : id,
         type: place.place_type[0],
       };
     }
 
     try {
+      console.log(searchData);
       const response = await getSingleDestiantion(
         `https://nearestdao.herokuapp.com`,
         searchData,
         "POST"
       );
       response && setSearchResult(true);
-
+      setAirtableData(response);
       setIsLoading(false);
       if (results.length === 0 && search !== "") {
         setAirtableData(response);
@@ -296,7 +302,13 @@ const Autocomplete = () => {
         )}
         {cityOption && (
           <li>
-            <span>{cityOption?.name.toUpperCase()}</span>
+            <div>
+              <span>
+                <img src={countryOption.flag} />
+              </span>
+              <span>{cityOption?.name.toUpperCase()}</span>
+            </div>
+
             {/* <Button type="yellow">{cityOption?.txt.toUpperCase()}</Button> */}
 
             {cityOption.txt !== "view" ? (
@@ -327,7 +339,9 @@ const Autocomplete = () => {
           Meta Mask
         </Button>
       </Modal>
-
+      {/* <Button id="asdas" type="blue" onClick={deployHandler}>
+        Deploy
+      </Button> */}
       {isLoading && <Spinner />}
     </div>
   );

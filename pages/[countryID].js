@@ -3,20 +3,18 @@ import { getSingleDestiantion } from "../src/utils/utils";
 import { getAllCountries } from "../src/utils/utils";
 import SEO from "../src/components/SEO/SEO";
 
-const Country = ({ country }) => {
+const Country = ({ details }) => {
+  const { country, city } = details;
   return (
     <>
-      <SEO title={country[0].fields["Name"]} />
-      <CountryPage
-        countryDetails={country[0]}
-        listOfCities={country[1]?.records}
-      />
+      <SEO title={country.fields["Name"]} />
+      <CountryPage countryDetails={country} listOfCities={city.records} />
     </>
   );
 };
 
 export async function getStaticProps(context) {
-  const country = await getSingleDestiantion(
+  const details = await getSingleDestiantion(
     "https://nearestdao.herokuapp.com",
     {
       id: context.params.countryID,
@@ -29,7 +27,7 @@ export async function getStaticProps(context) {
 
   return {
     props: {
-      country,
+      details,
     },
     revalidate: 100,
   };

@@ -31,36 +31,11 @@ const useForm = (initialFormConfig) => {
     });
   };
 
-  function validateEmail(email) {
-    var re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  }
-
   const validate = (config, onKeyStroke = false) => {
-    config.errorMsg = "";
-    config.isValid = true;
-
     if (config.value.trim() === "") {
-      config.errorMsg = `${config.labelName} is required`;
       config.isValid = false;
-    }
-
-    if (config.value.trim() !== "" && config.name === "email") {
-      let isValid = validateEmail(config.value.trim());
-      config.errorMsg = !isValid && onKeyStroke ? `ex. name@example.com` : "";
-      config.isValid = isValid;
-    }
-
-    if (
-      config.value.trim() !== "" &&
-      (config.name === "username" || config.name === "password")
-    ) {
-      let isValid = +config.value.length >= config.minLength;
-      config.errorMsg =
-        !isValid && onKeyStroke
-          ? `${config.name} is too short(${config.value.length}/${config.minLength} char.)`
-          : "";
-      config.isValid = isValid;
+    } else {
+      config.isValid = true;
     }
   };
 
@@ -83,7 +58,7 @@ const useForm = (initialFormConfig) => {
   };
 
   const formIsValid = () => {
-    return formConfig.every((config) => config.inputConfig.isValid);
+    return formConfig.some((config) => config.inputConfig.isValid);
   };
 
   return {

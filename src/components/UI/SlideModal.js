@@ -9,7 +9,7 @@ import classes from "./SlideModal.module.css";
 import AvatarIcon from "../../assets/images/AvatarIcon";
 import Button from "./Button";
 import { shorten } from "../../utils/utils";
-import { formConfig } from "../../config/formConfig";
+import { infoConfig } from "../../config/formConfig";
 import Form from "../Form";
 
 const SildeModal = ({
@@ -31,7 +31,7 @@ const SildeModal = ({
   const [enabled, setEnabled] = useState(false);
   const [notcheckedError, setNotCheckedError] = useState(false);
   const [userAddress, setUserAddress] = useState("");
-  const { logout, token, isAuth } = useContext(AuthContext);
+  const { logout, isAuth } = useContext(AuthContext);
 
   // console.log(show);
 
@@ -82,7 +82,6 @@ const SildeModal = ({
   };
 
   const backDropHandler = (e) => {
-    console.log(e.target.closest("#list"));
     if (
       !modalWrapperRef?.current?.contains(e.target) &&
       !e.target.id &&
@@ -158,11 +157,10 @@ const SildeModal = ({
           >
             {deploy ? (
               <Form
-                formConfig={formConfig.filter(
-                  (config) => config.inputConfig.name !== "email"
-                )}
+                formConfig={infoConfig}
                 onSubmit={onSubmitHandler}
                 searchValue={searchValue}
+                close={() => onClose()}
               />
             ) : isSubmitted || userData?.address || userAddress ? (
               <div className={classes.dashboardLastStage}>

@@ -19,6 +19,10 @@ const Button = ({ children, type, onClick, id }) => {
     className = classes.disabled;
   }
 
+  if (type === "disabled-submit") {
+    className = classes.disabledSubmit;
+  }
+
   if (type === "white") {
     className = classes.white;
   }
@@ -27,8 +31,17 @@ const Button = ({ children, type, onClick, id }) => {
     className = classes.yellow;
   }
 
+  if (type === "submit") {
+    className = classes.submit;
+  }
+
   return (
-    <button onClick={onClick} id={id} className={className}>
+    <button
+      type={type === "submit" ? "submit" : "button"}
+      onClick={onClick}
+      id={id}
+      className={className}
+    >
       {children}
     </button>
   );

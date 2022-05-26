@@ -3,7 +3,9 @@
 .metamask,
 .transparent,
 .white,
-.yellow {
+.yellow,
+.submit,
+.disabledSubmit {
   border-radius: 0.25rem;
   padding: 0.625rem 1rem;
   color: #ffffff;
@@ -28,11 +30,18 @@
   color: #211646;
 }
 
-.blue {
+.blue,
+.submit {
   background: #5568f1;
 }
 
-.disabled {
+.submit,
+.disabledSubmit {
+  padding: 0.625rem 4.81rem;
+}
+
+.disabled,
+.disabledSubmit {
   pointer-events: none;
   background-color: #d1d7e8b7;
 }
