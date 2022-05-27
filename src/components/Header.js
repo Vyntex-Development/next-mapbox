@@ -18,9 +18,9 @@ const Header = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [address, setAddress] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [allFavorites, setAllFavorites] = useState([]);
+  // const [allFavorites, setAllFavorites] = useState([]);
 
-  const { login, isAuth, user } = useContext(AuthContext);
+  const { login, isAuth, user, favourites } = useContext(AuthContext);
 
   useEffect(() => {
     address && setShowAddressModal(true);
@@ -32,14 +32,14 @@ const Header = () => {
     isAuth ? setShowModal(false) : setShowModal(true);
     isAuth && setShowAddressModal(true);
 
-    if (isAuth && user?.id) {
-      const { favorites } = await getAllFavorites(
-        `/api/favorites/getAllFavorites`,
-        { user_id: user?.id },
-        "POST"
-      );
-      setAllFavorites(favorites);
-    }
+    // if (isAuth && user?.id) {
+    //   const { favorites } = await getAllFavorites(
+    //     `/api/favorites/getAllFavorites`,
+    //     { user_id: user?.id },
+    //     "POST"
+    //   );
+    //   setAllFavorites(favorites);
+    // }
   };
 
   const onSubmitHandler = () => {
@@ -94,7 +94,7 @@ const Header = () => {
           onSubmit={onSubmitHandler}
           isSubmitted={isSubmitted}
           userData={userData}
-          allFavorites={allFavorites}
+          allFavorites={favourites}
         ></SildeModal>
       )}
     </header>

@@ -49,10 +49,20 @@ export const AuthContextProvider = ({ children }) => {
     setUpdate(false);
   }, [update]);
 
-  const loginHandler = (token) => {
+  const loginHandler = async (token) => {
     let parsedToken = JSON.stringify(token);
     localStorage.setItem("token", parsedToken);
     setToken(token);
+    const getAll = async () => {
+      const { favorites } = await getAllFavorites(
+        `/api/favorites/getAllFavorites`,
+        { user_id: getUserId() },
+        "POST"
+      );
+      console.log(favorites);
+      setAllFavorites(favorites);
+    };
+    getAll();
   };
 
   const logoutHandler = () => {
@@ -90,17 +100,6 @@ export const AuthContextProvider = ({ children }) => {
         address: user_metadata?.user?.address,
         id: user_metadata?.user?.id,
       });
-
-      const getAll = async () => {
-        const { favorites } = await getAllFavorites(
-          `/api/favorites/getAllFavorites`,
-          { user_id: user_metadata?.user?.id },
-          "POST"
-        );
-        console.log(favorites);
-        setAllFavorites(favorites);
-      };
-      getAll();
     }
   }, []);
 
