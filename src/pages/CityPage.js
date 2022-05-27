@@ -18,6 +18,7 @@ const CityPage = ({ cityDetails, countryDetails }) => {
   }, []);
 
   const addToFavourites = async () => {
+    if (!isAuth) return;
     let data = {
       city_name: cityDetails?.fields["city"],
       url: `${countryDetails.id}/${cityDetails?.id}`,
@@ -28,6 +29,7 @@ const CityPage = ({ cityDetails, countryDetails }) => {
   };
 
   const removeFromFavoritesHandler = async () => {
+    if (!isAuth) return;
     setUpdate(true);
     await removeFavorite(
       "/api/favorites/removeFavorite",
