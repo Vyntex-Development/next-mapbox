@@ -18,7 +18,6 @@ const CityPage = ({ cityDetails, countryDetails }) => {
   }, []);
 
   const addToFavourites = async () => {
-    if (!isAuth) return;
     let data = {
       city_name: cityDetails?.fields["city"],
       url: `${countryDetails.id}/${cityDetails?.id}`,
@@ -29,7 +28,6 @@ const CityPage = ({ cityDetails, countryDetails }) => {
   };
 
   const removeFromFavoritesHandler = async () => {
-    if (!isAuth) return;
     setUpdate(true);
     await removeFavorite(
       "/api/favorites/removeFavorite",
@@ -52,23 +50,29 @@ const CityPage = ({ cityDetails, countryDetails }) => {
     setUpdate(false);
   }, [isAuth, update]);
 
+  const cityIsInFavorites = () => {
+    return allFavorites.some(
+      (favorite) => favorite.city_name === cityDetails?.fields["city"]
+    );
+  };
+
   return (
     <div className={classes.cityPageWrapper}>
       <div>
         <h1>{cityDetails?.fields["city"] || ""}</h1>
-        {allFavorites.some(
-          (favorite) => favorite.city_name === cityDetails?.fields["city"]
-        ) ? (
-          <Button type="blue" onClick={removeFromFavoritesHandler}>
+
+        {isAuth && (
+          <Button
+            type="blue"
+            onClick={
+              cityIsInFavorites() ? removeFromFavoritesHandler : addToFavourites
+            }
+          >
             <FavouriteIcon />
-            REMOVE FROM FAVORITE
-          </Button>
-        ) : (
-          <Button type="blue" onClick={addToFavourites}>
-            <FavouriteIcon />
-            ADD TO FAVORITE
+            {cityIsInFavorites() ? "REMOVE FROM FAVORITE" : "ADD TO FAVORITE"}
           </Button>
         )}
+
         <div className={classes.countryDetails}>
           <div className={classes.row}>
             <div className={classes.descriptionWrapper}>
