@@ -1,7 +1,7 @@
 import Link from "next/link";
 import classes from "./Link.module.css";
 
-const LinkButton = ({ href, type, children }) => {
+const LinkButton = ({ href, type, children, onClick }) => {
   let className;
 
   if (type === "blue") {
@@ -21,7 +21,7 @@ const LinkButton = ({ href, type, children }) => {
   }
 
   return (
-    <div className={className}>
+    <div className={className} onClick={onClick}>
       <Link href={href}>{children}</Link>
     </div>
   );

@@ -21,6 +21,7 @@ const SildeModal = ({
   userData,
   deploy,
   searchValue,
+  allFavorites,
 }) => {
   const [isBrowser, setIsBrowser] = useState(false);
   const [isVisible, setIsVisble] = useState(false);
@@ -31,6 +32,8 @@ const SildeModal = ({
   const [enabled, setEnabled] = useState(false);
   const [notcheckedError, setNotCheckedError] = useState(false);
   const [userAddress, setUserAddress] = useState("");
+  const [changeAddress, setChangeAddress] = useState(false);
+
   const { logout, isAuth, user } = useContext(AuthContext);
 
   const modalWrapperRef = useRef();
@@ -49,6 +52,15 @@ const SildeModal = ({
       performMapboxSearch(e.target.value);
     }, 1000);
     setTimer(timeoutId);
+  };
+
+  const closeModalHandler = () => {
+    onClose();
+  };
+
+  const changeAddressHandler = () => {
+    setChangeAddress(true);
+    console.log("change");
   };
 
   const checkboxHandler = (ev) => {
@@ -149,7 +161,8 @@ const SildeModal = ({
           <div
             className={`${
               userData?.address || userAddress || (user?.address && !deploy)
-                ? classes.dashboardBody
+                ? // userData?.address || userAddress || user?.address || !deploy
+                  classes.dashboardBody
                 : classes.body
             }`}
           >
@@ -160,10 +173,11 @@ const SildeModal = ({
                 searchValue={searchValue}
                 close={() => onClose()}
               />
-            ) : isSubmitted ||
-              userData?.address ||
-              userAddress ||
-              user?.address ? (
+            ) : (isSubmitted ||
+                userData?.address ||
+                userAddress ||
+                user?.address) &&
+              !changeAddress ? (
               <div className={classes.dashboardLastStage}>
                 <div className={classes.dashboardInfoWrapper}>
                   <h4>User ID:</h4>
@@ -174,16 +188,28 @@ const SildeModal = ({
                   <span>
                     {userData?.address || userAddress || user?.address}
                   </span>
-                  <Button type="transparent">Change Address</Button>
+                  <Button
+                    id="change address"
+                    onClick={changeAddressHandler}
+                    type="transparent"
+                  >
+                    Change Address
+                  </Button>
                 </div>
                 <div>
                   <h4>Saved DAOs:</h4>
-                  <LinkButton href="/" type="cities-link">
-                    Manchester
-                  </LinkButton>
-                  <LinkButton href="/" type="cities-link">
-                    London
-                  </LinkButton>
+                  {allFavorites.map((fav) => {
+                    return (
+                      <LinkButton
+                        key={fav.id}
+                        href={fav.url}
+                        type="cities-link"
+                        onClick={closeModalHandler}
+                      >
+                        {fav.city_name}
+                      </LinkButton>
+                    );
+                  })}
                 </div>
               </div>
             ) : (

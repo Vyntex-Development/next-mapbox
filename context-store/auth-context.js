@@ -13,6 +13,7 @@ const AuthContext = createContext({
 export const AuthContextProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   //   const { httpClient, responseData: accessToken } = useHTTP();
 
@@ -67,6 +68,7 @@ export const AuthContextProvider = ({ children }) => {
       setUser({
         walletAddress: user_metadata?.user?.walletAddress,
         address: user_metadata?.user?.address,
+        id: user_metadata?.user?.id,
       });
     }
   }, []);
@@ -102,10 +104,10 @@ export const AuthContextProvider = ({ children }) => {
   //   }, [token]);
 
   return (
-    // <AuthContext.Provider value={authValue}>
-    //   {loading ? null : children}
-    // </AuthContext.Provider>
-    <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={authValue}>
+      {loading ? null : children}
+    </AuthContext.Provider>
+    // <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
   );
 };
 

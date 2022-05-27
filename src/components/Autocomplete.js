@@ -13,17 +13,19 @@ import SildeModal from "./UI/SlideModal";
 import Modal from "./UI/Modal";
 import AuthContext from "../../context-store/auth-context";
 import MetamaskIcon from "../assets/images/MetamaskIcon";
+import useMapbox from "../hooks/useMapbox";
 
 const Autocomplete = () => {
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [airtableData, setAirtableData] = useState(null);
-  const [results, setResults] = useState([]);
-  const [enabled, setEnabled] = useState(false);
-  const [place, setPlace] = useState(null);
-  const [isVisible, setIsVisble] = useState(false);
+  const [options, setOptions] = useState(false);
+  // const [results, setResults] = useState([]);
+  // const [enabled, setEnabled] = useState(false);
+  // const [place, setPlace] = useState(null);
+  // const [isVisible, setIsVisble] = useState(false);
   const [searchResult, setSearchResult] = useState(false);
-  const [timer, setTimer] = useState(null);
+  // const [timer, setTimer] = useState(null);
   const [countryOption, setCountryOption] = useState(null);
   const [cityOption, setCityOption] = useState(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -32,6 +34,17 @@ const Autocomplete = () => {
   const { login, isAuth } = useContext(AuthContext);
   const [address, setAddress] = useState(null);
   const [userData, setUserData] = useState(null);
+  const {
+    destinationChangeHadler,
+    handleItemClickedHandler,
+    updateReset,
+    results,
+    enabled,
+    search,
+    isVisible,
+    place,
+    reset,
+  } = useMapbox();
 
   const deployHandler = () => {
     !isAuth ? setShowModal(true) : setShowAddressModal(true);
@@ -41,10 +54,14 @@ const Autocomplete = () => {
   useEffect(() => {
     address && setShowAddressModal(true) && setShowModal(false);
     !userData || (!address && setIsSubmitted(false));
-  }, [address, userData]);
+    options && updateReset();
+    reset && setOptions(false);
+    // reset && setOptions(false) && setCityOption(null) && setCountryOption(null);
+  }, [address, userData, options]);
 
   useEffect(() => {
     if (searchResult) {
+      setOptions(true);
       let { city, country } = airtableData;
       if (place && place.place_type[0] === "country") {
         setCountryOption({
@@ -90,53 +107,53 @@ const Autocomplete = () => {
       setSearchResult(false);
     }
     setSearchResult(false);
-    setPlace(null);
+    // setPlace(null);
   }, [searchResult]);
 
   //   const handleSearchChangeHandler = (searchValue) => {};
-  const destinationChangeHadler = (e) => {
-    setSearch(capitalizeFirstLetter(e.target.value));
-    setCityOption(null);
-    setCountryOption(null);
-    if (e.target.value.trim() === "") {
-      setIsVisble(false);
-      setEnabled(false);
+  // const destinationChangeHadler = (e) => {
+  //   setSearch(capitalizeFirstLetter(e.target.value));
+  //   setCityOption(null);
+  //   setCountryOption(null);
+  //   if (e.target.value.trim() === "") {
+  //     setIsVisble(false);
+  //     setEnabled(false);
 
-      return;
-    }
-    // Stop the previous setTimeout if there is one in progress
-    clearTimeout(timer);
+  //     return;
+  //   }
+  //   // Stop the previous setTimeout if there is one in progress
+  //   clearTimeout(timer);
 
-    // Launch a new request in 1000ms
-    let timeoutId = setTimeout(() => {
-      performMapboxSearch();
-    }, 1000);
-    setTimer(timeoutId);
-  };
+  //   // Launch a new request in 1000ms
+  //   let timeoutId = setTimeout(() => {
+  //     performMapboxSearch();
+  //   }, 1000);
+  //   setTimer(timeoutId);
+  // };
 
-  const performMapboxSearch = async () => {
-    if (search === "") {
-      setResults([]);
-      setEnabled(false);
-      return;
-    }
+  // const performMapboxSearch = async () => {
+  //   if (search === "") {
+  //     setResults([]);
+  //     setEnabled(false);
+  //     return;
+  //   }
 
-    const features = await getMapboxSearchResults(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${search}.json?types=country&types=place&access_token=${MAPBOX_TOKEN_PRODUCTION}`,
-      null,
-      "GET"
-    );
-    setResults(features);
-    setIsVisble(true);
-    features.length === 0 && setIsVisble(false);
-  };
+  //   const features = await getMapboxSearchResults(
+  //     `https://api.mapbox.com/geocoding/v5/mapbox.places/${search}.json?types=country&types=place&access_token=${MAPBOX_TOKEN_PRODUCTION}`,
+  //     null,
+  //     "GET"
+  //   );
+  //   setResults(features);
+  //   setIsVisble(true);
+  //   features.length === 0 && setIsVisble(false);
+  // };
 
-  const handleItemClickedHandler = async (place) => {
-    setSearch(place.place_name);
-    setPlace(place);
-    setIsVisble(false);
-    setEnabled(true);
-  };
+  // const handleItemClickedHandler = async (place) => {
+  //   setSearch(place.place_name);
+  //   setPlace(place);
+  //   setIsVisble(false);
+  //   setEnabled(true);
+  // };
 
   const searchHandler = async () => {
     let id;
@@ -275,7 +292,7 @@ const Autocomplete = () => {
         </ul>
       )}
       <ul className={classes.SearchResults}>
-        {countryOption && (
+        {countryOption && !reset && (
           <li
             style={{
               borderBottom: `${
@@ -298,7 +315,7 @@ const Autocomplete = () => {
             )}
           </li>
         )}
-        {cityOption && (
+        {cityOption && !reset && (
           <li>
             <div>
               <span>

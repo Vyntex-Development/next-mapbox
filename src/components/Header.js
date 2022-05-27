@@ -9,7 +9,7 @@ import Modal from "./UI/Modal";
 import { useState, useEffect, useContext } from "react";
 import MetamaskIcon from "../assets/images/MetamaskIcon";
 import AuthContext from "../../context-store/auth-context";
-import { connectMetamaskHandler } from "../utils/utils";
+import { connectMetamaskHandler, getAllFavorites } from "../utils/utils";
 import SildeModal from "./UI/SlideModal";
 
 const Header = () => {
@@ -18,18 +18,26 @@ const Header = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [address, setAddress] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [allFavorites, setAllFavorites] = useState([]);
 
-  const { login, isAuth } = useContext(AuthContext);
+  const { login, isAuth, user } = useContext(AuthContext);
 
   useEffect(() => {
     address && setShowAddressModal(true);
     !userData || (!address && setIsSubmitted(false));
-    // !user?.address && setIsSubmitted(false);
+    !user?.address && setIsSubmitted(false);
   }, [address, userData]);
 
-  const linkButtonHandler = () => {
+  const linkButtonHandler = async () => {
     isAuth ? setShowModal(false) : setShowModal(true);
     isAuth && setShowAddressModal(true);
+
+    const { favorites } = await getAllFavorites(
+      `/api/favorites/getAllFavorites`,
+      { user_id: user.id },
+      "POST"
+    );
+    setAllFavorites(favorites);
   };
 
   const onSubmitHandler = () => {
@@ -84,6 +92,7 @@ const Header = () => {
           onSubmit={onSubmitHandler}
           isSubmitted={isSubmitted}
           userData={userData}
+          allFavorites={allFavorites}
         ></SildeModal>
       )}
     </header>

@@ -5,7 +5,11 @@ import classes from "./Form.module.css";
 import { useState, useEffect, useRef, useContext } from "react";
 import AuthContext from "../../context-store/auth-context";
 import Button from "./UI/Button";
-import { capitalizeFirstLetter, getMapboxSearchResults } from "../utils/utils";
+import {
+  capitalizeFirstLetter,
+  getMapboxSearchResults,
+  deployDao,
+} from "../utils/utils";
 
 const Form = ({
   searchValue,
@@ -78,12 +82,24 @@ const Form = ({
     setEnabled(true);
   };
 
-  const submitFormHandler = (ev) => {
+  const submitFormHandler = async (ev) => {
+    console.log(searchValue);
     ev.preventDefault();
     validateInputFields();
-    close();
-    //   if (!formIsValid()) return;
-    //   props.onSubmit(data);
+    // close();
+    let deployDaoData = {
+      place: searchValue,
+      ...data,
+    };
+    console.log(deployDaoData);
+    if (!formIsValid()) return;
+    const response = await deployDao(
+      "/api/deploy/deploy-dao",
+      deployDaoData,
+      "POST"
+    );
+    console.log(response);
+    // props.onSubmit(data);
   };
 
   const splittedArray = (arr) => {

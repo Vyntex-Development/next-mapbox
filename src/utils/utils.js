@@ -110,6 +110,26 @@ export const getAuth = async (URL, data, method) => {
   return response ? response : [];
 };
 
+export const getFavorites = async (URL, data, method) => {
+  const response = await fetchData(URL, data, method);
+  return response ? response : [];
+};
+
+export const getAllFavorites = async (URL, data, method) => {
+  const response = await fetchData(URL, data, method);
+  return response ? response : [];
+};
+
+export const removeFavorite = async (URL, data, method) => {
+  const response = await fetchData(URL, data, method);
+  return response ? response : [];
+};
+
+export const deployDao = async (URL, data, method) => {
+  const response = await fetchData(URL, data, method);
+  return response ? response : [];
+};
+
 export const shorten = (s, max) => {
   if (!s) return;
   return s.length > max

@@ -1,27 +1,73 @@
 import CustomMap from "../components/CustomMap";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import classes from "./CityPage.module.css";
 import Button from "../components/UI/Button";
 import LinkButton from "../components/UI/Link";
 import FavouriteIcon from "../assets/images/FavouriteIcon";
+import AuthContext from "../../context-store/auth-context";
+import { getFavorites, getAllFavorites, removeFavorite } from "../utils/utils";
 
 const CityPage = ({ cityDetails, countryDetails }) => {
   const [isInitial, setIsInitial] = useState(false);
+  const [allFavorites, setAllFavorites] = useState([]);
+  const [update, setUpdate] = useState(false);
 
+  const { user, isAuth } = useContext(AuthContext);
   useEffect(() => {
     setIsInitial(true);
   }, []);
 
-  const addToFavourites = () => {};
+  const addToFavourites = async () => {
+    let data = {
+      city_name: cityDetails?.fields["city"],
+      url: `${countryDetails.id}/${cityDetails?.id}`,
+      user_id: user.id,
+    };
+    setUpdate(true);
+    await getFavorites("/api/favorites/favorite", data, "POST");
+  };
+
+  const removeFromFavoritesHandler = async () => {
+    setUpdate(true);
+    await removeFavorite(
+      "/api/favorites/removeFavorite",
+      { city_name: cityDetails?.fields["city"], user_id: user.id },
+      "POST"
+    );
+  };
+
+  useEffect(() => {
+    const getAll = async () => {
+      if (!isAuth) return;
+      console.log("fetch favorites");
+      const { favorites } = await getAllFavorites(
+        `/api/favorites/getAllFavorites`,
+        { user_id: user?.id },
+        "POST"
+      );
+      setAllFavorites(favorites);
+    };
+    getAll();
+    setUpdate(false);
+  }, [isAuth, update]);
 
   return (
     <div className={classes.cityPageWrapper}>
       <div>
         <h1>{cityDetails?.fields["city"] || ""}</h1>
-        <Button type="blue" onClick={addToFavourites}>
-          <FavouriteIcon />
-          ADD TO FAVORITE
-        </Button>
+        {allFavorites.some(
+          (favorite) => favorite.city_name === cityDetails?.fields["city"]
+        ) ? (
+          <Button type="blue" onClick={removeFromFavoritesHandler}>
+            <FavouriteIcon />
+            REMOVE FROM FAVORITE
+          </Button>
+        ) : (
+          <Button type="blue" onClick={addToFavourites}>
+            <FavouriteIcon />
+            ADD TO FAVORITE
+          </Button>
+        )}
         <div className={classes.countryDetails}>
           <div className={classes.row}>
             <div className={classes.descriptionWrapper}>
