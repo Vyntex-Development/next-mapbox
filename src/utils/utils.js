@@ -1,6 +1,7 @@
 const AIRTABLE_ACCESS_KEY = process.env.AIRTABLE_ACCESS_KEY;
 const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
 import { ethers } from "ethers";
+import jwt from "jsonwebtoken";
 
 const fetchData = async (URL, data, method) => {
   const options = {
@@ -179,4 +180,12 @@ export const connectMetamaskHandler = async () => {
     token,
     userData,
   };
+};
+
+export const getUserId = () => {
+  if (localStorage.getItem("token")) {
+    const jwtToken = JSON.parse(localStorage.getItem("token"));
+    const { user_metadata } = jwt.decode(jwtToken);
+    return user_metadata?.user?.id;
+  }
 };

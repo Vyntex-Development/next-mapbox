@@ -1,11 +1,19 @@
 import { createContext, useEffect, useState } from "react";
+// import { getAllFavorites } from "../src/utils/utils";
 import jwt from "jsonwebtoken";
-// import useHTTP from "../components/hooks/use-http";
+import {
+  getFavorites,
+  getAllFavorites,
+  removeFavorite,
+  getUserId,
+} from "../src/utils/utils";
 
 const AuthContext = createContext({
   token: "",
   isAuth: false,
   user: null,
+  favourites: [],
+  updateFavorite: () => {},
   login: (token) => {},
   logout: () => {},
 });
@@ -13,10 +21,9 @@ const AuthContext = createContext({
 export const AuthContextProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
+  const [update, setUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  //   const { httpClient, responseData: accessToken } = useHTTP();
-
+  const [favourites, setAllFavorites] = useState([]);
   const isAuth = !!token;
 
   useEffect(() => {
@@ -27,19 +34,20 @@ export const AuthContextProvider = ({ children }) => {
     });
   }, []);
 
-  //   const updateToken = async () => {
-  //     if (token) {
-  //       let parsedToken = JSON.parse(token);
-
-  //       httpClient.sendRequest("POST", "/token/refresh/", null, {
-  //         refresh: parsedToken?.refresh,
-  //       });
-  //     }
-
-  //     if (loading) {
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    if (update) {
+      const getAll = async () => {
+        const { favorites } = await getAllFavorites(
+          `/api/favorites/getAllFavorites`,
+          { user_id: getUserId() },
+          "POST"
+        );
+        setAllFavorites(favorites);
+      };
+      getAll();
+    }
+    setUpdate(false);
+  }, [update]);
 
   const loginHandler = (token) => {
     let parsedToken = JSON.stringify(token);
@@ -52,12 +60,24 @@ export const AuthContextProvider = ({ children }) => {
     setToken(null);
   };
 
+  const updateFavorite = async (updateType, url, data, method) => {
+    if (updateType === "add") {
+      await getFavorites(url, data, method);
+      setUpdate(true);
+      return;
+    }
+    await removeFavorite(url, data, method);
+    setUpdate(true);
+  };
+
   const authValue = {
     login: loginHandler,
     logout: logoutHandler,
+    updateFavorite: updateFavorite,
     token: token,
     isAuth: isAuth,
     user: user,
+    favourites: favourites,
   };
 
   useEffect(() => {
@@ -70,38 +90,19 @@ export const AuthContextProvider = ({ children }) => {
         address: user_metadata?.user?.address,
         id: user_metadata?.user?.id,
       });
+
+      const getAll = async () => {
+        const { favorites } = await getAllFavorites(
+          `/api/favorites/getAllFavorites`,
+          { user_id: user_metadata?.user?.id },
+          "POST"
+        );
+        console.log(favorites);
+        setAllFavorites(favorites);
+      };
+      getAll();
     }
   }, []);
-
-  //   useEffect(() => {
-  //     if (accessToken) {
-  //       let parsedToken = JSON.parse(token);
-  //       loginHandler(
-  //         JSON.stringify({
-  //           ...parsedToken,
-  //           access: accessToken.access,
-  //         })
-  //       );
-  //     }
-  //   }, [accessToken, loading]);
-
-  //   useEffect(() => {
-  //     if (loading) {
-  //       updateToken();
-  //     }
-
-  //     let fiftySeconds = 1000 * 50;
-
-  //     if (token) {
-  //       const id = setInterval(() => {
-  //         updateToken();
-  //       }, fiftySeconds);
-
-  //       return () => {
-  //         clearInterval(id);
-  //       };
-  //     }
-  //   }, [token]);
 
   return (
     <AuthContext.Provider value={authValue}>

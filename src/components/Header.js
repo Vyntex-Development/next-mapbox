@@ -32,12 +32,14 @@ const Header = () => {
     isAuth ? setShowModal(false) : setShowModal(true);
     isAuth && setShowAddressModal(true);
 
-    const { favorites } = await getAllFavorites(
-      `/api/favorites/getAllFavorites`,
-      { user_id: user.id },
-      "POST"
-    );
-    setAllFavorites(favorites);
+    if (isAuth && user?.id) {
+      const { favorites } = await getAllFavorites(
+        `/api/favorites/getAllFavorites`,
+        { user_id: user?.id },
+        "POST"
+      );
+      setAllFavorites(favorites);
+    }
   };
 
   const onSubmitHandler = () => {
