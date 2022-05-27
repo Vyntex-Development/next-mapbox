@@ -21,7 +21,7 @@ const CityPage = ({ cityDetails, countryDetails }) => {
     let data = {
       city_name: cityDetails?.fields["city"],
       url: `${countryDetails.id}/${cityDetails?.id}`,
-      user_id: user.id,
+      user_id: user?.id,
     };
     setUpdate(true);
     await getFavorites("/api/favorites/favorite", data, "POST");
@@ -31,7 +31,7 @@ const CityPage = ({ cityDetails, countryDetails }) => {
     setUpdate(true);
     await removeFavorite(
       "/api/favorites/removeFavorite",
-      { city_name: cityDetails?.fields["city"], user_id: user.id },
+      { city_name: cityDetails?.fields["city"], user_id: user?.id },
       "POST"
     );
   };
@@ -39,7 +39,6 @@ const CityPage = ({ cityDetails, countryDetails }) => {
   useEffect(() => {
     const getAll = async () => {
       if (!isAuth) return;
-      console.log("fetch favorites");
       const { favorites } = await getAllFavorites(
         `/api/favorites/getAllFavorites`,
         { user_id: user?.id },
