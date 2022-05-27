@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/router";
 import { getCountryCoordinates } from "../utils/utils";
 import classes from "./CountryPage.module.css";
@@ -11,6 +11,7 @@ import Image from "next/image";
 import FavouriteIcon from "../assets/images/FavouriteIcon";
 import CustomMap from "../components/CustomMap";
 import { useMetaMask } from "metamask-react";
+import AuthContext from "../../context-store/auth-context";
 
 const CountryPage = ({ countryDetails, listOfCities }) => {
   const [isInitial, setIsInitial] = useState(false);
@@ -20,6 +21,7 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
   const countryRef = useRef();
   const router = useRouter();
   const { account } = useMetaMask();
+  const { user, isAuth } = useContext(AuthContext);
 
   useEffect(() => {
     setIsInitial(true);
@@ -68,10 +70,12 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
     <div className={classes.countryPageWrapper}>
       <div ref={countryRef}>
         <h1>{countryDetails.fields["Name"]}</h1>
-        <Button type="blue" onClick={addToFavourites}>
-          <FavouriteIcon />
-          ADD TO FAVORITE
-        </Button>
+        {isAuth && (
+          <Button type="blue" onClick={addToFavourites}>
+            <FavouriteIcon />
+            ADD TO FAVORITE
+          </Button>
+        )}
         <div className={classes.countryDetails}>
           <div className={classes.row}>
             <div className={classes.descriptionWrapper}>

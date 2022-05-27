@@ -37,16 +37,19 @@ const CityPage = ({ cityDetails, countryDetails }) => {
   };
 
   useEffect(() => {
-    const getAll = async () => {
-      if (!isAuth) return;
-      const { favorites } = await getAllFavorites(
-        `/api/favorites/getAllFavorites`,
-        { user_id: user?.id },
-        "POST"
-      );
-      setAllFavorites(favorites);
-    };
-    getAll();
+    if (isAuth) {
+      const getAll = async () => {
+        if (!isAuth) return;
+        const { favorites } = await getAllFavorites(
+          `/api/favorites/getAllFavorites`,
+          { user_id: user?.id },
+          "POST"
+        );
+        setAllFavorites(favorites);
+      };
+      getAll();
+    }
+
     setUpdate(false);
   }, [isAuth, update]);
 
