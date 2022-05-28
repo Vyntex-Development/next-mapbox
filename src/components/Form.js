@@ -91,7 +91,6 @@ const Form = ({
       place: searchValue,
       ...data,
     };
-    console.log(deployDaoData);
     if (!formIsValid()) return;
     const response = await deployDao(
       "/api/deploy/deploy-dao",
@@ -99,6 +98,7 @@ const Form = ({
       "POST"
     );
     console.log(response);
+    close();
     // props.onSubmit(data);
   };
 

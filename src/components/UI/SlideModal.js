@@ -38,6 +38,8 @@ const SildeModal = ({
 
   const modalWrapperRef = useRef();
 
+  console.log(userData?.address || userAddress || (user?.address && !deploy));
+
   const destinationChangeHadler = (e) => {
     setSearch(capitalizeFirstLetter(e.target.value));
     if (e.target.value.trim() === "") {
@@ -123,7 +125,7 @@ const SildeModal = ({
       body: JSON.stringify({ address: search, walletAddress: address }),
     });
     const { address: userAddress } = await response.json();
-    setUserAddress(userAddress);
+    setUserAddress(userAddress || search);
     onClose();
     setNotCheckedError(false);
     onSubmit(true);

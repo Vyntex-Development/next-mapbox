@@ -5,29 +5,34 @@ import Button from "../components/UI/Button";
 import LinkButton from "../components/UI/Link";
 import FavouriteIcon from "../assets/images/FavouriteIcon";
 import AuthContext from "../../context-store/auth-context";
+import FavoritesContext from "../../context-store/favorites-context";
 import { getUserId } from "../utils/utils";
 
 const CityPage = ({ cityDetails, countryDetails }) => {
   const [isInitial, setIsInitial] = useState(false);
   const [text, setText] = useState("");
-  const { user, isAuth, favourites, updateFavorite } = useContext(AuthContext);
+  const { favorites, allFavorites, updateFavorites } =
+    useContext(FavoritesContext);
+  const { isAuth } = useContext(AuthContext);
   useEffect(() => {
     setIsInitial(true);
   }, []);
 
-  useEffect(() => {
-    if (!cityIsInFavorites()) {
-      setText("ADD TO FAVORITES");
-      return;
-    }
-    setText("REMOVE FROM FAVORITES");
-  }, []);
-
   const cityIsInFavorites = () => {
-    return favourites.some(
+    return allFavorites.some(
       (favorite) => favorite.city_name === cityDetails?.fields["city"]
     );
   };
+
+  useEffect(() => {
+    if (favorites) {
+      if (!cityIsInFavorites()) {
+        setText("ADD TO FAVORITES");
+        return;
+      }
+      setText("REMOVE FROM FAVORITES");
+    }
+  }, [favorites]);
 
   const favoritesHandler = () => {
     if (cityIsInFavorites()) {
@@ -35,7 +40,7 @@ const CityPage = ({ cityDetails, countryDetails }) => {
         city_name: cityDetails?.fields["city"],
         user_id: getUserId(),
       };
-      updateFavorite("remove", "/api/favorites/removeFavorite", data, "POST");
+      updateFavorites("remove", "/api/favorites/removeFavorite", data, "POST");
       setText("ADD TO FAVORITES");
       return;
     }
@@ -46,7 +51,7 @@ const CityPage = ({ cityDetails, countryDetails }) => {
       user_id: getUserId(),
     };
     setText("REMOVE FROM FAVORITES");
-    updateFavorite("add", "/api/favorites/favorite", data, "POST");
+    updateFavorites("add", "/api/favorites/favorite", data, "POST");
   };
 
   return (
