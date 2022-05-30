@@ -7,7 +7,6 @@ import {
   getFavorites,
   getAllFavorites,
   removeFavorite,
-  getUserId,
 } from "../src/utils/utils";
 
 const FavoritesContext = createContext({
@@ -27,13 +26,14 @@ export const FavoritesContextProvider = ({ children }) => {
   const fetchFavorites = async () => {
     const jwtToken = JSON.parse(localStorage.getItem("token"));
     const { user_metadata } = jwt.decode(jwtToken);
-    setUserId(user_metadata.user.id);
     const { favorites } = await getAllFavorites(
       `/api/favorites/getAllFavorites`,
       { user_id: user_metadata.user.id },
       "POST"
     );
+    console.log(favorites);
     setAllFavorites(favorites);
+    setUserId(user_metadata.user.id);
   };
 
   useEffect(() => {
@@ -52,6 +52,7 @@ export const FavoritesContextProvider = ({ children }) => {
   }, [isAuth]);
 
   const updateFavorites = async (updateType, url, data, method) => {
+    console.log(updateType);
     if (updateType === "add") {
       await getFavorites(url, data, method);
       setUpdate(true);

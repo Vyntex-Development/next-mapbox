@@ -1,10 +1,6 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/router";
-import {
-  getCountryCoordinates,
-  getUserId,
-  getAllFavorites,
-} from "../utils/utils";
+import { getCountryCoordinates } from "../utils/utils";
 import classes from "./CountryPage.module.css";
 import Button from "../components/UI/Button";
 import LinkButton from "../components/UI/Link";
@@ -16,49 +12,37 @@ import FavouriteIcon from "../assets/images/FavouriteIcon";
 import CustomMap from "../components/CustomMap";
 import AuthContext from "../../context-store/auth-context";
 import FavoritesContext from "../../context-store/favorites-context";
-import jwt from "jsonwebtoken";
 
 const CountryPage = ({ countryDetails, listOfCities }) => {
   const [isInitial, setIsInitial] = useState(false);
   const [containerHeight, setContainerHeight] = useState({});
   const [coordinates, setCoordinates] = useState({});
   const [text, setText] = useState("");
-  const { favorites, allFavorites, updateFavorites, userId } =
+  const { allFavorites, updateFavorites, userId } =
     useContext(FavoritesContext);
   const countryRef = useRef();
   const router = useRouter();
   const { isAuth } = useContext(AuthContext);
 
-  const countryIsInFavorites = async () => {
-    const jwtToken = JSON.parse(localStorage.getItem("token"));
-    const { user_metadata } = jwt.decode(jwtToken);
-    const { favorites } = await getAllFavorites(
-      `/api/favorites/getAllFavorites`,
-      { user_id: user_metadata.user.id },
-      "POST"
-    );
-
-    return favorites.some(
+  const countryIsInFavorites = () => {
+    return allFavorites.some(
       (favorite) => favorite.place === countryDetails.fields["Name"]
     );
   };
 
   useEffect(() => {
     if (userId) {
-      const updateFavorites = async () => {
-        if (!(await countryIsInFavorites())) {
-          setText("ADD TO FAVORITES");
-          return;
-        }
-        setText("REMOVE FROM FAVORITES");
-      };
-
-      updateFavorites();
+      if (!countryIsInFavorites()) {
+        setText("ADD TO FAVORITES");
+        return;
+      }
+      setText("REMOVE FROM FAVORITES");
     }
   }, [userId]);
 
-  const favoritesHandler = async () => {
-    if (await countryIsInFavorites()) {
+  const favoritesHandler = () => {
+    console.log(countryIsInFavorites());
+    if (countryIsInFavorites()) {
       let data = {
         place: countryDetails.fields["Name"],
         user_id: userId,
