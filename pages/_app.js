@@ -6,15 +6,15 @@ import { FavoritesContextProvider } from "../context-store/favorites-context";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <FavoritesContextProvider>
-      <AuthContextProvider>
+    <AuthContextProvider>
+      <FavoritesContextProvider>
         <MetaMaskProvider>
           <Layout>
             <Component {...pageProps} />
           </Layout>
         </MetaMaskProvider>
-      </AuthContextProvider>
-    </FavoritesContextProvider>
+      </FavoritesContextProvider>
+    </AuthContextProvider>
   );
 }
 

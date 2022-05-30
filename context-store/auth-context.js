@@ -5,6 +5,7 @@ const AuthContext = createContext({
   token: "",
   isAuth: false,
   user: null,
+  userId: null,
   login: (token) => {},
   logout: () => {},
 });
@@ -12,6 +13,7 @@ const AuthContext = createContext({
 export const AuthContextProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(false);
   const isAuth = !!token;
 
@@ -33,6 +35,7 @@ export const AuthContextProvider = ({ children }) => {
     localStorage.removeItem("token");
     setToken(null);
     setUser(null);
+    setUserId(null);
   };
 
   const authValue = {
@@ -41,6 +44,7 @@ export const AuthContextProvider = ({ children }) => {
     token: token,
     isAuth: isAuth,
     user: user,
+    userId: userId,
   };
 
   useEffect(() => {
@@ -49,6 +53,7 @@ export const AuthContextProvider = ({ children }) => {
       setToken(localStorage.getItem("token"));
       const jwtToken = JSON.parse(localStorage.getItem("token"));
       const { user_metadata } = jwt.decode(jwtToken);
+      setUserId(user_metadata?.user?.id);
       setUser({
         walletAddress: user_metadata?.user?.walletAddress,
         address: user_metadata?.user?.address,

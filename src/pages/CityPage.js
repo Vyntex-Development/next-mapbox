@@ -1,44 +1,57 @@
 import CustomMap from "../components/CustomMap";
 import { useState, useEffect, useContext } from "react";
+import { getAllFavorites } from "../utils/utils";
 import classes from "./CityPage.module.css";
 import Button from "../components/UI/Button";
 import LinkButton from "../components/UI/Link";
 import FavouriteIcon from "../assets/images/FavouriteIcon";
 import AuthContext from "../../context-store/auth-context";
 import FavoritesContext from "../../context-store/favorites-context";
-import { getUserId } from "../utils/utils";
+import jwt from "jsonwebtoken";
 
 const CityPage = ({ cityDetails, countryDetails }) => {
   const [isInitial, setIsInitial] = useState(false);
   const [text, setText] = useState("");
-  const { favorites, allFavorites, updateFavorites } =
+  const { favorites, allFavorites, updateFavorites, userId } =
     useContext(FavoritesContext);
   const { isAuth } = useContext(AuthContext);
   useEffect(() => {
     setIsInitial(true);
   }, []);
 
-  const cityIsInFavorites = () => {
-    return allFavorites.some(
-      (favorite) => favorite.city_name === cityDetails?.fields["city"]
+  const cityIsInFavorites = async () => {
+    const jwtToken = JSON.parse(localStorage.getItem("token"));
+    const { user_metadata } = jwt.decode(jwtToken);
+    const { favorites } = await getAllFavorites(
+      `/api/favorites/getAllFavorites`,
+      { user_id: user_metadata.user.id },
+      "POST"
+    );
+
+    return favorites.some(
+      (favorite) => favorite.place === cityDetails?.fields["city"]
     );
   };
 
   useEffect(() => {
-    if (favorites) {
-      if (!cityIsInFavorites()) {
-        setText("ADD TO FAVORITES");
-        return;
-      }
-      setText("REMOVE FROM FAVORITES");
-    }
-  }, [favorites]);
+    if (userId) {
+      const updateFavorites = async () => {
+        if (!(await cityIsInFavorites())) {
+          setText("ADD TO FAVORITES");
+          return;
+        }
+        setText("REMOVE FROM FAVORITES");
+      };
 
-  const favoritesHandler = () => {
-    if (cityIsInFavorites()) {
+      updateFavorites();
+    }
+  }, [userId]);
+
+  const favoritesHandler = async () => {
+    if (await cityIsInFavorites()) {
       let data = {
-        city_name: cityDetails?.fields["city"],
-        user_id: getUserId(),
+        place: cityDetails?.fields["city"],
+        user_id: userId,
       };
       updateFavorites("remove", "/api/favorites/removeFavorite", data, "POST");
       setText("ADD TO FAVORITES");
@@ -46,9 +59,9 @@ const CityPage = ({ cityDetails, countryDetails }) => {
     }
 
     let data = {
-      city_name: cityDetails?.fields["city"],
+      place: cityDetails?.fields["city"],
       url: `${countryDetails.id}/${cityDetails?.id}`,
-      user_id: getUserId(),
+      user_id: userId,
     };
     setText("REMOVE FROM FAVORITES");
     updateFavorites("add", "/api/favorites/favorite", data, "POST");

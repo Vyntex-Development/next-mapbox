@@ -38,8 +38,6 @@ const SildeModal = ({
 
   const modalWrapperRef = useRef();
 
-  console.log(userData?.address || userAddress || (user?.address && !deploy));
-
   const destinationChangeHadler = (e) => {
     setSearch(capitalizeFirstLetter(e.target.value));
     if (e.target.value.trim() === "") {
@@ -163,8 +161,7 @@ const SildeModal = ({
           <div
             className={`${
               userData?.address || userAddress || (user?.address && !deploy)
-                ? // userData?.address || userAddress || user?.address || !deploy
-                  classes.dashboardBody
+                ? classes.dashboardBody
                 : classes.body
             }`}
           >
@@ -200,18 +197,19 @@ const SildeModal = ({
                 </div>
                 <div>
                   <h4>Saved DAOs:</h4>
-                  {allFavorites.map((fav) => {
-                    return (
-                      <LinkButton
-                        key={fav.id}
-                        href={fav.url}
-                        type="cities-link"
-                        onClick={closeModalHandler}
-                      >
-                        {fav.city_name}
-                      </LinkButton>
-                    );
-                  })}
+                  {allFavorites.length > 0 &&
+                    allFavorites.map((fav) => {
+                      return (
+                        <LinkButton
+                          key={fav.id}
+                          href={fav.url}
+                          type="cities-link"
+                          onClick={closeModalHandler}
+                        >
+                          {fav.place}
+                        </LinkButton>
+                      );
+                    })}
                 </div>
               </div>
             ) : (

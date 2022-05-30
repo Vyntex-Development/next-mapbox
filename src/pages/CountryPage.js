@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/router";
-import { getCountryCoordinates } from "../utils/utils";
+import {
+  getCountryCoordinates,
+  getUserId,
+  getAllFavorites,
+} from "../utils/utils";
 import classes from "./CountryPage.module.css";
 import Button from "../components/UI/Button";
 import LinkButton from "../components/UI/Link";
@@ -10,18 +14,68 @@ import TelegramIcon from "../assets/images/TelegramIcon";
 import Image from "next/image";
 import FavouriteIcon from "../assets/images/FavouriteIcon";
 import CustomMap from "../components/CustomMap";
-import { useMetaMask } from "metamask-react";
 import AuthContext from "../../context-store/auth-context";
+import FavoritesContext from "../../context-store/favorites-context";
+import jwt from "jsonwebtoken";
 
 const CountryPage = ({ countryDetails, listOfCities }) => {
   const [isInitial, setIsInitial] = useState(false);
   const [containerHeight, setContainerHeight] = useState({});
   const [coordinates, setCoordinates] = useState({});
-
+  const [text, setText] = useState("");
+  const { favorites, allFavorites, updateFavorites, userId } =
+    useContext(FavoritesContext);
   const countryRef = useRef();
   const router = useRouter();
-  const { account } = useMetaMask();
-  const { user, isAuth } = useContext(AuthContext);
+  const { isAuth } = useContext(AuthContext);
+
+  const countryIsInFavorites = async () => {
+    const jwtToken = JSON.parse(localStorage.getItem("token"));
+    const { user_metadata } = jwt.decode(jwtToken);
+    const { favorites } = await getAllFavorites(
+      `/api/favorites/getAllFavorites`,
+      { user_id: user_metadata.user.id },
+      "POST"
+    );
+
+    return favorites.some(
+      (favorite) => favorite.place === countryDetails.fields["Name"]
+    );
+  };
+
+  useEffect(() => {
+    if (userId) {
+      const updateFavorites = async () => {
+        if (!(await countryIsInFavorites())) {
+          setText("ADD TO FAVORITES");
+          return;
+        }
+        setText("REMOVE FROM FAVORITES");
+      };
+
+      updateFavorites();
+    }
+  }, [userId]);
+
+  const favoritesHandler = async () => {
+    if (await countryIsInFavorites()) {
+      let data = {
+        place: countryDetails.fields["Name"],
+        user_id: userId,
+      };
+      updateFavorites("remove", "/api/favorites/removeFavorite", data, "POST");
+      setText("ADD TO FAVORITES");
+      return;
+    }
+
+    let data = {
+      place: countryDetails.fields["Name"],
+      url: `${countryDetails.id}`,
+      user_id: userId,
+    };
+    setText("REMOVE FROM FAVORITES");
+    updateFavorites("add", "/api/favorites/favorite", data, "POST");
+  };
 
   useEffect(() => {
     setIsInitial(true);
@@ -37,43 +91,14 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
     getCoordinates();
   }, []);
 
-  const addToFavourites = async () => {
-    console.log(countryDetails);
-    let addToFavouritesData = {
-      eht_address: account,
-      data: {
-        dao_id: countryDetails.id,
-        name: countryDetails.fields["Name"],
-        iso2: countryDetails.fields["ISO Alpha-2"],
-        iso3: countryDetails.fields["ISO Alpha-3"],
-        lat: null,
-        lng: null,
-        countryID: countryDetails.id,
-      },
-    };
-    const response = await fetch(
-      "https://nearestdao.herokuapp.com/add/favorite",
-      {
-        method: "POST",
-        body: JSON.stringify(addToFavouritesData),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
-    const responseData = await response.json();
-    console.log(responseData);
-  };
-
   return (
     <div className={classes.countryPageWrapper}>
       <div ref={countryRef}>
         <h1>{countryDetails.fields["Name"]}</h1>
         {isAuth && (
-          <Button type="blue" onClick={addToFavourites}>
+          <Button type="blue" onClick={favoritesHandler}>
             <FavouriteIcon />
-            ADD TO FAVORITE
+            {text}
           </Button>
         )}
         <div className={classes.countryDetails}>

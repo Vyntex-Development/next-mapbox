@@ -1,11 +1,11 @@
 import supabase from "../../../src/supabase/supabase";
 const removeFromFavorite = async (req, res) => {
-  const { user_id, city_name } = req.body;
+  const { user_id, place } = req.body;
   //   const nonce = uuidv4();
   let { data, error } = await supabase
     .from("favorite")
     .delete()
-    .match({ user_id: user_id, city_name: city_name });
+    .match({ user_id: user_id, place: place });
   if (error) {
     res.status(400).json({ error: error.message });
   } else {
