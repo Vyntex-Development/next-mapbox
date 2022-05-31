@@ -2,7 +2,7 @@ export const infoConfig = [
   {
     id: "twitter-handle",
     inputConfig: {
-      name: "twitter_handle",
+      name: "twitter",
       elementType: "input",
       errorMsg: "",
       isValid: false,
@@ -29,7 +29,7 @@ export const infoConfig = [
   {
     id: "telegram-handle",
     inputConfig: {
-      name: "telegram_handle",
+      name: "telegram",
       elementType: "input",
       errorMsg: "",
       isValid: false,

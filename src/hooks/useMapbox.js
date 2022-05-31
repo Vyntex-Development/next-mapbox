@@ -11,6 +11,7 @@ const useMapbox = () => {
   const [isVisible, setIsVisble] = useState(false);
   const [place, setPlace] = useState(null);
   const [reset, setReset] = useState(null);
+  const [destinationType, setDestinationType] = useState(null);
 
   const destinationChangeHadler = (e) => {
     setSearch(capitalizeFirstLetter(e.target.value));
@@ -53,7 +54,7 @@ const useMapbox = () => {
     setIsVisble(false);
     setEnabled(true);
     setPlace(place);
-    // setReset(false);
+    setDestinationType(place.place_type[0]);
     // setChosen(true)
   };
 
@@ -71,7 +72,7 @@ const useMapbox = () => {
     isVisible,
     place,
     reset,
-    // chosen,
+    destinationType,
   };
 };
 

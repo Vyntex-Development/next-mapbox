@@ -29,6 +29,13 @@ export const AuthContextProvider = ({ children }) => {
     let parsedToken = JSON.stringify(token);
     localStorage.setItem("token", parsedToken);
     setToken(token);
+    const jwtToken = JSON.parse(localStorage.getItem("token"));
+    const { user_metadata } = jwt.decode(jwtToken);
+    setUser({
+      walletAddress: user_metadata?.user?.walletAddress,
+      address: user_metadata?.user?.address,
+      id: user_metadata?.user?.id,
+    });
   };
 
   const logoutHandler = () => {

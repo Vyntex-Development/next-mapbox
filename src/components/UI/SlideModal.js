@@ -22,6 +22,7 @@ const SildeModal = ({
   deploy,
   searchValue,
   allFavorites,
+  destinationType,
 }) => {
   const [isBrowser, setIsBrowser] = useState(false);
   const [isVisible, setIsVisble] = useState(false);
@@ -171,6 +172,7 @@ const SildeModal = ({
                 onSubmit={onSubmitHandler}
                 searchValue={searchValue}
                 close={() => onClose()}
+                destinationType={destinationType}
               />
             ) : (isSubmitted ||
                 userData?.address ||

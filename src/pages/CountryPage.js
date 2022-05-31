@@ -96,12 +96,14 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
                   justifyContent: "center",
                 }}
               >
-                <Image
-                  src={countryDetails.fields["Flag"]}
-                  width="25"
-                  height="16"
-                  alt="flag"
-                />
+                {countryDetails.fields["Flag"] && (
+                  <Image
+                    src={countryDetails.fields["Flag"]}
+                    width="25"
+                    height="16"
+                    alt="flag"
+                  />
+                )}
               </span>
             </div>
             <div className={classes.descriptionWrapper}>
@@ -193,10 +195,10 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
                   return (
                     <LinkButton
                       key={index}
-                      href={`/${router.query.countryID}/${city.id}`}
+                      href={`/${router.query.countryID}/${city?.id}`}
                       type="cities-link"
                     >
-                      {city.fields.city_ascii}
+                      {city?.fields?.city || city?.fields?.city_ascii}
                     </LinkButton>
                   );
                 })}

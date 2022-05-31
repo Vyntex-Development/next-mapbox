@@ -1,11 +1,9 @@
-const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
 const AIRTABLE_ACCESS_KEY = process.env.AIRTABLE_ACCESS_KEY;
 import { useState, useEffect, useContext } from "react";
 import classes from "./Autocomplete.module.css";
 import Button from "./UI/Button";
 import Spinner from "./UI/Spinner";
-import { capitalizeFirstLetter, connectMetamaskHandler } from "../utils/utils";
-import { getMapboxSearchResults } from "../utils/utils";
+import { connectMetamaskHandler } from "../utils/utils";
 import { getID } from "../utils/utils";
 import { getSingleDestiantion } from "../utils/utils";
 import LinkButton from "./UI/Link";
@@ -16,16 +14,10 @@ import MetamaskIcon from "../assets/images/MetamaskIcon";
 import useMapbox from "../hooks/useMapbox";
 
 const Autocomplete = () => {
-  // const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [airtableData, setAirtableData] = useState(null);
   const [options, setOptions] = useState(false);
-  // const [results, setResults] = useState([]);
-  // const [enabled, setEnabled] = useState(false);
-  // const [place, setPlace] = useState(null);
-  // const [isVisible, setIsVisble] = useState(false);
   const [searchResult, setSearchResult] = useState(false);
-  // const [timer, setTimer] = useState(null);
   const [countryOption, setCountryOption] = useState(null);
   const [cityOption, setCityOption] = useState(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -44,6 +36,7 @@ const Autocomplete = () => {
     isVisible,
     place,
     reset,
+    destinationType,
   } = useMapbox();
 
   const deployHandler = () => {
@@ -91,7 +84,7 @@ const Autocomplete = () => {
       if (place && place.place_type[0] !== "country") {
         if (airtableData.value === false) return;
         setCityOption({
-          name: `${city.fields.city_ascii} - ${country.fields["Name"]}`,
+          name: `${city.fields.city} - ${country.fields["Name"]}`,
           txt: "view",
           flag: country.fields["Flag"],
           link: `${country.id}/${city.id}`,
@@ -110,51 +103,6 @@ const Autocomplete = () => {
     // setPlace(null);
   }, [searchResult]);
 
-  //   const handleSearchChangeHandler = (searchValue) => {};
-  // const destinationChangeHadler = (e) => {
-  //   setSearch(capitalizeFirstLetter(e.target.value));
-  //   setCityOption(null);
-  //   setCountryOption(null);
-  //   if (e.target.value.trim() === "") {
-  //     setIsVisble(false);
-  //     setEnabled(false);
-
-  //     return;
-  //   }
-  //   // Stop the previous setTimeout if there is one in progress
-  //   clearTimeout(timer);
-
-  //   // Launch a new request in 1000ms
-  //   let timeoutId = setTimeout(() => {
-  //     performMapboxSearch();
-  //   }, 1000);
-  //   setTimer(timeoutId);
-  // };
-
-  // const performMapboxSearch = async () => {
-  //   if (search === "") {
-  //     setResults([]);
-  //     setEnabled(false);
-  //     return;
-  //   }
-
-  //   const features = await getMapboxSearchResults(
-  //     `https://api.mapbox.com/geocoding/v5/mapbox.places/${search}.json?types=country&types=place&access_token=${MAPBOX_TOKEN_PRODUCTION}`,
-  //     null,
-  //     "GET"
-  //   );
-  //   setResults(features);
-  //   setIsVisble(true);
-  //   features.length === 0 && setIsVisble(false);
-  // };
-
-  // const handleItemClickedHandler = async (place) => {
-  //   setSearch(place.place_name);
-  //   setPlace(place);
-  //   setIsVisble(false);
-  //   setEnabled(true);
-  // };
-
   const searchHandler = async () => {
     let id;
     let searchData;
@@ -169,15 +117,26 @@ const Autocomplete = () => {
           "GET"
         );
         setAirtableData(response);
-        if (response.records.length === 0) {
-          setIsLoading(false);
-          return;
+
+        // if (response.records.length === 0) {
+        //   setIsLoading(false);
+        //   return;
+        // }
+        if (response.records.length !== 0) {
+          id = response.records[0].id;
         }
-        id = response.records[0].id;
-        if (!id) {
+        console.log(response);
+        if (!id || response.records.length === 0) {
+          setOptions(true);
           setCountryOption({
-            name: response.records[0].fields["Name"],
-            flag: response.records[0].fields["Flag"],
+            name:
+              response.records.length !== 0
+                ? response.records[0].fields["Name"]
+                : place.text,
+            flag:
+              response.records.length !== 0
+                ? response.records[0].fields["Flag"]
+                : "",
             txt: "deploy",
             id: null,
           });
@@ -346,6 +305,7 @@ const Autocomplete = () => {
         show={showAddressModal}
         deploy={deploy}
         searchValue={search}
+        destinationType={destinationType}
       />
       <Modal
         onClose={() => setShowModal(false)}

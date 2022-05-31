@@ -1,4 +1,5 @@
 const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
+const AIRTABLE_ACCESS_KEY = process.env.AIRTABLE_ACCESS_KEY;
 import useForm from "../hooks/useForm";
 import Input from "../components/UI/Input";
 import classes from "./Form.module.css";
@@ -8,8 +9,10 @@ import Button from "./UI/Button";
 import {
   capitalizeFirstLetter,
   getMapboxSearchResults,
+  getID,
   deployDao,
 } from "../utils/utils";
+import { useRouter } from "next/router";
 
 const Form = ({
   searchValue,
@@ -17,6 +20,7 @@ const Form = ({
   loading,
   children,
   close,
+  destinationType,
 }) => {
   const [search, setSearch] = useState(searchValue);
   const [enabled, setEnabled] = useState(false);
@@ -28,6 +32,7 @@ const Form = ({
   const [deploymentStage, setDeploymentStage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
+  const router = useRouter();
 
   let content;
 
@@ -83,26 +88,50 @@ const Form = ({
   };
 
   const submitFormHandler = async (ev) => {
-    console.log(searchValue);
     ev.preventDefault();
     validateInputFields();
-    // close();
+    let countryId;
+
+    if (destinationType !== "country") {
+      let spliitedArray = searchValue.split(",");
+      let country = spliitedArray[spliitedArray.length - 1].trim();
+      const { records } = await getID(
+        `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Countries?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=Name="${country} DAO"`,
+        null,
+        "GET"
+      );
+      countryId = records[0].id;
+    }
+
     let deployDaoData = {
-      place: searchValue,
-      ...data,
+      fields: {
+        [destinationType === "country" ? "Name" : "city"]: `${
+          destinationType === "country"
+            ? searchValue.split(",")[0] + " DAO"
+            : searchValue.split(",")[0]
+        }`,
+        ...data,
+      },
     };
+
+    if (destinationType !== "country") {
+      deployDaoData.fields["Country"] = [countryId];
+    }
+
     if (!formIsValid()) return;
     const response = await deployDao(
-      "/api/deploy/deploy-dao",
+      `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/${
+        destinationType === "country" ? "Countries" : "Cities"
+      }?api_key=${AIRTABLE_ACCESS_KEY}`,
       deployDaoData,
       "POST"
     );
-    console.log(response);
     close();
-    // props.onSubmit(data);
+    router.push(`${response.fields["Country"][0]}/${response.id}`);
   };
 
   const splittedArray = (arr) => {
+    console.log(arr);
     const splittedArray = arr.split(",");
     return splittedArray[splittedArray.length - 1];
   };
@@ -110,7 +139,8 @@ const Form = ({
   const submitHandler = async () => {
     const deplymentCountry = splittedArray(search);
     const userCountry = splittedArray(user?.address);
-    if (deplymentCountry !== userCountry) {
+
+    if (deplymentCountry.trim() !== userCountry.trim()) {
       setError(true);
       return;
     }
