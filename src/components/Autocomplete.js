@@ -46,6 +46,13 @@ const Autocomplete = () => {
     !isAuth ? setDeploy(true) : setDeploy(true);
   };
 
+  const getRecommendedCity = (rec) => {
+    let city = rec.context.find((text) => {
+      return text.id.includes("place");
+    });
+    return city.text;
+  };
+
   useEffect(() => {
     address && setShowAddressModal(true) && setShowModal(false);
     !userData || (!address && setIsSubmitted(false));
@@ -55,14 +62,14 @@ const Autocomplete = () => {
 
   useEffect(() => {
     if (recommendation) {
-      searchViaReccomendation(recommendation.context[1].text);
+      searchViaReccomendation(getRecommendedCity(recommendation));
     }
   }, [recommendation]);
 
   useEffect(() => {
     if (searchResult) {
       setOptions(true);
-
+      console.log(airtableData);
       let { city, country } = airtableData;
       if (place && place.place_type[0] === "country") {
         setCountryOption({
@@ -76,7 +83,9 @@ const Autocomplete = () => {
       if (airtableData && airtableData.value === false) {
         setCityOption({
           name: recommendation
-            ? `${recommendation.context[1].text} - ${airtableData.country_name}`
+            ? `${getRecommendedCity(recommendation)} - ${
+                airtableData.country_name
+              }`
             : `${place.text} - ${airtableData.country_name}`,
           flag: airtableData.country.records?.[0].fields["Flag"],
           txt: "deploy",
@@ -97,10 +106,12 @@ const Autocomplete = () => {
         (!place && recommendation)
       ) {
         if (airtableData.value === false) return;
-
+        console.log(recommendation, country);
         setCityOption({
           name: recommendation
-            ? `${recommendation.context[1].text} - ${country.fields["Name"]}`
+            ? `${getRecommendedCity(recommendation)} - ${
+                country.fields["Name"]
+              }`
             : `${city.fields.city} - ${country.fields["Name"]}`,
           txt: "view",
           flag: country.fields["Flag"],
@@ -124,6 +135,7 @@ const Autocomplete = () => {
   }, [searchResult]);
 
   const searchViaReccomendation = async (reccomentdation) => {
+    console.log(reccomentdation);
     let cityExist;
     let id;
     const response = await getID(
