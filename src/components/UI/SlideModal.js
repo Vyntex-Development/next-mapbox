@@ -3,18 +3,21 @@ import ReactDOM from "react-dom";
 import LinkButton from "./Link";
 import { useState, useEffect, useRef, useContext } from "react";
 import AuthContext from "../../../context-store/auth-context";
-import { capitalizeFirstLetter } from "../../utils/utils";
-import { getMapboxSearchResults } from "../../utils/utils";
 import classes from "./SlideModal.module.css";
 import AvatarIcon from "../../assets/images/AvatarIcon";
 import Button from "./Button";
-import { shorten } from "../../utils/utils";
+import {
+  shorten,
+  setNewAddress,
+  capitalizeFirstLetter,
+  getMapboxSearchResults,
+} from "../../utils/utils";
 import { infoConfig } from "../../config/formConfig";
 import Form from "../Form";
 
 const SildeModal = ({
   show,
-  address,
+  address: walletAddress,
   onClose,
   onSubmit,
   isSubmitted,
@@ -29,13 +32,23 @@ const SildeModal = ({
   const [timer, setTimer] = useState(null);
   const [results, setResults] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
+  const [city, setCity] = useState(null);
   const [search, setSearch] = useState("");
   const [enabled, setEnabled] = useState(false);
   const [notcheckedError, setNotCheckedError] = useState(false);
   const [userAddress, setUserAddress] = useState("");
   const [changeAddress, setChangeAddress] = useState(false);
-
-  const { logout, isAuth, user } = useContext(AuthContext);
+  const [error, setError] = useState(false);
+  const {
+    logout,
+    isAuth,
+    user,
+    submitAddress,
+    hasAddress,
+    minutesDiff,
+    updateAddress,
+    onRecommendation,
+  } = useContext(AuthContext);
 
   const modalWrapperRef = useRef();
 
@@ -59,9 +72,15 @@ const SildeModal = ({
     onClose();
   };
 
-  const changeAddressHandler = () => {
+  const changeAddressHandler = async () => {
+    let sixMonths = 262974;
+    if (minutesDiff < sixMonths) {
+      setError(true);
+      return;
+    }
     setChangeAddress(true);
-    console.log("change");
+    setError(false);
+    setSearch("");
   };
 
   const checkboxHandler = (ev) => {
@@ -87,6 +106,7 @@ const SildeModal = ({
   };
 
   const handleItemClickedHandler = async (place) => {
+    setCity(place);
     setSearch(place.place_name);
     setIsVisble(false);
     setEnabled(true);
@@ -101,6 +121,7 @@ const SildeModal = ({
       !e.target.closest("#list")
     ) {
       onClose();
+      setError(false);
     }
   };
 
@@ -116,18 +137,20 @@ const SildeModal = ({
       return;
     }
 
-    const response = await fetch("/api/auth/address", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({ address: search, walletAddress: address }),
-    });
-    const { address: userAddress } = await response.json();
+    onRecommendation(city);
+
+    if (user.address) {
+      updateAddress(true);
+    }
+
+    const userAddress = await setNewAddress(search, walletAddress, user);
     setUserAddress(userAddress || search);
+
     onClose();
     setNotCheckedError(false);
     onSubmit(true);
+    submitAddress(true);
+    setChangeAddress(false);
   };
 
   const onSubmitHandler = (formData) => {
@@ -153,7 +176,9 @@ const SildeModal = ({
               <AvatarIcon />
             </div>
             <div className={classes.accountWrapper}>
-              <p>delocal.xyz/{shorten(user?.walletAddress || address, 20)}</p>
+              <p>
+                delocal.xyz/{shorten(user?.walletAddress || walletAddress, 20)}
+              </p>
               <Button onClick={() => logout()} type="transparent">
                 Logout
               </Button>
@@ -161,7 +186,12 @@ const SildeModal = ({
           </div>
           <div
             className={`${
-              userData?.address || userAddress || (user?.address && !deploy)
+              (userData?.address ||
+                userAddress ||
+                hasAddress ||
+                // !changeAddress ||
+                (user?.address && !deploy)) &&
+              !changeAddress
                 ? classes.dashboardBody
                 : classes.body
             }`}
@@ -177,17 +207,18 @@ const SildeModal = ({
             ) : (isSubmitted ||
                 userData?.address ||
                 userAddress ||
+                hasAddress ||
                 user?.address) &&
               !changeAddress ? (
               <div className={classes.dashboardLastStage}>
                 <div className={classes.dashboardInfoWrapper}>
                   <h4>User ID:</h4>
-                  <span>{address || user?.walletAddress}</span>
+                  <span>{walletAddress || user?.walletAddress}</span>
                 </div>
                 <div className={classes.dashboardInfoWrapper}>
                   <h4>Address:</h4>
                   <span>
-                    {userData?.address || userAddress || user?.address}
+                    {userAddress || userData?.address || user?.address}
                   </span>
                   <Button
                     id="change address"
@@ -196,6 +227,11 @@ const SildeModal = ({
                   >
                     Change Address
                   </Button>
+                  {error && (
+                    <div className={classes.importantNote}>
+                      Adress can be changed only six months after registration.
+                    </div>
+                  )}
                 </div>
                 <div>
                   <h4>Saved DAOs:</h4>
@@ -269,7 +305,7 @@ const SildeModal = ({
                     </ul>
                   )}
                 </div>
-                <div className={classes.importantNote}>
+                <div className={`${classes.importantNote} ${classes.Yellow}`}>
                   Please note! You won’t be able to change your address in the
                   next
                   <span> 6 months.</span>

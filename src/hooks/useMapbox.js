@@ -62,10 +62,15 @@ const useMapbox = () => {
     setReset(false);
   };
 
+  const setMapboxSearch = () => {
+    setSearch("");
+  };
+
   return {
     destinationChangeHadler,
     handleItemClickedHandler,
     updateReset,
+    setMapboxSearch,
     results,
     enabled,
     search,

@@ -23,7 +23,8 @@ const Autocomplete = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [deploy, setDeploy] = useState(false);
-  const { login, isAuth } = useContext(AuthContext);
+  const { login, isAuth, recommendation, onRecommendation } =
+    useContext(AuthContext);
   const [address, setAddress] = useState(null);
   const [userData, setUserData] = useState(null);
   const {
@@ -37,6 +38,7 @@ const Autocomplete = () => {
     place,
     reset,
     destinationType,
+    setMapboxSearch,
   } = useMapbox();
 
   const deployHandler = () => {
@@ -49,12 +51,18 @@ const Autocomplete = () => {
     !userData || (!address && setIsSubmitted(false));
     options && updateReset();
     reset && setOptions(false);
-    // reset && setOptions(false) && setCityOption(null) && setCountryOption(null);
   }, [address, userData, options]);
+
+  useEffect(() => {
+    if (recommendation) {
+      searchViaReccomendation(recommendation.context[1].text);
+    }
+  }, [recommendation]);
 
   useEffect(() => {
     if (searchResult) {
       setOptions(true);
+
       let { city, country } = airtableData;
       if (place && place.place_type[0] === "country") {
         setCountryOption({
@@ -67,24 +75,33 @@ const Autocomplete = () => {
 
       if (airtableData && airtableData.value === false) {
         setCityOption({
-          name: `${place.text} - ${airtableData.country_name}`,
-          flag: airtableData.country.records[0].fields["Flag"],
+          name: recommendation
+            ? `${recommendation.context[1].text} - ${airtableData.country_name}`
+            : `${place.text} - ${airtableData.country_name}`,
+          flag: airtableData.country.records?.[0].fields["Flag"],
           txt: "deploy",
         });
         setCountryOption({
           name: airtableData.country.records[0].fields["Name"],
-          flag: airtableData.country.records[0].fields["Flag"],
+          flag: airtableData.country.records?.[0].fields["Flag"],
           txt: "view",
           link: airtableData.country.records[0].id,
         });
         setSearchResult(false);
+        onRecommendation("");
         return;
       }
 
-      if (place && place.place_type[0] !== "country") {
+      if (
+        (place && place.place_type[0] !== "country") ||
+        (!place && recommendation)
+      ) {
         if (airtableData.value === false) return;
+
         setCityOption({
-          name: `${city.fields.city} - ${country.fields["Name"]}`,
+          name: recommendation
+            ? `${recommendation.context[1].text} - ${country.fields["Name"]}`
+            : `${city.fields.city} - ${country.fields["Name"]}`,
           txt: "view",
           flag: country.fields["Flag"],
           link: `${country.id}/${city.id}`,
@@ -95,13 +112,65 @@ const Autocomplete = () => {
           txt: "view",
           link: country.id,
         });
+        onRecommendation("");
       }
 
       setSearchResult(false);
+
+      onRecommendation("");
     }
     setSearchResult(false);
-    // setPlace(null);
+    updateReset();
   }, [searchResult]);
+
+  const searchViaReccomendation = async (reccomentdation) => {
+    let cityExist;
+    let id;
+    const response = await getID(
+      `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Cities?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=city="${reccomentdation}"`,
+      null,
+      "GET"
+    );
+    cityExist = true;
+    if (response.records.length === 0) {
+      cityExist = false;
+      const response = await getSingleDestiantion(
+        `https://nearestdao.herokuapp.com`,
+        {
+          name: reccomentdation,
+          type: "place",
+        },
+        "POST"
+      );
+      setAirtableData(response);
+    } else {
+      setAirtableData(response);
+      id = response.records[0]?.id;
+    }
+
+    let searchData = {
+      [!cityExist ? "name" : "id"]: !cityExist ? reccomentdation : id,
+      type: "place",
+    };
+
+    try {
+      const response = await getSingleDestiantion(
+        `https://nearestdao.herokuapp.com`,
+        searchData,
+        "POST"
+      );
+      response && setSearchResult(true);
+      setAirtableData(response);
+      setIsLoading(false);
+      setMapboxSearch("");
+      updateReset();
+      if (results.length === 0 && search !== "") {
+        setAirtableData(response);
+      }
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
 
   const searchHandler = async () => {
     let id;
@@ -118,14 +187,10 @@ const Autocomplete = () => {
         );
         setAirtableData(response);
 
-        // if (response.records.length === 0) {
-        //   setIsLoading(false);
-        //   return;
-        // }
         if (response.records.length !== 0) {
           id = response.records[0].id;
         }
-        console.log(response);
+
         if (!id || response.records.length === 0) {
           setOptions(true);
           setCountryOption({
@@ -283,8 +348,6 @@ const Autocomplete = () => {
               <span>{cityOption?.name.toUpperCase()}</span>
             </div>
 
-            {/* <Button type="yellow">{cityOption?.txt.toUpperCase()}</Button> */}
-
             {cityOption.txt !== "view" ? (
               <Button id="deploy" onClick={deployHandler} type="yellow">
                 {cityOption.txt.toUpperCase()}
@@ -317,9 +380,6 @@ const Autocomplete = () => {
           Meta Mask
         </Button>
       </Modal>
-      {/* <Button id="asdas" type="blue" onClick={deployHandler}>
-        Deploy
-      </Button> */}
       {isLoading && <Spinner />}
     </div>
   );

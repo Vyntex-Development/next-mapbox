@@ -189,3 +189,26 @@ export const getUserId = () => {
     return user_metadata?.user?.id;
   }
 };
+
+export const getUserAddress = async (walletAddress) => {
+  const response = await fetch(
+    "/api/auth/find-address?walletAddress=" + walletAddress
+  );
+  const { address } = await response.json();
+  return address;
+};
+
+export const setNewAddress = async (search, walletAddress, user) => {
+  const response = await fetch("/api/auth/address", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      address: search,
+      walletAddress: user.walletAddress || walletAddress,
+    }),
+  });
+  const { address: userAddress } = await response.json();
+  return userAddress;
+};

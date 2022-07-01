@@ -304,6 +304,25 @@
   left: -1.5rem;
 }
 
+.importantNote {
+  background: rgba(252, 3, 3, 0.15);
+  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+  font-family: "Open Sans";
+  font-style: italic;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 120%;
+  text-align: center;
+  color: #211646;
+  margin: 0.5rem 0 1rem 0;
+  max-width: 376px;
+}
+
+.Yellow {
+  background: rgba(252, 192, 3, 0.2);
+}
+
 @keyframes slidein {
   from {
     left: -9999px;
