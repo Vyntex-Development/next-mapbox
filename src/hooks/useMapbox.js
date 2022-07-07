@@ -3,7 +3,9 @@ import { capitalizeFirstLetter } from "../utils/utils";
 import { getMapboxSearchResults } from "../utils/utils";
 const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
 
-const useMapbox = () => {
+const useMapbox = (endpoint) => {
+  const URL = "https://api.mapbox.com/geocoding/v5/mapbox.places/";
+
   const [results, setResults] = useState([]);
   const [enabled, setEnabled] = useState(false);
   const [search, setSearch] = useState("");
@@ -12,6 +14,7 @@ const useMapbox = () => {
   const [place, setPlace] = useState(null);
   const [reset, setReset] = useState(null);
   const [destinationType, setDestinationType] = useState(null);
+  const [city, setCity] = useState(null);
 
   const destinationChangeHadler = (e) => {
     setSearch(capitalizeFirstLetter(e.target.value));
@@ -40,7 +43,7 @@ const useMapbox = () => {
     }
 
     const features = await getMapboxSearchResults(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${value}.json?types=country&types=place&access_token=${MAPBOX_TOKEN_PRODUCTION}`,
+      URL + value + endpoint + MAPBOX_TOKEN_PRODUCTION,
       null,
       "GET"
     );
@@ -50,12 +53,12 @@ const useMapbox = () => {
   };
 
   const handleItemClickedHandler = async (place) => {
+    setCity(place);
     setSearch(place.place_name);
     setIsVisble(false);
     setEnabled(true);
     setPlace(place);
     setDestinationType(place.place_type[0]);
-    // setChosen(true)
   };
 
   const updateReset = () => {
@@ -78,6 +81,7 @@ const useMapbox = () => {
     place,
     reset,
     destinationType,
+    city,
   };
 };
 

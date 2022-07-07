@@ -323,6 +323,27 @@
   background: rgba(252, 192, 3, 0.2);
 }
 
+.LinkWrapper {
+  margin-top: 2rem;
+}
+
+.LinkWrapper input {
+  margin-bottom: 1rem;
+}
+
+.LinkWrapper a {
+  background: #5568f1;
+  border-radius: 0.25rem;
+  padding: 0.625rem 1rem;
+  width: max-content;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  line-height: 140%;
+  color: #ffffff;
+  cursor: pointer;
+}
+
 @keyframes slidein {
   from {
     left: -9999px;

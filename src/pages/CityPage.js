@@ -6,13 +6,16 @@ import LinkButton from "../components/UI/Link";
 import FavouriteIcon from "../assets/images/FavouriteIcon";
 import AuthContext from "../../context-store/auth-context";
 import FavoritesContext from "../../context-store/favorites-context";
+import PlaceInfo from "../components/PlaceInfo";
+import useDeploy from "../hooks/useDeploy";
 
 const CityPage = ({ cityDetails, countryDetails }) => {
   const [isInitial, setIsInitial] = useState(false);
   const [text, setText] = useState("");
   const { allFavorites, updateFavorites, userId } =
     useContext(FavoritesContext);
-  const { isAuth } = useContext(AuthContext);
+  const { isAuth, user } = useContext(AuthContext);
+  const { userCandDeploy } = useDeploy(user, countryDetails, "cityID");
   useEffect(() => {
     setIsInitial(true);
   }, []);
@@ -35,22 +38,27 @@ const CityPage = ({ cityDetails, countryDetails }) => {
 
   const favoritesHandler = () => {
     if (cityIsInFavorites()) {
-      let data = {
-        place: cityDetails?.fields["city"],
-        user_id: userId,
-      };
-      updateFavorites("remove", "/api/favorites/removeFavorite", data, "POST");
+      updateFavorites(
+        "remove",
+        "/api/favorites/removeFavorite",
+        { place: cityDetails?.fields["city"], user_id: userId },
+        "POST"
+      );
       setText("ADD TO FAVORITES");
       return;
     }
 
-    let data = {
-      place: cityDetails?.fields["city"],
-      url: `${countryDetails.id}/${cityDetails?.id}`,
-      user_id: userId,
-    };
     setText("REMOVE FROM FAVORITES");
-    updateFavorites("add", "/api/favorites/favorite", data, "POST");
+    updateFavorites(
+      "add",
+      "/api/favorites/favorite",
+      {
+        place: cityDetails?.fields["city"],
+        url: `${countryDetails.id}/${cityDetails?.id}`,
+        user_id: userId,
+      },
+      "POST"
+    );
   };
 
   return (
@@ -59,12 +67,14 @@ const CityPage = ({ cityDetails, countryDetails }) => {
         <h1>{cityDetails?.fields["city"] || ""}</h1>
 
         {isAuth && (
-          <Button type="blue" onClick={favoritesHandler}>
+          <Button
+            type={`${userCandDeploy ? "disabled" : "blue"}`}
+            onClick={favoritesHandler}
+          >
             <FavouriteIcon />
             {text}
           </Button>
         )}
-
         <div className={classes.countryDetails}>
           <div className={classes.row}>
             <div className={classes.descriptionWrapper}>
@@ -75,38 +85,25 @@ const CityPage = ({ cityDetails, countryDetails }) => {
                 </LinkButton>
               </span>
             </div>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>ISO Alpha-2:</span>
-              <span className={classes.descriptionValue}>
-                {cityDetails?.fields["iso2"] || ""}
-              </span>
-            </div>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>ISO Alpha-3:</span>
-              <span className={classes.descriptionValue}>
-                {cityDetails?.fields["iso3"] || ""}
-              </span>
-            </div>
+            <PlaceInfo
+              description="ISO Alpha-2:"
+              value={cityDetails?.fields["iso2"] || ""}
+            />
+            <PlaceInfo
+              description="ISO Alpha-3:"
+              value={cityDetails?.fields["iso3"] || ""}
+            />
           </div>
           <div className={classes.row}>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>Population:</span>
-              <span className={classes.descriptionValue}>
-                {cityDetails?.fields["population"] || ""}
-              </span>
-            </div>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>Admin:</span>
-              <span className={classes.descriptionValue}>
-                {cityDetails?.fields["admin_name"] || ""}
-              </span>
-            </div>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>ID:</span>
-              <span className={classes.descriptionValue}>
-                {cityDetails?.id || ""}
-              </span>
-            </div>
+            <PlaceInfo
+              description="Population:"
+              value={cityDetails?.fields["population"] || ""}
+            />
+            <PlaceInfo
+              description="Admin:"
+              value={cityDetails?.fields["admin_name"] || ""}
+            />
+            <PlaceInfo description="ID:" value={cityDetails?.id || ""} />
           </div>
         </div>
       </div>

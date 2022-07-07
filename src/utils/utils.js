@@ -140,7 +140,7 @@ export const shorten = (s, max) => {
     : s;
 };
 
-export const connectMetamaskHandler = async () => {
+export const connectMetamaskHandler = async (str) => {
   if (!window.ethereum) {
     window.open(
       "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn",
@@ -157,7 +157,7 @@ export const connectMetamaskHandler = async () => {
 
   let response = await fetch("/api/auth/nonce", {
     method: "POST",
-    body: JSON.stringify({ walletAddress }),
+    body: JSON.stringify({ walletAddress, str }),
     headers: {
       "Content-type": "application/json",
     },
@@ -174,6 +174,8 @@ export const connectMetamaskHandler = async () => {
     },
   });
   const { data: userData, token } = await walletResponse.json();
+
+  console.log(userData);
 
   return {
     walletAddress,

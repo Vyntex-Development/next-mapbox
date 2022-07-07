@@ -30,6 +30,10 @@
   color: #211646;
 }
 
+.blue {
+  width: max-content;
+}
+
 .blue,
 .submit {
   background: #5568f1;

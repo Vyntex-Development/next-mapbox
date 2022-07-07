@@ -1,0 +1,18 @@
+.description {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 140%;
+  color: #211646;
+}
+
+.descriptionValue {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 140%;
+  color: #5568f1;
+  margin-left: 0.5rem;
+}

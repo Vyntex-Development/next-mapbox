@@ -2,7 +2,9 @@
   background: #5568f1;
   border-radius: 0.25rem;
   padding: 0.625rem 1rem;
+  width: max-content;
 }
+
 .transparent a,
 .blue a,
 .white a {

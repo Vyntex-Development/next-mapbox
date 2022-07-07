@@ -35,10 +35,6 @@ export const AuthContextProvider = ({ children }) => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   setHasRecommendation(false);
-  // }, [recommendation]);
-
   const loginHandler = async (token) => {
     let parsedToken = JSON.stringify(token);
     localStorage.setItem("token", parsedToken);
@@ -72,7 +68,17 @@ export const AuthContextProvider = ({ children }) => {
     setRecommendation(city);
   };
 
-  const updateAddressHandler = () => {
+  const updateAddressHandler = ({ address, path }) => {
+    let userData = {
+      walletAddress: user?.walletAddress,
+      id: user?.id,
+      created_at: user.created_at,
+    };
+    setUser({
+      ...userData,
+      address: address,
+      path: path,
+    });
     localStorage.setItem("update", true);
   };
 

@@ -1,19 +1,21 @@
-const MAPBOX_TOKEN_PRODUCTION = process.env.MAPBOX_TOKEN_PRODUCTION;
 import ReactDOM from "react-dom";
 import LinkButton from "./Link";
 import { useState, useEffect, useRef, useContext } from "react";
+import { twitterInputConfig } from "../../config/formConfig";
 import AuthContext from "../../../context-store/auth-context";
 import classes from "./SlideModal.module.css";
 import AvatarIcon from "../../assets/images/AvatarIcon";
 import Button from "./Button";
+import TwitterVerification from "./TwitterVerification";
 import {
   shorten,
   setNewAddress,
-  capitalizeFirstLetter,
-  getMapboxSearchResults,
+  connectMetamaskHandler,
 } from "../../utils/utils";
 import { infoConfig } from "../../config/formConfig";
 import Form from "../Form";
+import useMapbox from "../../hooks/useMapbox";
+import { useRouter } from "next/router";
 
 const SildeModal = ({
   show,
@@ -25,20 +27,29 @@ const SildeModal = ({
   deploy,
   searchValue,
   allFavorites,
-  destinationType,
+  desType,
 }) => {
   const [isBrowser, setIsBrowser] = useState(false);
-  const [isVisible, setIsVisble] = useState(false);
-  const [timer, setTimer] = useState(null);
-  const [results, setResults] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
-  const [city, setCity] = useState(null);
-  const [search, setSearch] = useState("");
-  const [enabled, setEnabled] = useState(false);
   const [notcheckedError, setNotCheckedError] = useState(false);
   const [userAddress, setUserAddress] = useState("");
   const [changeAddress, setChangeAddress] = useState(false);
   const [error, setError] = useState(false);
+  const [navigate, setNavigate] = useState(false);
+  const [usernameIsValid, setUsernameIsValid] = useState(false);
+  const [twitterInputError, setTwitterInputError] = useState("");
+  const [twitterUsername, setTwitterUsername] = useState("");
+  const router = useRouter();
+  const {
+    destinationChangeHadler,
+    handleItemClickedHandler,
+    results,
+    enabled,
+    search,
+    isVisible,
+    city,
+    setMapboxSearch,
+  } = useMapbox(".json?types=address&access_token=");
   const {
     logout,
     isAuth,
@@ -52,35 +63,20 @@ const SildeModal = ({
 
   const modalWrapperRef = useRef();
 
-  const destinationChangeHadler = (e) => {
-    setSearch(capitalizeFirstLetter(e.target.value));
-    if (e.target.value.trim() === "") {
-      setIsVisble(false);
-      setEnabled(false);
-      return;
-    }
-
-    clearTimeout(timer);
-
-    let timeoutId = setTimeout(() => {
-      performMapboxSearch(e.target.value);
-    }, 1000);
-    setTimer(timeoutId);
-  };
-
   const closeModalHandler = () => {
     onClose();
   };
 
   const changeAddressHandler = async () => {
-    let sixMonths = 262974;
+    //262974
+    let sixMonths = 1;
     if (minutesDiff < sixMonths) {
       setError(true);
       return;
     }
     setChangeAddress(true);
     setError(false);
-    setSearch("");
+    setMapboxSearch("");
   };
 
   const checkboxHandler = (ev) => {
@@ -88,28 +84,35 @@ const SildeModal = ({
     setNotCheckedError(false);
   };
 
-  const performMapboxSearch = async (value) => {
-    if (search === "") {
-      setResults([]);
-      setEnabled(false);
+  const onChangeHandler = (ev) => {
+    setTwitterUsername(ev.target.value);
+    setTwitterInputError("");
+  };
+
+  const onLinkTwitterHandle = async () => {
+    if (twitterUsername.trim() === "") {
+      setTwitterInputError("This field is required");
       return;
     }
 
-    const features = await getMapboxSearchResults(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${value}.json?types=address&access_token=${MAPBOX_TOKEN_PRODUCTION}`,
-      null,
-      "GET"
-    );
-    setResults(features);
-    setIsVisble(true);
-    features.length === 0 && setIsVisble(false);
-  };
+    if (
+      twitterUsername.trim() !== "" &&
+      twitterUsername.trim().charAt(0) !== "@"
+    ) {
+      setTwitterInputError("Username must begines with @ symbol");
+      return;
+    }
 
-  const handleItemClickedHandler = async (place) => {
-    setCity(place);
-    setSearch(place.place_name);
-    setIsVisble(false);
-    setEnabled(true);
+    connectMetamaskHandler;
+
+    const { token, userData } =
+      await connectMetamaskHandler(`Hi there from DELOCAL.XZY! Sign this message to prove you have access to this wallet and we'll log you in. This won't cost you any Ether.
+    To stop hackers using your wallet, here's a unique message ID they can't guess: ${twitterUsername}`);
+    userData && setNavigate(true);
+    userData && setUsernameIsValid(true);
+    // twttr.events.bind("click", function (ev) {
+    //   console.log(ev);
+    // });
   };
 
   const backDropHandler = (e) => {
@@ -118,7 +121,11 @@ const SildeModal = ({
       !e.target.id &&
       !e.target.closest("#wrapper") &&
       !e.target.closest("#address-wrapper") &&
-      !e.target.closest("#list")
+      !e.target.closest("#list") &&
+      !e.target.closest("#twitter-link") &&
+      !e.target.closest("#twitter-link") &&
+      !e.target.closest("#verify-button") &&
+      !e.target.closest("#post-button")
     ) {
       onClose();
       setError(false);
@@ -140,7 +147,7 @@ const SildeModal = ({
     onRecommendation(city);
 
     if (user.address) {
-      updateAddress(true);
+      updateAddress({ address: search, path: router.pathname });
     }
 
     const userAddress = await setNewAddress(search, walletAddress, user);
@@ -202,7 +209,7 @@ const SildeModal = ({
                 onSubmit={onSubmitHandler}
                 searchValue={searchValue}
                 close={() => onClose()}
-                destinationType={destinationType}
+                destinationType={desType}
               />
             ) : (isSubmitted ||
                 userData?.address ||
@@ -248,6 +255,17 @@ const SildeModal = ({
                         </LinkButton>
                       );
                     })}
+                </div>
+                <div className={classes.LinkWrapper}>
+                  <TwitterVerification
+                    user={user}
+                    onChange={onChangeHandler}
+                    username={twitterUsername}
+                    onClick={onLinkTwitterHandle}
+                    twitterInputError={twitterInputError}
+                    usernameIsValid={usernameIsValid}
+                    navigate={navigate}
+                  />
                 </div>
               </div>
             ) : (

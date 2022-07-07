@@ -18,6 +18,20 @@ const walletApi = async (req, res) => {
       .eq("nonce", nonce)
       .single();
 
+    // let { data : signatureCheckData , } = await supabase
+    // .from("users")
+    // .select("nonce")
+    // .eq("walletAddress", walletAddress);
+
+    // if (signatureCheckData.length > 0) {
+    //   let { data, error } = await supabase
+    //     .from("users")
+    //     .update({ signature })
+    //     .match({ walletAddress });
+    // } else {
+    //   let { data, error } = await supabase.from("users").insert({ signature });
+    // }
+
     const token = jwt.sign(
       {
         aud: "authenticated",

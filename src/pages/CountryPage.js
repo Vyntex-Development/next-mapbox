@@ -12,6 +12,8 @@ import FavouriteIcon from "../assets/images/FavouriteIcon";
 import CustomMap from "../components/CustomMap";
 import AuthContext from "../../context-store/auth-context";
 import FavoritesContext from "../../context-store/favorites-context";
+import useDeploy from "../hooks/useDeploy";
+import PlaceInfo from "../components/PlaceInfo";
 
 const CountryPage = ({ countryDetails, listOfCities }) => {
   const [isInitial, setIsInitial] = useState(false);
@@ -22,7 +24,8 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
     useContext(FavoritesContext);
   const countryRef = useRef();
   const router = useRouter();
-  const { isAuth } = useContext(AuthContext);
+  const { isAuth, user } = useContext(AuthContext);
+  const { userCandDeploy } = useDeploy(user, countryDetails, "countryID");
 
   const countryIsInFavorites = () => {
     return allFavorites.some(
@@ -41,24 +44,31 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
   }, [userId]);
 
   const favoritesHandler = () => {
-    console.log(countryIsInFavorites());
     if (countryIsInFavorites()) {
-      let data = {
-        place: countryDetails.fields["Name"],
-        user_id: userId,
-      };
-      updateFavorites("remove", "/api/favorites/removeFavorite", data, "POST");
+      updateFavorites(
+        "remove",
+        "/api/favorites/removeFavorite",
+        {
+          place: countryDetails.fields["Name"],
+          user_id: userId,
+        },
+        "POST"
+      );
       setText("ADD TO FAVORITES");
       return;
     }
 
-    let data = {
-      place: countryDetails.fields["Name"],
-      url: `${countryDetails.id}`,
-      user_id: userId,
-    };
     setText("REMOVE FROM FAVORITES");
-    updateFavorites("add", "/api/favorites/favorite", data, "POST");
+    updateFavorites(
+      "add",
+      "/api/favorites/favorite",
+      {
+        place: countryDetails.fields["Name"],
+        url: `${countryDetails.id}`,
+        user_id: userId,
+      },
+      "POST"
+    );
   };
 
   useEffect(() => {
@@ -80,7 +90,10 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
       <div ref={countryRef}>
         <h1>{countryDetails.fields["Name"]}</h1>
         {isAuth && (
-          <Button type="blue" onClick={favoritesHandler}>
+          <Button
+            type={`${userCandDeploy ? "disabled" : "blue"}`}
+            onClick={favoritesHandler}
+          >
             <FavouriteIcon />
             {text}
           </Button>
@@ -106,52 +119,36 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
                 )}
               </span>
             </div>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>Capital City:</span>
-              <span className={classes.descriptionValue}>
-                {countryDetails.fields["Capital City"]}
-              </span>
-            </div>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>GDP ($ Billion):</span>
-              <span className={classes.descriptionValue}>
-                {countryDetails.fields["GDP ($ Billion)"]}
-              </span>
-            </div>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>GDP/Capita:</span>
-              <span className={classes.descriptionValue}>
-                {countryDetails.fields["GDP/Capita"]}
-              </span>
-            </div>
+            <PlaceInfo
+              description="Capital City:"
+              value={countryDetails.fields["Capital City"]}
+            />
+            <PlaceInfo
+              description="GDP ($ Billion):"
+              value={countryDetails.fields["GDP ($ Billion)"]}
+            />
+            <PlaceInfo
+              description="GDP/Capita:"
+              value={countryDetails.fields["GDP/Capita"]}
+            />
           </div>
           <div className={classes.row}>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>
-                Population (Millions):
-              </span>
-              <span className={classes.descriptionValue}>
-                {countryDetails.fields["Population"]}
-              </span>
-            </div>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>ISO Alpha-2:</span>
-              <span className={classes.descriptionValue}>
-                {countryDetails.fields["ISO Alpha-2"]}
-              </span>
-            </div>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>ISO Alpha-3:</span>
-              <span className={classes.descriptionValue}>
-                {countryDetails.fields["ISO Alpha-3"]}
-              </span>
-            </div>
-            <div className={classes.descriptionWrapper}>
-              <span className={classes.description}>Dialing Code:</span>
-              <span className={classes.descriptionValue}>
-                {countryDetails.fields["Dialing Code"]}
-              </span>
-            </div>
+            <PlaceInfo
+              description="Population (Millions):"
+              value={countryDetails.fields["Population"]}
+            />
+            <PlaceInfo
+              description="ISO Alpha-2:"
+              value={countryDetails.fields["ISO Alpha-2"]}
+            />
+            <PlaceInfo
+              description="ISO Alpha-3:"
+              value={countryDetails.fields["ISO Alpha-3"]}
+            />
+            <PlaceInfo
+              description="Dialing Code:"
+              value={countryDetails.fields["Dialing Code"]}
+            />
           </div>
         </div>
         <div className={classes.linksWrapper}>

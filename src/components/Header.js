@@ -38,7 +38,9 @@ const Header = () => {
   };
 
   const connectToMetamask = async () => {
-    const { walletAddress, token, userData } = await connectMetamaskHandler();
+    const { walletAddress, token, userData } =
+      await connectMetamaskHandler(`Hi there from DELOCAL.XZY! Sign this message to prove you have access to this wallet and we'll log you in. This won't cost you any Ether.
+    To stop hackers using your wallet, here's a unique message ID they can't guess:`);
     setAddress(walletAddress || "");
     login(token);
     userData && setUserData(userData);

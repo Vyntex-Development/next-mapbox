@@ -75,6 +75,7 @@ const Form = ({
       null,
       "GET"
     );
+
     setResults(features);
     setIsVisble(true);
     features.length === 0 && setIsVisble(false);
@@ -131,7 +132,6 @@ const Form = ({
   };
 
   const splittedArray = (arr) => {
-    console.log(arr);
     const splittedArray = arr.split(",");
     return splittedArray[splittedArray.length - 1];
   };

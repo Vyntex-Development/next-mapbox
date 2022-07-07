@@ -23,7 +23,7 @@ const Autocomplete = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [deploy, setDeploy] = useState(false);
-  const { login, isAuth, recommendation, onRecommendation } =
+  const { login, isAuth, recommendation, onRecommendation, user } =
     useContext(AuthContext);
   const [address, setAddress] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -39,7 +39,7 @@ const Autocomplete = () => {
     reset,
     destinationType,
     setMapboxSearch,
-  } = useMapbox();
+  } = useMapbox(".json?types=country&types=place&access_token=");
 
   const deployHandler = () => {
     !isAuth ? setShowModal(true) : setShowAddressModal(true);
@@ -67,10 +67,10 @@ const Autocomplete = () => {
   }, [recommendation]);
 
   useEffect(() => {
-    if (searchResult) {
+    if (searchResult && (user.path === "/" || !user.path)) {
       setOptions(true);
-      console.log(airtableData);
       let { city, country } = airtableData;
+      console.log(airtableData);
       if (place && place.place_type[0] === "country") {
         setCountryOption({
           name: country.fields["Name"],
@@ -86,7 +86,7 @@ const Autocomplete = () => {
             ? `${getRecommendedCity(recommendation)} - ${
                 airtableData.country_name
               }`
-            : `${place.text} - ${airtableData.country_name}`,
+            : `${place?.text} - ${airtableData.country_name}`,
           flag: airtableData.country.records?.[0].fields["Flag"],
           txt: "deploy",
         });
@@ -135,7 +135,6 @@ const Autocomplete = () => {
   }, [searchResult]);
 
   const searchViaReccomendation = async (reccomentdation) => {
-    console.log(reccomentdation);
     let cityExist;
     let id;
     const response = await getID(
@@ -171,6 +170,7 @@ const Autocomplete = () => {
         searchData,
         "POST"
       );
+
       response && setSearchResult(true);
       setAirtableData(response);
       setIsLoading(false);
@@ -380,7 +380,7 @@ const Autocomplete = () => {
         show={showAddressModal}
         deploy={deploy}
         searchValue={search}
-        destinationType={destinationType}
+        desType={destinationType}
       />
       <Modal
         onClose={() => setShowModal(false)}
