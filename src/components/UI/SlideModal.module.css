@@ -344,6 +344,11 @@
   cursor: pointer;
 }
 
+.dashboardBody .Verified {
+  color: #5568f1;
+  font-weight: 600;
+}
+
 @keyframes slidein {
   from {
     left: -9999px;

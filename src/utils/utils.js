@@ -190,8 +190,6 @@ export const connectMetamaskHandler = async (str) => {
   });
   const { data: userData, token } = await walletResponse.json();
 
-  console.log(userData);
-
   return {
     walletAddress,
     token,
@@ -230,6 +228,34 @@ export const setNewAddress = async (search, walletAddress, user) => {
   return userAddress;
 };
 
+export const setVerifyUser = async (walletAddress) => {
+  const response = await fetch("/api/auth/verify", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      walletAddress,
+    }),
+  });
+  const { token } = await response.json();
+  return token;
+};
+
+export const setTwitterHandle = async (twitterHandle, walletAddress) => {
+  const response = await fetch("/api/auth/twitter", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      twitterHandle,
+      walletAddress,
+    }),
+  });
+  const { tweterHandle } = await response.json();
+};
+
 export const getclientID = async () => {
   const id = await fetchDataFromTwitter(
     `https://api.twitter.com/2/users/by/username/viamirror`
@@ -245,7 +271,6 @@ export const getMentions = async (id) => {
 };
 
 export const filterMentions = async (mentions, walletAddress) => {
-  // console.log(mentions);
   let sig =
     "0x703789f4eb4aa7eacf66bafbedae2939240b025e7de7445e972e3e853c395b3c1dc66882cb7c847282ea04c892839bc0b886cc0c0aa89111b97bfc443a6aa8541c";
   const mention = mentions.find((mention) => mention.text.includes(sig));

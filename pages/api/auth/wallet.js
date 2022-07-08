@@ -7,9 +7,13 @@ const walletApi = async (req, res) => {
     const { walletAddress, signature, nonce } = req.body;
     const signerAddress = ethers.utils.verifyMessage(nonce, signature);
 
+    console.log(signature, "signature");
+
     if (signerAddress !== walletAddress) {
       throw new Error("wrong signature");
     }
+
+    await supabase.from("users").update({ signature }).match({ walletAddress });
 
     let { data, error } = await supabase
       .from("users")
@@ -17,20 +21,6 @@ const walletApi = async (req, res) => {
       .eq("walletAddress", walletAddress)
       .eq("nonce", nonce)
       .single();
-
-    // let { data : signatureCheckData , } = await supabase
-    // .from("users")
-    // .select("nonce")
-    // .eq("walletAddress", walletAddress);
-
-    // if (signatureCheckData.length > 0) {
-    //   let { data, error } = await supabase
-    //     .from("users")
-    //     .update({ signature })
-    //     .match({ walletAddress });
-    // } else {
-    //   let { data, error } = await supabase.from("users").insert({ signature });
-    // }
 
     const token = jwt.sign(
       {

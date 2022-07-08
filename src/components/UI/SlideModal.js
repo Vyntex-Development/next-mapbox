@@ -11,6 +11,7 @@ import {
   shorten,
   setNewAddress,
   connectMetamaskHandler,
+  setTwitterHandle,
 } from "../../utils/utils";
 import { infoConfig } from "../../config/formConfig";
 import Form from "../Form";
@@ -39,6 +40,7 @@ const SildeModal = ({
   const [usernameIsValid, setUsernameIsValid] = useState(false);
   const [twitterInputError, setTwitterInputError] = useState("");
   const [twitterUsername, setTwitterUsername] = useState("");
+  const [verified, setVerified] = useState(false);
   const router = useRouter();
   const {
     destinationChangeHadler,
@@ -103,16 +105,13 @@ const SildeModal = ({
       return;
     }
 
-    connectMetamaskHandler;
-
+    // connectMetamaskHandler;
+    setTwitterHandle(twitterUsername, user.walletAddress);
     const { token, userData } =
       await connectMetamaskHandler(`Hi there from DELOCAL.XZY! Sign this message to prove you have access to this wallet and we'll log you in. This won't cost you any Ether.
     To stop hackers using your wallet, here's a unique message ID they can't guess: ${twitterUsername}`);
     userData && setNavigate(true);
     userData && setUsernameIsValid(true);
-    // twttr.events.bind("click", function (ev) {
-    //   console.log(ev);
-    // });
   };
 
   const backDropHandler = (e) => {
@@ -137,6 +136,10 @@ const SildeModal = ({
     window.addEventListener("click", backDropHandler);
     return () => window.removeEventListener("click", backDropHandler);
   }, []);
+
+  const setVerifyHandler = (verified) => {
+    setVerified(verified);
+  };
 
   const searchHandler = async () => {
     if (!isChecked) {
@@ -219,6 +222,16 @@ const SildeModal = ({
               !changeAddress ? (
               <div className={classes.dashboardLastStage}>
                 <div className={classes.dashboardInfoWrapper}>
+                  <h4>Account status:</h4>
+                  <span
+                    className={`${
+                      verified || user.verified ? classes.Verified : ""
+                    }`}
+                  >
+                    {verified || user.verified ? "Verified" : "Not verified"}
+                  </span>
+                </div>
+                <div className={classes.dashboardInfoWrapper}>
                   <h4>User ID:</h4>
                   <span>{walletAddress || user?.walletAddress}</span>
                 </div>
@@ -242,6 +255,9 @@ const SildeModal = ({
                 </div>
                 <div>
                   <h4>Saved DAOs:</h4>
+                  {allFavorites.length === 0 && (
+                    <span>No currently saved DAOS</span>
+                  )}
                   {allFavorites.length > 0 &&
                     allFavorites.map((fav) => {
                       return (
@@ -256,17 +272,23 @@ const SildeModal = ({
                       );
                     })}
                 </div>
-                <div className={classes.LinkWrapper}>
-                  <TwitterVerification
-                    user={user}
-                    onChange={onChangeHandler}
-                    username={twitterUsername}
-                    onClick={onLinkTwitterHandle}
-                    twitterInputError={twitterInputError}
-                    usernameIsValid={usernameIsValid}
-                    navigate={navigate}
-                  />
-                </div>
+                {!verified && (
+                  <div className={classes.LinkWrapper}>
+                    <div className={classes.dashboardInfoWrapper}>
+                      <h4>Tweeter account:</h4>
+                      <TwitterVerification
+                        user={user}
+                        onChange={onChangeHandler}
+                        username={twitterUsername}
+                        onClick={onLinkTwitterHandle}
+                        twitterInputError={twitterInputError}
+                        usernameIsValid={usernameIsValid}
+                        navigate={navigate}
+                        setVerify={setVerifyHandler}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="wrapper">

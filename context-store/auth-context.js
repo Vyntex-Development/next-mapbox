@@ -108,6 +108,8 @@ export const AuthContextProvider = ({ children }) => {
       const { user_metadata } = jwt.decode(jwtToken);
       const { user } = user_metadata;
 
+      console.log(user);
+
       let timeOfUserRegistration = new Date(user.created_at) / 1000;
       let currentTime = new Date().getTime() / 1000; //1440516958
       let minutes = Math.floor((currentTime - timeOfUserRegistration) / 60);
@@ -117,6 +119,7 @@ export const AuthContextProvider = ({ children }) => {
         walletAddress: user?.walletAddress,
         id: user?.id,
         created_at: user.created_at,
+        verified: user.verified,
       };
       setUserId(user?.id);
       if (

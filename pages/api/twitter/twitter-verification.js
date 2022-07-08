@@ -6,6 +6,7 @@ import {
 
 const handler = async (req, res) => {
   const { walletAddress } = req.query;
+  console.log(walletAddress);
   let error;
 
   const { id } = await getclientID();

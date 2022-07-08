@@ -44,7 +44,7 @@
 
 .InputWrapper span {
   position: absolute;
-  color: rgb(226, 140, 140);
+  color: rgb(226, 140, 140) !important;
   left: -1rem;
   top: 3rem;
   font-size: 0.9rem;
