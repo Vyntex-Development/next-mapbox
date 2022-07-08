@@ -24,6 +24,21 @@ const fetchData = async (URL, data, method) => {
   return responseData;
 };
 
+const fetchDataFromTwitter = async (url) => {
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Fetch wasn't successful");
+  }
+  const { data } = await response.json();
+  return data;
+};
+
 export const getAllCountries = async () => {
   let listOfAllCountries = [];
   let offset = null;
@@ -213,4 +228,26 @@ export const setNewAddress = async (search, walletAddress, user) => {
   });
   const { address: userAddress } = await response.json();
   return userAddress;
+};
+
+export const getclientID = async () => {
+  const id = await fetchDataFromTwitter(
+    `https://api.twitter.com/2/users/by/username/viamirror`
+  );
+  return id;
+};
+
+export const getMentions = async (id) => {
+  const mentions = await fetchDataFromTwitter(
+    `https://api.twitter.com/2/users/${id}/mentions`
+  );
+  return mentions;
+};
+
+export const filterMentions = async (mentions, walletAddress) => {
+  // console.log(mentions);
+  let sig =
+    "0x703789f4eb4aa7eacf66bafbedae2939240b025e7de7445e972e3e853c395b3c1dc66882cb7c847282ea04c892839bc0b886cc0c0aa89111b97bfc443a6aa8541c";
+  const mention = mentions.find((mention) => mention.text.includes(sig));
+  return mention;
 };

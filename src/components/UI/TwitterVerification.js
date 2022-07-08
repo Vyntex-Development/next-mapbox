@@ -21,15 +21,16 @@ const TwitterVerification = ({
         "width=600,height=600"
       );
     setVerifyButton(true);
-    // const reponse = await fetch(
-    //   `https://api.twitter.com/2/users/by/username/${username}?bearer_token=${TWITTER_BEARER_TOKEN}`
-    // );
-    // const data = await reponse.json();
-    // console.log(data);
   };
 
-  const verifyAccountHandler = () => {
-    console.log("verify");
+  const verifyAccountHandler = async () => {
+    const reponse = await fetch(
+      `/api/twitter/twitter-verification?walletAddress=${user.walletAddress}`
+    );
+    const { mention } = await reponse.json();
+    if (mention) {
+      console.log("verify");
+    }
   };
 
   return (
