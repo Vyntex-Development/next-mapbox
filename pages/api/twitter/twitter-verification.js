@@ -5,13 +5,14 @@ import {
 } from "../../../src/utils/utils";
 
 const handler = async (req, res) => {
-  const { walletAddress } = req.query;
-  console.log(walletAddress);
+  const { signature } = req.query;
   let error;
+  let mention;
 
   const { id } = await getclientID();
   const mentions = await getMentions(id);
-  const mention = await filterMentions(mentions, walletAddress);
+  mention = await filterMentions(mentions, signature);
+
   if (!mention === {}) {
     res.status(400).json({ error: error.message });
   } else {

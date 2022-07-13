@@ -23,8 +23,14 @@ const Autocomplete = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [deploy, setDeploy] = useState(false);
-  const { login, isAuth, recommendation, onRecommendation, user } =
-    useContext(AuthContext);
+  const {
+    login,
+    isAuth,
+    recommendation,
+    onRecommendation,
+    user,
+    enableDeploy,
+  } = useContext(AuthContext);
   const [address, setAddress] = useState(null);
   const [userData, setUserData] = useState(null);
   const {
@@ -40,6 +46,8 @@ const Autocomplete = () => {
     destinationType,
     setMapboxSearch,
   } = useMapbox(".json?types=country&types=place&access_token=");
+
+  console.log(enableDeploy);
 
   const deployHandler = () => {
     !isAuth ? setShowModal(true) : setShowAddressModal(true);
@@ -70,7 +78,7 @@ const Autocomplete = () => {
     if (searchResult && (user.path === "/" || !user.path)) {
       setOptions(true);
       let { city, country } = airtableData;
-      console.log(airtableData);
+
       if (place && place.place_type[0] === "country") {
         setCountryOption({
           name: country.fields["Name"],
@@ -106,7 +114,6 @@ const Autocomplete = () => {
         (!place && recommendation)
       ) {
         if (airtableData.value === false) return;
-        console.log(recommendation, country);
         setCityOption({
           name: recommendation
             ? `${getRecommendedCity(recommendation)} - ${
@@ -361,7 +368,15 @@ const Autocomplete = () => {
             </div>
 
             {cityOption.txt !== "view" ? (
-              <Button id="deploy" onClick={deployHandler} type="yellow">
+              <Button
+                id="deploy"
+                onClick={deployHandler}
+                type={`${
+                  (user && user?.verified) || enableDeploy
+                    ? "yellow"
+                    : "disabled"
+                }`}
+              >
                 {cityOption.txt.toUpperCase()}
               </Button>
             ) : (

@@ -1,25 +1,32 @@
 const TWITTER_BEARER_TOKEN = process.env.TWITTER_BEARER_TOKEN;
 import classes from "./TwitterVerification.module.css";
 import Button from "./Button";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { setVerifyUser } from "../../utils/utils";
+import AuthContext from "../../../context-store/auth-context";
+import Spinner from "./Spinner";
 
 const TwitterVerification = ({
   onChange,
-  user,
   usernameIsValid,
   username,
   onClick,
   twitterInputError,
   navigate,
   setVerify,
+  updatedSignature,
 }) => {
   const [verifyButton, setVerifyButton] = useState(false);
-  // const [verified, setVerify] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
+  const [posted, setPosted] = useState(false);
+  const [error, setError] = useState("");
   const openTwitter = async () => {
     navigate &&
       window.open(
-        `https://twitter.com/intent/tweet?hashtags=delocalize&original_referer=https%3A%2F%2Fsaurabhnemade.github.io%2F&ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5Edelocalize&text=Verifying%20my%20identity%20for%20%40delocalize%20with%20sig%3A%20%20${user.walletAddress}%20&url=https%3A%2F%2Fb92.rs%20`,
+        `https://twitter.com/intent/tweet?hashtags=vyntex_&original_referer=https%3A%2F%2Fsaurabhnemade.github.io%2F&ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5Evyntex_&text=Verifying%20my%20identity%20for%20%40vyntex_%20with%20sig%3A%20%20${
+          updatedSignature || user.signature
+        }%20`,
         "popup",
         "width=600,height=600"
       );
@@ -27,22 +34,53 @@ const TwitterVerification = ({
   };
 
   const verifyAccountHandler = async () => {
-    const reponse = await fetch(
-      `/api/twitter/twitter-verification?walletAddress=${user.walletAddress}`
-    );
-    const { mention } = await reponse.json();
-    if (!mention) {
-      setVerify(false);
-      return;
-    }
-    setVerify(true);
-    const data = await setVerifyUser(user.walletAddress);
-    let parsedToken = JSON.stringify(data);
-    localStorage.setItem("token", parsedToken);
+    let userMention;
+    const getMentionAndUser = async () => {
+      setLoading(true);
+      setError("");
+      const reponse = await fetch(
+        `/api/twitter/twitter-verification?signature=${
+          updatedSignature || user.signature
+        }`
+      );
+      const { mention } = await reponse.json();
+      userMention = mention;
+
+      if (!userMention) {
+        setVerify(false);
+        setError("Something went wrong, verify again");
+        setPosted(false);
+        setLoading(false);
+        setVerifyButton(false);
+        return;
+      }
+
+      const userResponse = await fetch(
+        `/api/twitter/twitter-user?id=${userMention.author_id}`
+      );
+      let { user: twiiterUser } = await userResponse.json();
+      const { username: twitterUsername } = twiiterUser;
+
+      if (username.toLowerCase() !== "@" + twitterUsername.toLowerCase()) {
+        setError("Username is not correct");
+        return;
+      }
+
+      setError("");
+      setLoading(false);
+      setVerify(true);
+      setPosted(true);
+      const data = await setVerifyUser(user.walletAddress);
+      let parsedToken = JSON.stringify(data);
+      localStorage.setItem("token", parsedToken);
+    };
+
+    setTimeout(getMentionAndUser, 6000);
   };
 
   return (
     <div className={classes.InputWrapper}>
+      {loading && <Spinner />}
       <input
         id="twitter"
         name="twitter"
@@ -56,7 +94,7 @@ const TwitterVerification = ({
           Link Twitter
         </Button>
       )}
-      {usernameIsValid && !verifyButton && (
+      {usernameIsValid && !verifyButton && !posted && (
         <a onClick={openTwitter} id="post-button">
           Post to Tweeter
         </a>
@@ -66,6 +104,7 @@ const TwitterVerification = ({
           Verify account
         </Button>
       )}
+      {error && <span>{error}</span>}
     </div>
   );
 };

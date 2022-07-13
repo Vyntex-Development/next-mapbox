@@ -41,6 +41,7 @@ const SildeModal = ({
   const [twitterInputError, setTwitterInputError] = useState("");
   const [twitterUsername, setTwitterUsername] = useState("");
   const [verified, setVerified] = useState(false);
+  const [updatedSignature, setUpdatedSignature] = useState("");
   const router = useRouter();
   const {
     destinationChangeHadler,
@@ -61,7 +62,12 @@ const SildeModal = ({
     minutesDiff,
     updateAddress,
     onRecommendation,
+    onDeploy,
   } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (verified) closeModalHandler();
+  }, [verified]);
 
   const modalWrapperRef = useRef();
 
@@ -107,11 +113,12 @@ const SildeModal = ({
 
     // connectMetamaskHandler;
     setTwitterHandle(twitterUsername, user.walletAddress);
-    const { token, userData } =
+    const { userData, signature } =
       await connectMetamaskHandler(`Hi there from DELOCAL.XZY! Sign this message to prove you have access to this wallet and we'll log you in. This won't cost you any Ether.
     To stop hackers using your wallet, here's a unique message ID they can't guess: ${twitterUsername}`);
     userData && setNavigate(true);
     userData && setUsernameIsValid(true);
+    setUpdatedSignature(signature);
   };
 
   const backDropHandler = (e) => {
@@ -139,6 +146,9 @@ const SildeModal = ({
 
   const setVerifyHandler = (verified) => {
     setVerified(verified);
+    if (verified) {
+      onDeploy(true);
+    }
   };
 
   const searchHandler = async () => {
@@ -225,10 +235,10 @@ const SildeModal = ({
                   <h4>Account status:</h4>
                   <span
                     className={`${
-                      verified || user.verified ? classes.Verified : ""
+                      verified || user?.verified ? classes.Verified : ""
                     }`}
                   >
-                    {verified || user.verified ? "Verified" : "Not verified"}
+                    {verified || user?.verified ? "Verified" : "Not verified"}
                   </span>
                 </div>
                 <div className={classes.dashboardInfoWrapper}>
@@ -272,12 +282,11 @@ const SildeModal = ({
                       );
                     })}
                 </div>
-                {!verified && (
+                {!verified && !user.verified && (
                   <div className={classes.LinkWrapper}>
                     <div className={classes.dashboardInfoWrapper}>
                       <h4>Tweeter account:</h4>
                       <TwitterVerification
-                        user={user}
                         onChange={onChangeHandler}
                         username={twitterUsername}
                         onClick={onLinkTwitterHandle}
@@ -285,6 +294,7 @@ const SildeModal = ({
                         usernameIsValid={usernameIsValid}
                         navigate={navigate}
                         setVerify={setVerifyHandler}
+                        updatedSignature={updatedSignature}
                       />
                     </div>
                   </div>

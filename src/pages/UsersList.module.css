@@ -1,0 +1,35 @@
+.UsersList {
+  width: 100%;
+  display: grid;
+  grid-row-gap: 8px;
+  padding: 1.5rem 3.89em;
+}
+
+.UserListWrapper {
+  margin: auto 0;
+}
+
+.UsersList li {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 150px 30% 50% 150px;
+}
+
+.UserListWrapper ul:nth-of-type(1) span {
+  color: #1a1745;
+  font-weight: 700;
+}
+
+.UserListWrapper ul:nth-of-type(2) li {
+  background-color: #f2f5ff93;
+  padding: 0.5rem 0;
+}
+
+.Verified {
+  color: #1c10c5;
+  font-weight: 700;
+}
+
+.NotVerified {
+  color: #a4a2c4;
+}

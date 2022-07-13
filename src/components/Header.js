@@ -18,6 +18,7 @@ const Header = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [address, setAddress] = useState(null);
+  const [userSignature, setSignature] = useState(null);
   const [userData, setUserData] = useState(null);
   const { login, isAuth, user } = useContext(AuthContext);
   const { allFavorites } = useContext(FavoritesContext);
@@ -38,10 +39,11 @@ const Header = () => {
   };
 
   const connectToMetamask = async () => {
-    const { walletAddress, token, userData } =
+    const { walletAddress, token, userData, signature } =
       await connectMetamaskHandler(`Hi there from DELOCAL.XZY! Sign this message to prove you have access to this wallet and we'll log you in. This won't cost you any Ether.
     To stop hackers using your wallet, here's a unique message ID they can't guess:`);
     setAddress(walletAddress || "");
+    setSignature(signature || "");
     login(token);
     userData && setUserData(userData);
   };
@@ -82,6 +84,7 @@ const Header = () => {
       {isAuth && (
         <SildeModal
           onClose={() => setShowAddressModal(false)}
+          userSignature={userSignature}
           show={showAddressModal}
           address={address}
           onSubmit={onSubmitHandler}

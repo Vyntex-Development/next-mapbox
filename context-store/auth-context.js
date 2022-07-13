@@ -11,8 +11,10 @@ const AuthContext = createContext({
   recommendation: "",
   minutesDiff: 0,
   hasRecommendation: false,
+  enableDeploy: false,
   login: (token) => {},
   logout: () => {},
+  onDeploy: () => {},
 });
 
 export const AuthContextProvider = ({ children }) => {
@@ -21,6 +23,7 @@ export const AuthContextProvider = ({ children }) => {
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState(false);
+  const [enableDeploy, setEnableDeploy] = useState(false);
   const [hasRecommendation, setHasRecommendation] = useState(false);
   const [recommendation, setRecommendation] = useState("");
   const [minutesDiff, setMinutesDiff] = useState(0);
@@ -45,6 +48,8 @@ export const AuthContextProvider = ({ children }) => {
       walletAddress: user_metadata?.user?.walletAddress,
       address: user_metadata?.user?.address,
       id: user_metadata?.user?.id,
+      verified: user_metadata?.user?.verified,
+      signature: user_metadata?.user?.signature,
     });
   };
 
@@ -71,6 +76,7 @@ export const AuthContextProvider = ({ children }) => {
   const updateAddressHandler = ({ address, path }) => {
     let userData = {
       walletAddress: user?.walletAddress,
+      signature: user?.signature,
       id: user?.id,
       created_at: user.created_at,
     };
@@ -82,15 +88,21 @@ export const AuthContextProvider = ({ children }) => {
     localStorage.setItem("update", true);
   };
 
+  const onDeployHandler = () => {
+    setEnableDeploy(true);
+  };
+
   const authValue = {
     login: loginHandler,
     logout: logoutHandler,
     submitAddress: submitAddressHandler,
     updateAddress: updateAddressHandler,
     onRecommendation: onRecommendationHandler,
+    onDeploy: onDeployHandler,
     recommendation: recommendation,
     token: token,
     isAuth: isAuth,
+    enableDeploy: enableDeploy,
     user: user,
     userId: userId,
     hasAddress: hasAddress,
@@ -108,8 +120,6 @@ export const AuthContextProvider = ({ children }) => {
       const { user_metadata } = jwt.decode(jwtToken);
       const { user } = user_metadata;
 
-      console.log(user);
-
       let timeOfUserRegistration = new Date(user.created_at) / 1000;
       let currentTime = new Date().getTime() / 1000; //1440516958
       let minutes = Math.floor((currentTime - timeOfUserRegistration) / 60);
@@ -117,6 +127,7 @@ export const AuthContextProvider = ({ children }) => {
 
       let userData = {
         walletAddress: user?.walletAddress,
+        signature: user?.signature,
         id: user?.id,
         created_at: user.created_at,
         verified: user.verified,
