@@ -35,8 +35,8 @@ const TwitterVerification = ({
 
   const verifyAccountHandler = async () => {
     let userMention;
+    setLoading(true);
     const getMentionAndUser = async () => {
-      setLoading(true);
       setError("");
       const reponse = await fetch(
         `/api/twitter/twitter-verification?signature=${
@@ -68,11 +68,11 @@ const TwitterVerification = ({
 
       setError("");
       setLoading(false);
-      setVerify(true);
       setPosted(true);
       const data = await setVerifyUser(user.walletAddress);
       let parsedToken = JSON.stringify(data);
       localStorage.setItem("token", parsedToken);
+      setVerify(true);
     };
 
     setTimeout(getMentionAndUser, 6000);

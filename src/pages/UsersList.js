@@ -11,6 +11,7 @@ const UsersList = ({ users }) => {
   useEffect(() => {
     const resetUsers = async () => {
       let { data: users } = await supabase.from("users").select("*");
+      console.log(users);
       setUsers(users);
     };
 
