@@ -1,6 +1,24 @@
 import classes from "./UsersList.module.css";
+import { useState, useEffect, useContext } from "react";
+import AuthContext from "../../context-store/auth-context";
+import supabase from "../supabase/supabase";
 
 const UsersList = ({ users }) => {
+  const [appUsers, setUsers] = useState(users);
+
+  const { address, enableDeploy } = useContext(AuthContext);
+
+  useEffect(() => {
+    const resetUsers = async () => {
+      let { data: users } = await supabase.from("users").select("*");
+      setUsers(users);
+    };
+
+    if (address || enableDeploy) {
+      resetUsers();
+    }
+  }, [address, enableDeploy]);
+
   return (
     <>
       <div className={`${classes.UserListWrapper}`}>
@@ -13,7 +31,7 @@ const UsersList = ({ users }) => {
           </li>
         </ul>
         <ul className={`${classes.UsersList} container`}>
-          {users.map(
+          {appUsers.map(
             ({ id, address, twitterHandle, verified, walletAddress }) => {
               return (
                 <li key={id}>

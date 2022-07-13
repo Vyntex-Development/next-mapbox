@@ -100,6 +100,7 @@ export const AuthContextProvider = ({ children }) => {
     onRecommendation: onRecommendationHandler,
     onDeploy: onDeployHandler,
     recommendation: recommendation,
+    address: address,
     token: token,
     isAuth: isAuth,
     enableDeploy: enableDeploy,
