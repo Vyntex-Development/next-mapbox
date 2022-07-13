@@ -47,8 +47,6 @@ const Autocomplete = () => {
     setMapboxSearch,
   } = useMapbox(".json?types=country&types=place&access_token=");
 
-  console.log(enableDeploy);
-
   const deployHandler = () => {
     !isAuth ? setShowModal(true) : setShowAddressModal(true);
     !isAuth ? setDeploy(true) : setDeploy(true);
