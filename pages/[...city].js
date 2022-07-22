@@ -5,6 +5,7 @@ import { getAllCities } from "../src/utils/utils";
 
 const City = ({ data }) => {
   const { city, country } = data;
+  console.log(city);
   return (
     <>
       <SEO title={`${country.fields["Name"]} - ${city.fields.city}`}></SEO>

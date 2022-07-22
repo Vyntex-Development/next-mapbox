@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/router";
-import { getCountryCoordinates } from "../utils/utils";
+import { getDestinationCoordinates } from "../utils/utils";
 import classes from "./CountryPage.module.css";
 import Button from "../components/UI/Button";
 import LinkButton from "../components/UI/Link";
@@ -76,7 +76,7 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
     setContainerHeight(countryRef.current.clientHeight);
     let countryName = countryDetails.fields["Name"].split(" ")[0].toLowerCase();
     const getCoordinates = async () => {
-      let coordinates = await getCountryCoordinates(countryName);
+      let coordinates = await getDestinationCoordinates(countryName);
       setCoordinates({
         lat: coordinates[1],
         lng: coordinates[0],

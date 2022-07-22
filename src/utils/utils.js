@@ -96,7 +96,7 @@ export const getSingleDestiantion = async (URL, data, method) => {
   return singleDestination ? singleDestination : [];
 };
 
-export const getCountryCoordinates = async (destination) => {
+export const getDestinationCoordinates = async (destination) => {
   const coordinates = await fetchData(
     `https://api.mapbox.com/geocoding/v5/mapbox.places/${destination}.json?access_token=${MAPBOX_TOKEN_PRODUCTION}`,
     null,

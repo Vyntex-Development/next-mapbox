@@ -1,5 +1,6 @@
 import CustomMap from "../components/CustomMap";
 import { useState, useEffect, useContext } from "react";
+import { getDestinationCoordinates } from "../utils/utils";
 import classes from "./CityPage.module.css";
 import Button from "../components/UI/Button";
 import LinkButton from "../components/UI/Link";
@@ -10,14 +11,25 @@ import PlaceInfo from "../components/PlaceInfo";
 import useDeploy from "../hooks/useDeploy";
 
 const CityPage = ({ cityDetails, countryDetails }) => {
+  console.log(cityDetails);
   const [isInitial, setIsInitial] = useState(false);
   const [text, setText] = useState("");
+  const [coordinates, setCoordinates] = useState({});
   const { allFavorites, updateFavorites, userId } =
     useContext(FavoritesContext);
   const { isAuth, user } = useContext(AuthContext);
   const { userCandDeploy } = useDeploy(user, countryDetails, "cityID");
   useEffect(() => {
     setIsInitial(true);
+    let cityName = cityDetails.fields["city"].toLowerCase();
+    const getCoordinates = async () => {
+      let coordinates = await getDestinationCoordinates(cityName);
+      setCoordinates({
+        lat: coordinates[1],
+        lng: coordinates[0],
+      });
+    };
+    getCoordinates();
   }, []);
 
   const cityIsInFavorites = () => {
@@ -108,14 +120,7 @@ const CityPage = ({ cityDetails, countryDetails }) => {
         </div>
       </div>
       {isInitial && (
-        <CustomMap
-          zoom={12}
-          height="480"
-          coordinates={{
-            lng: cityDetails.fields.lng,
-            lat: cityDetails.fields.lat,
-          }}
-        />
+        <CustomMap zoom={12} height="480" coordinates={coordinates} />
       )}
     </div>
   );
