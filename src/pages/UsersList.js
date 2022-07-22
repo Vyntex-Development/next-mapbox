@@ -2,6 +2,7 @@ import classes from "./UsersList.module.css";
 import { useState, useEffect, useContext } from "react";
 import AuthContext from "../../context-store/auth-context";
 import supabase from "../supabase/supabase";
+import Link from "../components/UI/Link";
 
 const UsersList = ({ users }) => {
   const [appUsers, setUsers] = useState(users);
@@ -36,7 +37,9 @@ const UsersList = ({ users }) => {
             ({ id, address, twitterHandle, verified, walletAddress }) => {
               return (
                 <li key={id}>
-                  <span>{twitterHandle}</span>
+                  <Link href={`https://twitter.com/${twitterHandle}`}>
+                    {twitterHandle}
+                  </Link>
                   <span>{walletAddress}</span>
                   <span>{address}</span>
                   <span

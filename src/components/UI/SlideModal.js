@@ -1,7 +1,8 @@
 import ReactDOM from "react-dom";
 import LinkButton from "./Link";
 import { useState, useEffect, useRef, useContext } from "react";
-import { twitterInputConfig } from "../../config/formConfig";
+//import { twitterInputConfig } from "../../config/formConfig";
+import supabase from "../../supabase/supabase";
 import AuthContext from "../../../context-store/auth-context";
 import classes from "./SlideModal.module.css";
 import AvatarIcon from "../../assets/images/AvatarIcon";
@@ -41,6 +42,7 @@ const SildeModal = ({
   const [twitterInputError, setTwitterInputError] = useState("");
   const [twitterUsername, setTwitterUsername] = useState("");
   const [verified, setVerified] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
   const [updatedSignature, setUpdatedSignature] = useState("");
   const router = useRouter();
   const {
@@ -112,6 +114,18 @@ const SildeModal = ({
     }
 
     // connectMetamaskHandler;
+
+    // check if handle exists in base
+
+    let { data: users } = await supabase.from("users").select("*");
+
+    if (users.some((user) => user.twitterHandle === twitterUsername)) {
+      setUsernameError(
+        "User already exists. Try with different twitter handle"
+      );
+      return;
+    }
+    setUsernameError(false);
     setTwitterHandle(twitterUsername, user.walletAddress);
     const { userData, signature } =
       await connectMetamaskHandler(`Hi there from DELOCAL.XZY! Sign this message to prove you have access to this wallet and we'll log you in. This won't cost you any Ether.
@@ -132,6 +146,7 @@ const SildeModal = ({
       !e.target.closest("#twitter-link") &&
       !e.target.closest("#verify-button") &&
       !e.target.closest("#post-button")
+      // !e.target.closest("#submit")
     ) {
       onClose();
       setError(false);
@@ -296,6 +311,7 @@ const SildeModal = ({
                         navigate={navigate}
                         setVerify={setVerifyHandler}
                         updatedSignature={updatedSignature}
+                        usernameError={usernameError}
                       />
                     </div>
                   </div>

@@ -18,7 +18,7 @@ const CityPage = ({ cityDetails, countryDetails }) => {
   const { allFavorites, updateFavorites, userId } =
     useContext(FavoritesContext);
   const { isAuth, user } = useContext(AuthContext);
-  const { userCandDeploy } = useDeploy(user, countryDetails, "cityID");
+  const { canDeploy } = useDeploy(user, countryDetails, "cityID");
   useEffect(() => {
     setIsInitial(true);
     let cityName = cityDetails.fields["city"].toLowerCase();
@@ -79,13 +79,20 @@ const CityPage = ({ cityDetails, countryDetails }) => {
         <h1>{cityDetails?.fields["city"] || ""}</h1>
 
         {isAuth && (
-          <Button
-            type={`${userCandDeploy ? "disabled" : "blue"}`}
-            onClick={favoritesHandler}
-          >
-            <FavouriteIcon />
-            {text}
-          </Button>
+          <>
+            <Button
+              type={`${!canDeploy ? "disabled" : "blue"}`}
+              onClick={favoritesHandler}
+            >
+              <FavouriteIcon />
+              {text}
+            </Button>
+            {!canDeploy && (
+              <span className={classes.DeployMsg}>
+                * This DAO is not in your location.
+              </span>
+            )}
+          </>
         )}
         <div className={classes.countryDetails}>
           <div className={classes.row}>

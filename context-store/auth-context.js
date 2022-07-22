@@ -44,6 +44,7 @@ export const AuthContextProvider = ({ children }) => {
     setToken(token);
     const jwtToken = JSON.parse(localStorage.getItem("token"));
     const { user_metadata } = jwt.decode(jwtToken);
+
     setUser({
       walletAddress: user_metadata?.user?.walletAddress,
       address: user_metadata?.user?.address,
@@ -120,7 +121,6 @@ export const AuthContextProvider = ({ children }) => {
       const jwtToken = JSON.parse(localStorage.getItem("token"));
       const { user_metadata } = jwt.decode(jwtToken);
       const { user } = user_metadata;
-
       let timeOfUserRegistration = new Date(user.created_at) / 1000;
       let currentTime = new Date().getTime() / 1000; //1440516958
       let minutes = Math.floor((currentTime - timeOfUserRegistration) / 60);

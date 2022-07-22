@@ -25,7 +25,7 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
   const countryRef = useRef();
   const router = useRouter();
   const { isAuth, user } = useContext(AuthContext);
-  const { userCandDeploy } = useDeploy(user, countryDetails, "countryID");
+  const { canDeploy } = useDeploy(user, countryDetails, "countryID");
 
   const countryIsInFavorites = () => {
     return allFavorites.some(
@@ -90,14 +90,22 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
       <div ref={countryRef}>
         <h1>{countryDetails.fields["Name"]}</h1>
         {isAuth && (
-          <Button
-            type={`${userCandDeploy ? "disabled" : "blue"}`}
-            onClick={favoritesHandler}
-          >
-            <FavouriteIcon />
-            {text}
-          </Button>
+          <>
+            <Button
+              type={`${!canDeploy ? "disabled" : "blue"}`}
+              onClick={favoritesHandler}
+            >
+              <FavouriteIcon />
+              {text}
+            </Button>
+            {!canDeploy && (
+              <span className={classes.DeployMsg}>
+                * This DAO is not in your location.
+              </span>
+            )}
+          </>
         )}
+
         <div className={classes.countryDetails}>
           <div className={classes.row}>
             <div className={classes.descriptionWrapper}>

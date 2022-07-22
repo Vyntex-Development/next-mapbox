@@ -9,6 +9,7 @@
   width: 100%;
   max-width: 100em;
   margin: 0 auto;
+  position: relative;
 }
 
 .countryPageWrapper svg {
@@ -145,4 +146,14 @@
 .mapWrapper {
   background-color: red;
   height: 100%;
+}
+
+.DeployMsg {
+  font-family: "Open Sans";
+  display: block;
+  font-style: normal;
+  font-size: 0.775rem;
+  line-height: 140%;
+  color: #ff0033;
+  margin-bottom: 0.5rem;
 }

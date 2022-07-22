@@ -2,7 +2,6 @@ import { getTwitterUser } from "../../../src/utils/utils";
 
 const handler = async (req, res) => {
   const { id } = req.query;
-  let error;
   const user = await getTwitterUser(id);
 
   if (!user) {

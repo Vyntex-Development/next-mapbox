@@ -5,6 +5,7 @@ import { useState, useContext } from "react";
 import { setVerifyUser } from "../../utils/utils";
 import AuthContext from "../../../context-store/auth-context";
 import Spinner from "./Spinner";
+import supabase from "../../supabase/supabase";
 
 const TwitterVerification = ({
   onChange,
@@ -15,12 +16,14 @@ const TwitterVerification = ({
   navigate,
   setVerify,
   updatedSignature,
+  usernameError,
 }) => {
   const [verifyButton, setVerifyButton] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const [posted, setPosted] = useState(false);
   const [error, setError] = useState("");
+  const [verificationError, setVerificationError] = useState("");
   const openTwitter = async () => {
     navigate &&
       window.open(
@@ -38,6 +41,8 @@ const TwitterVerification = ({
     setLoading(true);
     const getMentionAndUser = async () => {
       setError("");
+      setVerificationError("");
+      setSwitchOption(false);
       const reponse = await fetch(
         `/api/twitter/twitter-verification?signature=${
           updatedSignature || user.signature
@@ -58,15 +63,28 @@ const TwitterVerification = ({
       const userResponse = await fetch(
         `/api/twitter/twitter-user?id=${userMention.author_id}`
       );
-      let { user: twiiterUser } = await userResponse.json();
-      const { username: twitterUsername } = twiiterUser;
+      let { user: twitterUser } = await userResponse.json();
+      const { username: twitterUsername } = twitterUser;
 
       if (username.toLowerCase() !== "@" + twitterUsername.toLowerCase()) {
         setError("Username is not correct");
+        setLoading(false);
+        return;
+      }
+
+      let { data: supabseUser } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", user.id);
+
+      if (username !== supabseUser[0].twitterHandle) {
+        setVerificationError("Please provide correct twitter handle");
+        setLoading(false);
         return;
       }
 
       setError("");
+      setVerificationError("");
       setLoading(false);
       setPosted(true);
       const data = await setVerifyUser(user.walletAddress);
@@ -90,9 +108,12 @@ const TwitterVerification = ({
       />
       <span>{twitterInputError}</span>
       {!usernameIsValid && (
-        <Button onClick={onClick} id="twitter-link" type="blue">
-          Link Twitter
-        </Button>
+        <>
+          <Button onClick={onClick} id="twitter-link" type="blue">
+            Link Twitter
+          </Button>
+          {usernameError && <span>{usernameError}</span>}
+        </>
       )}
       {usernameIsValid && !verifyButton && !posted && (
         <a onClick={openTwitter} id="post-button">
@@ -100,9 +121,12 @@ const TwitterVerification = ({
         </a>
       )}
       {verifyButton && (
-        <Button onClick={verifyAccountHandler} id="verify-button" type="blue">
-          Verify account
-        </Button>
+        <>
+          <Button onClick={verifyAccountHandler} id="verify-button" type="blue">
+            Verify account
+          </Button>
+          {verificationError && <span>{verificationError}</span>}
+        </>
       )}
       {error && <span>{error}</span>}
     </div>

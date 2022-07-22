@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 const useDeploy = (user, countryDetails, endpoint) => {
-  const [userCandDeploy, setUserCanDeploy] = useState(false);
+  const [canDeploy, setCanDeploy] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -12,13 +12,13 @@ const useDeploy = (user, countryDetails, endpoint) => {
       if (!spliitedUserAddress) return;
       const countryOfUser =
         spliitedUserAddress[spliitedUserAddress.length - 1].trim();
-      const userCanDeploy = countryOfUser !== countryName;
-      setUserCanDeploy(userCanDeploy);
+      const userCanDeploy = countryOfUser === countryName;
+      setCanDeploy(userCanDeploy);
     }
   }, [user, router.query[endpoint]]);
 
   return {
-    userCandDeploy,
+    canDeploy,
   };
 };
 
