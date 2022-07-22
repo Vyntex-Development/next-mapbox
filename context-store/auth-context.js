@@ -6,7 +6,7 @@ const AuthContext = createContext({
   token: "",
   address: false,
   isAuth: false,
-  user: null,
+  user: {},
   userId: null,
   recommendation: "",
   minutesDiff: 0,
@@ -19,7 +19,7 @@ const AuthContext = createContext({
 
 export const AuthContextProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState(false);
