@@ -9,6 +9,7 @@ const useDeploy = (user, countryDetails, endpoint) => {
     if (user || router.query[endpoint]) {
       const countryName = countryDetails.fields["Name"].split(" ")[0];
       const spliitedUserAddress = user?.address?.split(",");
+      if (!spliitedUserAddress) return;
       const countryOfUser =
         spliitedUserAddress[spliitedUserAddress.length - 1].trim();
       const userCanDeploy = countryOfUser !== countryName;

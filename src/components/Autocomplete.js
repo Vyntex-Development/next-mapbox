@@ -335,61 +335,61 @@ const Autocomplete = () => {
           })}
         </ul>
       )}
-      {isAuth && (
-        <ul className={classes.SearchResults}>
-          {countryOption && !reset && (
-            <li
-              style={{
-                borderBottom: `${
-                  !cityOption ? "0px" : "1px solid rgba(32, 32, 32, 0.1)"
-                }`,
-              }}
-            >
+      {/* {isAuth && ( */}
+      <ul className={classes.SearchResults}>
+        {countryOption && !reset && (
+          <li
+            style={{
+              borderBottom: `${
+                !cityOption ? "0px" : "1px solid rgba(32, 32, 32, 0.1)"
+              }`,
+            }}
+          >
+            <span>
+              <img src={countryOption.flag} />
+              {countryOption.name}
+            </span>
+            {countryOption.txt !== "view" ? (
+              <Button id="deploy2" onClick={deployHandler} type="white">
+                {countryOption.txt.toUpperCase()}
+              </Button>
+            ) : (
+              <LinkButton href={`/${countryOption.link}`} type="white">
+                {countryOption.txt.toUpperCase()}
+              </LinkButton>
+            )}
+          </li>
+        )}
+        {cityOption && !reset && (
+          <li>
+            <div>
               <span>
                 <img src={countryOption.flag} />
-                {countryOption.name}
               </span>
-              {countryOption.txt !== "view" ? (
-                <Button id="deploy2" onClick={deployHandler} type="white">
-                  {countryOption.txt.toUpperCase()}
-                </Button>
-              ) : (
-                <LinkButton href={`/${countryOption.link}`} type="white">
-                  {countryOption.txt.toUpperCase()}
-                </LinkButton>
-              )}
-            </li>
-          )}
-          {cityOption && !reset && (
-            <li>
-              <div>
-                <span>
-                  <img src={countryOption.flag} />
-                </span>
-                <span>{cityOption?.name.toUpperCase()}</span>
-              </div>
+              <span>{cityOption?.name.toUpperCase()}</span>
+            </div>
 
-              {cityOption.txt !== "view" ? (
-                <Button
-                  id="deploy"
-                  onClick={deployHandler}
-                  type={`${
-                    (user && user?.verified) || enableDeploy
-                      ? "yellow"
-                      : "disabled"
-                  }`}
-                >
-                  {cityOption.txt.toUpperCase()}
-                </Button>
-              ) : (
-                <LinkButton href={`/${cityOption.link}`} type="white">
-                  {cityOption.txt.toUpperCase()}
-                </LinkButton>
-              )}
-            </li>
-          )}
-        </ul>
-      )}
+            {cityOption.txt !== "view" ? (
+              <Button
+                id="deploy"
+                onClick={deployHandler}
+                type={`${
+                  (user && user?.verified) || enableDeploy
+                    ? "yellow"
+                    : "disabled"
+                }`}
+              >
+                {cityOption.txt.toUpperCase()}
+              </Button>
+            ) : (
+              <LinkButton href={`/${cityOption.link}`} type="white">
+                {cityOption.txt.toUpperCase()}
+              </LinkButton>
+            )}
+          </li>
+        )}
+      </ul>
+      {/* )} */}
       <SildeModal
         onClose={() => {
           setShowAddressModal(false);
