@@ -42,7 +42,6 @@ const TwitterVerification = ({
     const getMentionAndUser = async () => {
       setError("");
       setVerificationError("");
-      setSwitchOption(false);
       const reponse = await fetch(
         `/api/twitter/twitter-verification?signature=${
           updatedSignature || user.signature
