@@ -160,7 +160,8 @@ const SildeModal = ({
     onRecommendation(city);
 
     if (user.address) {
-      updateAddress({ address: search, path: router.pathname });
+      // updateAddress({ address: search, path: router.pathname });
+      updateAddress({ address: search });
     }
 
     const userAddress = await setNewAddress(search, walletAddress, user);

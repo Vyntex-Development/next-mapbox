@@ -6,7 +6,7 @@ const AuthContext = createContext({
   token: "",
   address: false,
   isAuth: false,
-  user: {},
+  user: null,
   userId: null,
   recommendation: "",
   minutesDiff: 0,
@@ -19,7 +19,7 @@ const AuthContext = createContext({
 
 export const AuthContextProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState(false);
@@ -73,7 +73,7 @@ export const AuthContextProvider = ({ children }) => {
     setRecommendation(city);
   };
 
-  const updateAddressHandler = ({ address, path }) => {
+  const updateAddressHandler = ({ address }) => {
     let userData = {
       walletAddress: user?.walletAddress,
       signature: user?.signature,
@@ -83,7 +83,7 @@ export const AuthContextProvider = ({ children }) => {
     setUser({
       ...userData,
       address: address,
-      path: path,
+      // path: path,
     });
     localStorage.setItem("update", true);
   };
@@ -132,7 +132,7 @@ export const AuthContextProvider = ({ children }) => {
         id: user?.id,
         created_at: user.created_at,
         verified: user.verified,
-        path: "/",
+        // path: "/",
       };
       setUserId(user?.id);
       if (
