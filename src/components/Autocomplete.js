@@ -73,7 +73,7 @@ const Autocomplete = () => {
   }, [recommendation]);
 
   useEffect(() => {
-    if (searchResult && (user.path === "/" || !user.path)) {
+    if (searchResult && (user?.path === "/" || !user?.path)) {
       setOptions(true);
       let { city, country } = airtableData;
 

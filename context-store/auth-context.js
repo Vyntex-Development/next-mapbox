@@ -132,6 +132,7 @@ export const AuthContextProvider = ({ children }) => {
         id: user?.id,
         created_at: user.created_at,
         verified: user.verified,
+        path: "/",
       };
       setUserId(user?.id);
       if (
