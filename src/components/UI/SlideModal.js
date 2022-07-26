@@ -46,6 +46,7 @@ const SildeModal = ({
   const [updatedSignature, setUpdatedSignature] = useState("");
   const [enablePostStep, setEnablePostStep] = useState(false);
   //const router = useRouter();
+  //".json?types=address&types=place&access_token="
   const {
     destinationChangeHadler,
     handleItemClickedHandler,
@@ -68,8 +69,6 @@ const SildeModal = ({
     onDeploy,
     enableDeploy,
   } = useContext(AuthContext);
-
-  console.log(show);
 
   useEffect(() => {
     if (verified) closeModalHandler();
@@ -247,6 +246,7 @@ const SildeModal = ({
                 searchValue={searchValue}
                 close={() => onClose()}
                 destinationType={desType}
+                deploy={deploy}
               />
             ) : (isSubmitted ||
                 userData?.address ||

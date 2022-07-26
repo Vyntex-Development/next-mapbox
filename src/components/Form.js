@@ -21,6 +21,7 @@ const Form = ({
   children,
   close,
   destinationType,
+  deploy,
 }) => {
   const [search, setSearch] = useState(searchValue);
   const [enabled, setEnabled] = useState(false);
@@ -152,7 +153,7 @@ const Form = ({
     content = <p>Loading....</p>;
   } else {
     content = (
-      <div>
+      <div className={`${deploy ? classes.DeploymentStage : ""}`}>
         <form onSubmit={submitFormHandler} ref={formRef} noValidate>
           {deploymentStage === 0 && (
             <div className="wrapper">

@@ -74,8 +74,7 @@ const Autocomplete = () => {
 
   useEffect(() => {
     // if (searchResult && (user?.path === "/" || !user?.path)) {
-    console.log(searchResult, "searchResult must be true");
-    console.log(airtableData, "airtableData must return values");
+
     if (searchResult) {
       setOptions(true);
       let { city, country } = airtableData;
