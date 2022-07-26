@@ -204,6 +204,8 @@ const SildeModal = ({
     httpClient.sendRequest("POST", "/token/", null, userDetails);
   };
 
+  console.log(hasAddress);
+
   const modalContent =
     show && isAuth ? (
       <div className={classes.modalOverlay}>
@@ -231,7 +233,7 @@ const SildeModal = ({
             className={`${
               (userData?.address ||
                 userAddress ||
-                hasAddress ||
+                // hasAddress ||
                 // !changeAddress ||
                 (user?.address && !deploy)) &&
               !changeAddress
@@ -246,7 +248,6 @@ const SildeModal = ({
                 searchValue={searchValue}
                 close={() => onClose()}
                 destinationType={desType}
-                deploy={deploy}
               />
             ) : (isSubmitted ||
                 userData?.address ||

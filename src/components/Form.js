@@ -153,7 +153,7 @@ const Form = ({
     content = <p>Loading....</p>;
   } else {
     content = (
-      <div className={`${deploy ? classes.DeploymentStage : ""}`}>
+      <div>
         <form onSubmit={submitFormHandler} ref={formRef} noValidate>
           {deploymentStage === 0 && (
             <div className="wrapper">

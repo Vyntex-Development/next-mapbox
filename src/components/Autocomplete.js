@@ -47,6 +47,10 @@ const Autocomplete = () => {
     setMapboxSearch,
   } = useMapbox(".json?types=country&types=place&access_token=");
 
+  // let country = user.address.split(",");
+  let addressCountry =
+    user && user?.address?.split(",")[user?.address?.split(",").length - 1];
+
   const deployHandler = () => {
     !isAuth ? setShowModal(true) : setShowAddressModal(true);
     !isAuth ? setDeploy(true) : setDeploy(true);
@@ -334,7 +338,6 @@ const Autocomplete = () => {
           })}
         </ul>
       )}
-      {/* {isAuth && ( */}
       <ul className={classes.SearchResults}>
         {countryOption && !reset && (
           <li
@@ -373,7 +376,11 @@ const Autocomplete = () => {
                 id="deploy"
                 onClick={deployHandler}
                 type={`${
-                  (user && user?.verified) || enableDeploy
+                  (user &&
+                    user?.verified &&
+                    countryOption?.name.split("DAO")[0].trim() ===
+                      addressCountry.trim()) ||
+                  enableDeploy
                     ? "yellow"
                     : "disabled"
                 }`}
