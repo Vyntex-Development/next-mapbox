@@ -160,7 +160,8 @@ p {
 }
 
 #modal-root,
-#address-modal-root {
+#address-modal-root,
+#notifications {
   height: auto;
   min-height: auto;
 }

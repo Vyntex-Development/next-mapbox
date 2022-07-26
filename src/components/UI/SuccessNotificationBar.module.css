@@ -1,0 +1,32 @@
+.NotificationBar {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  bottom: 2rem;
+  opacity: 0;
+  max-width: 100em;
+  width: calc(100em - 3.89em);
+  padding: 1rem 3.89em;
+  z-index: 1000;
+  background-color: #4bb543;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 1s ease-in-out;
+}
+
+.Open {
+  animation-name: open;
+  animation-duration: 4s;
+}
+
+@keyframes open {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

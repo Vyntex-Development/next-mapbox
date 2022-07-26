@@ -12,6 +12,7 @@ import AuthContext from "../../context-store/auth-context";
 import FavoritesContext from "../../context-store/favorites-context";
 import { connectMetamaskHandler } from "../utils/utils";
 import SildeModal from "./UI/SlideModal";
+import SuccessNotificationBar from "./UI/SuccessNotificationBar";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
@@ -20,7 +21,7 @@ const Header = () => {
   const [address, setAddress] = useState(null);
   const [userSignature, setSignature] = useState(null);
   const [userData, setUserData] = useState(null);
-  const { login, isAuth, user } = useContext(AuthContext);
+  const { login, isAuth, user, enableDeploy } = useContext(AuthContext);
   const { allFavorites } = useContext(FavoritesContext);
 
   useEffect(() => {
@@ -69,6 +70,12 @@ const Header = () => {
           </Button>
         </div>
       </div>
+
+      {enableDeploy && (
+        <SuccessNotificationBar verified={enableDeploy}>
+          You have successfuly verified!
+        </SuccessNotificationBar>
+      )}
       {!isAuth && (
         <Modal
           onClose={() => setShowModal(false)}

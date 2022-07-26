@@ -266,13 +266,14 @@ export const getclientID = async () => {
 
 export const getMentions = async (id) => {
   const mentions = await fetchDataFromTwitter(
-    `https://api.twitter.com/2/users/${id}/mentions?max_results=15&expansions=author_id`
+    `https://api.twitter.com/2/users/${id}/mentions?max_results=15&expansions=author_id&tweet.fields=created_at`
   );
   return mentions;
 };
 
 export const filterMentions = async (mentions, signature) => {
   const mention = mentions.find((mention) => mention.text.includes(signature));
+  console.log(mention);
   return mention;
 };
 
@@ -281,4 +282,32 @@ export const getTwitterUser = async (id) => {
     `https://api.twitter.com/2/users/${id}`
   );
   return user;
+};
+
+export const setTweeterTimestamp = async (created_at, walletAddress) => {
+  const response = await fetch("/api/twitter/twitter-creation", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      walletAddress,
+      created_at,
+    }),
+  });
+  const data = await response.json();
+};
+
+export const setTweetId = async (id, walletAddress) => {
+  const response = await fetch("/api/twitter/twitt-id", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      id,
+      walletAddress,
+    }),
+  });
+  const data = await response.json();
 };

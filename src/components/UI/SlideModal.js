@@ -44,7 +44,8 @@ const SildeModal = ({
   const [verified, setVerified] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [updatedSignature, setUpdatedSignature] = useState("");
-  const router = useRouter();
+  const [enablePostStep, setEnablePostStep] = useState(false);
+  //const router = useRouter();
   const {
     destinationChangeHadler,
     handleItemClickedHandler,
@@ -65,7 +66,10 @@ const SildeModal = ({
     updateAddress,
     onRecommendation,
     onDeploy,
+    enableDeploy,
   } = useContext(AuthContext);
+
+  console.log(show);
 
   useEffect(() => {
     if (verified) closeModalHandler();
@@ -100,6 +104,7 @@ const SildeModal = ({
   };
 
   const onLinkTwitterHandle = async () => {
+    setEnablePostStep(false);
     if (twitterUsername.trim() === "") {
       setTwitterInputError("This field is required");
       return;
@@ -119,14 +124,18 @@ const SildeModal = ({
 
     let { data: users } = await supabase.from("users").select("*");
 
-    if (users.some((user) => user.twitterHandle === twitterUsername)) {
-      setUsernameError(
-        "User already exists. Try with different twitter handle"
-      );
+    if (
+      users.some((user) => {
+        return user.twitterHandle === twitterUsername && user.verified;
+      })
+    ) {
+      setUsernameError("User with this account already exists");
       return;
     }
     setUsernameError(false);
     setTwitterHandle(twitterUsername, user.walletAddress);
+
+    setEnablePostStep(true);
     const { userData, signature } =
       await connectMetamaskHandler(`Hi there from DELOCAL.XZY! Sign this message to prove you have access to this wallet and we'll log you in. This won't cost you any Ether.
     To stop hackers using your wallet, here's a unique message ID they can't guess: ${twitterUsername}`);
@@ -146,7 +155,6 @@ const SildeModal = ({
       !e.target.closest("#twitter-link") &&
       !e.target.closest("#verify-button") &&
       !e.target.closest("#post-button")
-      // !e.target.closest("#submit")
     ) {
       onClose();
       setError(false);
@@ -182,7 +190,7 @@ const SildeModal = ({
     const userAddress = await setNewAddress(search, walletAddress, user);
     setUserAddress(userAddress || search);
 
-    onClose();
+    //onClose();
     setNotCheckedError(false);
     onSubmit(true);
     submitAddress(true);
@@ -298,7 +306,7 @@ const SildeModal = ({
                       );
                     })}
                 </div>
-                {!verified && !user.verified && (
+                {!verified && !user?.verified && (
                   <div className={classes.LinkWrapper}>
                     <div className={classes.dashboardInfoWrapper}>
                       <h4>Tweeter account:</h4>
@@ -312,6 +320,7 @@ const SildeModal = ({
                         setVerify={setVerifyHandler}
                         updatedSignature={updatedSignature}
                         usernameError={usernameError}
+                        enablePostStep={enablePostStep}
                       />
                     </div>
                   </div>

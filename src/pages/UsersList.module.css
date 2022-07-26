@@ -12,7 +12,7 @@
 .UsersList li {
   list-style: none;
   display: grid;
-  grid-template-columns: 150px 30% 50% 150px;
+  grid-template-columns: 125px 25% 30% 1fr 150px 70px;
 }
 
 .UserListWrapper ul:nth-of-type(1) span {
@@ -32,4 +32,8 @@
 
 .NotVerified {
   color: #a4a2c4;
+}
+
+.UserListWrapper div:nth-of-type(2) a {
+  color: #1c10c5;
 }

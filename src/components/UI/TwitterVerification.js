@@ -1,8 +1,12 @@
 const TWITTER_BEARER_TOKEN = process.env.TWITTER_BEARER_TOKEN;
 import classes from "./TwitterVerification.module.css";
 import Button from "./Button";
-import { useState, useContext } from "react";
-import { setVerifyUser } from "../../utils/utils";
+import { useState, useContext, useEffect } from "react";
+import {
+  setVerifyUser,
+  setTweeterTimestamp,
+  setTweetId,
+} from "../../utils/utils";
 import AuthContext from "../../../context-store/auth-context";
 import Spinner from "./Spinner";
 import supabase from "../../supabase/supabase";
@@ -17,10 +21,12 @@ const TwitterVerification = ({
   setVerify,
   updatedSignature,
   usernameError,
+  enablePostStep,
 }) => {
   const [verifyButton, setVerifyButton] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
+  const [linkStep, setLinkStep] = useState(false);
   const [posted, setPosted] = useState(false);
   const [error, setError] = useState("");
   const [verificationError, setVerificationError] = useState("");
@@ -36,9 +42,20 @@ const TwitterVerification = ({
     setVerifyButton(true);
   };
 
+  useEffect(() => {
+    if (enablePostStep) {
+      setLinkStep(false);
+      setError("");
+      setVerificationError("");
+      setVerifyButton(false);
+    }
+  }, [enablePostStep]);
+
   const verifyAccountHandler = async () => {
     let userMention;
     setLoading(true);
+    setLinkStep(false);
+    setError("");
     const getMentionAndUser = async () => {
       setError("");
       setVerificationError("");
@@ -52,12 +69,18 @@ const TwitterVerification = ({
 
       if (!userMention) {
         setVerify(false);
-        setError("Something went wrong, verify again");
+        setError("Something went wrong, please try again");
         setPosted(false);
         setLoading(false);
         setVerifyButton(false);
+        setLinkStep(true);
         return;
       }
+
+      // set created_at
+
+      await setTweeterTimestamp(userMention.created_at, user.walletAddress);
+      await setTweetId(userMention.id, user.walletAddress);
 
       const userResponse = await fetch(
         `/api/twitter/twitter-user?id=${userMention.author_id}`
@@ -66,7 +89,8 @@ const TwitterVerification = ({
       const { username: twitterUsername } = twitterUser;
 
       if (username.toLowerCase() !== "@" + twitterUsername.toLowerCase()) {
-        setError("Username is not correct");
+        setError("Tweeter username or account is not correct");
+        setLinkStep(true);
         setLoading(false);
         return;
       }
@@ -78,6 +102,7 @@ const TwitterVerification = ({
 
       if (username !== supabseUser[0].twitterHandle) {
         setVerificationError("Please provide correct twitter handle");
+        setLinkStep(true);
         setLoading(false);
         return;
       }
@@ -86,6 +111,7 @@ const TwitterVerification = ({
       setVerificationError("");
       setLoading(false);
       setPosted(true);
+      setLinkStep(false);
       const data = await setVerifyUser(user.walletAddress);
       let parsedToken = JSON.stringify(data);
       localStorage.setItem("token", parsedToken);
@@ -106,20 +132,21 @@ const TwitterVerification = ({
         placeholder="@Username"
       />
       <span>{twitterInputError}</span>
-      {!usernameIsValid && (
+      {(!usernameIsValid || linkStep) && (
         <>
           <Button onClick={onClick} id="twitter-link" type="blue">
             Link Twitter
           </Button>
           {usernameError && <span>{usernameError}</span>}
+          {verificationError && <span>{verificationError}</span>}
         </>
       )}
-      {usernameIsValid && !verifyButton && !posted && (
+      {usernameIsValid && !verifyButton && !posted && !linkStep && (
         <a onClick={openTwitter} id="post-button">
           Post to Tweeter
         </a>
       )}
-      {verifyButton && (
+      {verifyButton && !linkStep && (
         <>
           <Button onClick={verifyAccountHandler} id="verify-button" type="blue">
             Verify account
