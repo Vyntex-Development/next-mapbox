@@ -20,7 +20,6 @@ const useMapbox = (endpoint) => {
     setSearch(capitalizeFirstLetter(e.target.value));
     setReset(true);
     setPlace(null);
-    // setSearch("");
     if (e.target.value.trim() === "") {
       setIsVisble(false);
       setEnabled(false);

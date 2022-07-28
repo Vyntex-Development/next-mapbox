@@ -52,13 +52,19 @@ const Autocomplete = () => {
     !isAuth ? setDeploy(true) : setDeploy(true);
   };
 
-  console.log(user);
-
   const getRecommendedCity = (rec) => {
-    // console.log(rec);
-    // let city = rec.context.find((text) => {
-    //   return text.id.includes("region");
-    // });
+    const cityIsoContextObject = rec.context.find((ctx) =>
+      ctx.id.includes("country")
+    );
+    const { short_code: iso } = cityIsoContextObject;
+
+    return {
+      iso: iso,
+      recName: rec.txt,
+    };
+  };
+
+  const getRecommendedCityName = (rec) => {
     return rec.text;
   };
 
@@ -94,7 +100,7 @@ const Autocomplete = () => {
       if (airtableData && airtableData.value === false) {
         setCityOption({
           name: recommendation
-            ? `${getRecommendedCity(recommendation)} - ${
+            ? `${getRecommendedCityName(recommendation)} - ${
                 airtableData.country_name
               }`
             : `${place?.text} - ${airtableData.country_name}`,
@@ -119,9 +125,7 @@ const Autocomplete = () => {
         if (airtableData.value === false) return;
         setCityOption({
           name: recommendation
-            ? `${getRecommendedCity(recommendation)} - ${
-                country.fields["Name"]
-              }`
+            ? `${recommendation.text} - ${country.fields["Name"]}`
             : `${city.fields.city} - ${country.fields["Name"]}`,
           txt: "view",
           flag: country.fields["Flag"],
@@ -145,22 +149,28 @@ const Autocomplete = () => {
   }, [searchResult]);
 
   const searchViaReccomendation = async (reccomentdation) => {
-    console.log(recommendation);
     let cityExist;
     let id;
+    let countryIso;
     const response = await getID(
-      `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Cities?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=city="${reccomentdation}"`,
+      `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Cities?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=city="${reccomentdation.recName}"`,
       null,
       "GET"
     );
     cityExist = true;
     if (response.records.length === 0) {
       cityExist = false;
+      // const cityIsoContextObject = reccomentdation.context.find((ctx) =>
+      //   ctx.id.includes("country")
+      // );
+      // const { short_code: iso } = cityIsoContextObject;
+      countryIso = reccomentdation.iso;
       const response = await getSingleDestiantion(
         `https://nearestdao.herokuapp.com`,
         {
           name: reccomentdation,
           type: "place",
+          iso: reccomentdation.iso,
         },
         "POST"
       );
@@ -173,6 +183,7 @@ const Autocomplete = () => {
     let searchData = {
       [!cityExist ? "name" : "id"]: !cityExist ? reccomentdation : id,
       type: "place",
+      [!cityExist && "iso"]: countryIso,
     };
 
     try {
@@ -199,6 +210,7 @@ const Autocomplete = () => {
     let id;
     let searchData;
     let cityExist;
+    let countryIso;
     setIsLoading(true);
     if (place) {
       if (place.place_type[0] === "country") {
@@ -240,11 +252,18 @@ const Autocomplete = () => {
         cityExist = true;
         if (response.records.length === 0) {
           cityExist = false;
+
+          const cityIsoContextObject = place.context.find((ctx) =>
+            ctx.id.includes("country")
+          );
+          const { short_code: iso } = cityIsoContextObject;
+          countryIso = iso;
           const response = await getSingleDestiantion(
             `https://nearestdao.herokuapp.com`,
             {
               name: place.matching_text || place.text,
               type: "place",
+              iso: iso,
             },
             "POST"
           );
@@ -267,6 +286,7 @@ const Autocomplete = () => {
           ? place.matching_text || place.text
           : id,
         type: place.place_type[0],
+        [!cityExist && "iso"]: countryIso,
       };
     }
 
