@@ -82,7 +82,7 @@ const SildeModal = ({
 
   const changeAddressHandler = async () => {
     //262974
-    let sixMonths = 1;
+    let sixMonths = 262974;
     if (minutesDiff < sixMonths) {
       setError(true);
       return;
