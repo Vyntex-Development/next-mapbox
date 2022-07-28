@@ -47,20 +47,19 @@ const Autocomplete = () => {
     setMapboxSearch,
   } = useMapbox(".json?types=country&types=place&access_token=");
 
-  // let country = user.address.split(",");
-  let addressCountry =
-    user && user?.address?.split(",")[user?.address?.split(",").length - 1];
-
   const deployHandler = () => {
     !isAuth ? setShowModal(true) : setShowAddressModal(true);
     !isAuth ? setDeploy(true) : setDeploy(true);
   };
 
+  console.log(user);
+
   const getRecommendedCity = (rec) => {
-    let city = rec.context.find((text) => {
-      return text.id.includes("place");
-    });
-    return city.text;
+    // console.log(rec);
+    // let city = rec.context.find((text) => {
+    //   return text.id.includes("region");
+    // });
+    return rec.text;
   };
 
   useEffect(() => {
@@ -146,6 +145,7 @@ const Autocomplete = () => {
   }, [searchResult]);
 
   const searchViaReccomendation = async (reccomentdation) => {
+    console.log(recommendation);
     let cityExist;
     let id;
     const response = await getID(
@@ -294,6 +294,10 @@ const Autocomplete = () => {
     userData && setUserData(userData);
   };
 
+  // console.log(user?.address);
+  // console.log(user && user?.address?.split(",")[0], "adresa");
+  // console.log(countryOption && countryOption?.name?.split("DAO")[0].trim());
+
   return (
     <div className={classes.AutocompleteWrapper}>
       <input
@@ -376,11 +380,7 @@ const Autocomplete = () => {
                 id="deploy"
                 onClick={deployHandler}
                 type={`${
-                  (user &&
-                    user?.verified &&
-                    countryOption?.name.split("DAO")[0].trim() ===
-                      addressCountry.trim()) ||
-                  enableDeploy
+                  (user && user?.verified) || enableDeploy
                     ? "yellow"
                     : "disabled"
                 }`}

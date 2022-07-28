@@ -141,7 +141,6 @@ export const AuthContextProvider = ({ children }) => {
       ) {
         const getAddress = async () => {
           const userAddress = await getUserAddress(user?.walletAddress);
-
           setUser({
             ...userData,
             address: userAddress,

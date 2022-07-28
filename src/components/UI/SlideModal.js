@@ -56,7 +56,7 @@ const SildeModal = ({
     isVisible,
     city,
     setMapboxSearch,
-  } = useMapbox(".json?types=address&access_token=");
+  } = useMapbox(".json?types=place&access_token=");
   const {
     logout,
     isAuth,
@@ -82,7 +82,7 @@ const SildeModal = ({
 
   const changeAddressHandler = async () => {
     //262974
-    let sixMonths = 1;
+    let sixMonths = 262974;
     if (minutesDiff < sixMonths) {
       setError(true);
       return;
@@ -187,13 +187,16 @@ const SildeModal = ({
     }
 
     const userAddress = await setNewAddress(search, walletAddress, user);
+
     setUserAddress(userAddress || search);
 
     //onClose();
+    updateAddress({ address: userAddress || search });
     setNotCheckedError(false);
     onSubmit(true);
     submitAddress(true);
     setChangeAddress(false);
+    setIsChecked(false);
   };
 
   const onSubmitHandler = (formData) => {
@@ -203,8 +206,6 @@ const SildeModal = ({
     };
     httpClient.sendRequest("POST", "/token/", null, userDetails);
   };
-
-  console.log(hasAddress);
 
   const modalContent =
     show && isAuth ? (
@@ -331,8 +332,8 @@ const SildeModal = ({
               <div className="wrapper">
                 <h2>You’re almost done!</h2>
                 <p>
-                  Sumbit your physical address and start engaging your local
-                  DAOs communities!
+                  Sumbit a name of your city and start engaging your local DAOs
+                  communities!
                 </p>
                 <div className={classes.AutocompleteWrapper}>
                   <input

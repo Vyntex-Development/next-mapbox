@@ -7,11 +7,14 @@ const useDeploy = (user, countryDetails, endpoint) => {
 
   useEffect(() => {
     if (user || router.query[endpoint]) {
-      const countryName = countryDetails.fields["Name"].split(" ")[0];
+      const countryName = countryDetails.fields["Name"];
       const spliitedUserAddress = user?.address?.split(",");
       if (!spliitedUserAddress) return;
       const countryOfUser =
-        spliitedUserAddress[spliitedUserAddress.length - 1].trim();
+        spliitedUserAddress[spliitedUserAddress.length - 1].trim() + " DAO";
+      // console.log(countryOfUser);
+      // console.log(countryName);
+
       const userCanDeploy = countryOfUser === countryName;
       setCanDeploy(userCanDeploy);
     }

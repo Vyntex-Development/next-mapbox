@@ -27,7 +27,7 @@ const UsersList = ({ users }) => {
           <li>
             <span>Twitter handle</span>
             <span>Wallet address</span>
-            <span>User address</span>
+            <span>User city</span>
             <span>Created at</span>
             <span>Tweet ID</span>
             <span>Status</span>

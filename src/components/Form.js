@@ -159,7 +159,7 @@ const Form = ({
             <div className="wrapper">
               <h2>Deploy DAO!</h2>
               <p>
-                Sumbit your DAO’s address below. You can only deploy a DAO in
+                Sumbit your DAO’s city name below. You can only deploy a DAO in
                 your local area.
               </p>
               <div className={classes.AutocompleteWrapper}>
