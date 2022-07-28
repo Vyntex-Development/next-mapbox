@@ -148,12 +148,15 @@ const Autocomplete = () => {
     updateReset();
   }, [searchResult]);
 
-  const searchViaReccomendation = async (reccomentdation) => {
+  const searchViaReccomendation = async (recObj) => {
+    // console.log(reccomentdation);
+    // console.log(recommendation);
+
     let cityExist;
     let id;
     let countryIso;
     const response = await getID(
-      `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Cities?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=city="${reccomentdation.recName}"`,
+      `https://api.airtable.com/v0/appEQgGYRpKWhBUQj/Cities?api_key=${AIRTABLE_ACCESS_KEY}&filterByFormula=city="${recommendation.text}"`,
       null,
       "GET"
     );
@@ -164,13 +167,13 @@ const Autocomplete = () => {
       //   ctx.id.includes("country")
       // );
       // const { short_code: iso } = cityIsoContextObject;
-      countryIso = reccomentdation.iso;
+      countryIso = recObj.iso;
       const response = await getSingleDestiantion(
         `https://nearestdao.herokuapp.com`,
         {
-          name: reccomentdation,
+          name: recommendation.text,
           type: "place",
-          iso: reccomentdation.iso,
+          iso: recObj.iso,
         },
         "POST"
       );
@@ -181,7 +184,7 @@ const Autocomplete = () => {
     }
 
     let searchData = {
-      [!cityExist ? "name" : "id"]: !cityExist ? reccomentdation : id,
+      [!cityExist ? "name" : "id"]: !cityExist ? recommendation.text : id,
       type: "place",
       [!cityExist && "iso"]: countryIso,
     };
