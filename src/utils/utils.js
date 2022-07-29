@@ -96,14 +96,23 @@ export const getSingleDestiantion = async (URL, data, method) => {
   return singleDestination ? singleDestination : [];
 };
 
-export const getDestinationCoordinates = async (destination) => {
-  const coordinates = await fetchData(
-    `https://api.mapbox.com/geocoding/v5/mapbox.places/${destination}.json?access_token=${MAPBOX_TOKEN_PRODUCTION}`,
-    null,
-    "GET"
-  );
-  return coordinates.features[0].geometry.coordinates
-    ? coordinates.features[0].geometry.coordinates
+export const getDestinationCoordinates = async (
+  destination,
+  countryName = false
+) => {
+  console.log(countryName);
+  let url = countryName
+    ? `https://api.mapbox.com/geocoding/v5/mapbox.places/${destination}&country=${countryName}.json?access_token=${MAPBOX_TOKEN_PRODUCTION}`
+    : `https://api.mapbox.com/geocoding/v5/mapbox.places/${destination}.json?access_token=${MAPBOX_TOKEN_PRODUCTION}`;
+
+  const coordinates = await fetchData(url, null, "GET");
+
+  let destinationCoordinates = countryName
+    ? coordinates.features.find((c) => c.place_type[0] === "place")
+    : coordinates.features[0];
+
+  return destinationCoordinates?.geometry?.coordinates
+    ? destinationCoordinates?.geometry?.coordinates
     : [];
 };
 
@@ -273,7 +282,6 @@ export const getMentions = async (id) => {
 
 export const filterMentions = async (mentions, signature) => {
   const mention = mentions.find((mention) => mention.text.includes(signature));
-  console.log(mention);
   return mention;
 };
 

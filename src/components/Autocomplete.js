@@ -149,9 +149,6 @@ const Autocomplete = () => {
   }, [searchResult]);
 
   const searchViaReccomendation = async (recObj) => {
-    // console.log(reccomentdation);
-    // console.log(recommendation);
-
     let cityExist;
     let id;
     let countryIso;
@@ -163,10 +160,6 @@ const Autocomplete = () => {
     cityExist = true;
     if (response.records.length === 0) {
       cityExist = false;
-      // const cityIsoContextObject = reccomentdation.context.find((ctx) =>
-      //   ctx.id.includes("country")
-      // );
-      // const { short_code: iso } = cityIsoContextObject;
       countryIso = recObj.iso;
       const response = await getSingleDestiantion(
         `https://nearestdao.herokuapp.com`,
@@ -317,9 +310,11 @@ const Autocomplete = () => {
     userData && setUserData(userData);
   };
 
-  // console.log(user?.address);
-  // console.log(user && user?.address?.split(",")[0], "adresa");
-  // console.log(countryOption && countryOption?.name?.split("DAO")[0].trim());
+  const countryOfVerifiedUser =
+    user &&
+    user?.address?.split(",")[user?.address?.split(",").length - 1].trim();
+  const selectedCountry =
+    countryOption && countryOption?.name?.split("DAO")[0].trim();
 
   return (
     <div className={classes.AutocompleteWrapper}>
@@ -403,7 +398,8 @@ const Autocomplete = () => {
                 id="deploy"
                 onClick={deployHandler}
                 type={`${
-                  (user && user?.verified) || enableDeploy
+                  ((user && user?.verified) || enableDeploy) &&
+                  countryOfVerifiedUser === selectedCountry
                     ? "yellow"
                     : "disabled"
                 }`}

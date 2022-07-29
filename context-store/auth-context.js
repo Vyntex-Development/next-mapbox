@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { getUserAddress } from "../src/utils/utils";
 import jwt from "jsonwebtoken";
+import { useRouter } from "next/router";
 
 const AuthContext = createContext({
   token: "",
@@ -27,6 +28,7 @@ export const AuthContextProvider = ({ children }) => {
   const [hasRecommendation, setHasRecommendation] = useState(false);
   const [recommendation, setRecommendation] = useState("");
   const [minutesDiff, setMinutesDiff] = useState(0);
+  const router = useRouter();
   const isAuth = !!token;
   const hasAddress = !!address;
 
@@ -62,6 +64,7 @@ export const AuthContextProvider = ({ children }) => {
     setUser(null);
     setUserId(null);
     setAddress(false);
+    setEnableDeploy(false);
   };
 
   const submitAddressHandler = () => {
@@ -70,8 +73,8 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const onRecommendationHandler = (city) => {
-    setHasRecommendation(true);
-    setRecommendation(city);
+    router.pathname === "/" && setHasRecommendation(true);
+    router.pathname === "/" && setRecommendation(city);
   };
 
   const updateAddressHandler = ({ address }) => {

@@ -2,7 +2,7 @@ import supabase from "../../../src/supabase/supabase";
 
 const tweetId = async (req, res) => {
   const { id, walletAddress } = req.body;
-  console.log(id, walletAddress);
+
   let { data, error } = await supabase
     .from("users")
     .update({ tweet_id: id })

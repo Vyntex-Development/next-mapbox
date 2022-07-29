@@ -41,8 +41,6 @@ const useMapbox = (endpoint) => {
       return;
     }
 
-    console.log(URL + value + endpoint + MAPBOX_TOKEN_PRODUCTION);
-
     const features = await getMapboxSearchResults(
       URL + value + endpoint + MAPBOX_TOKEN_PRODUCTION,
       null,

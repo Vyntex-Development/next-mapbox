@@ -17,7 +17,6 @@ import {
 import { infoConfig } from "../../config/formConfig";
 import Form from "../Form";
 import useMapbox from "../../hooks/useMapbox";
-import { useRouter } from "next/router";
 
 const SildeModal = ({
   show,

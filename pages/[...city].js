@@ -5,6 +5,7 @@ import { getAllCities } from "../src/utils/utils";
 
 const City = ({ data }) => {
   const { city, country } = data;
+
   return (
     <>
       <SEO title={`${country.fields["Name"]} - ${city.fields.city}`}></SEO>
@@ -40,7 +41,6 @@ export async function getStaticPaths() {
   );
   const allPaths = [];
   modifiedCities.forEach((city) => {
-    console.log(city);
     allPaths.push({
       params: {
         city: [city.fields["Country"][0], `${city.id}`],

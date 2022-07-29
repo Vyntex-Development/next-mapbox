@@ -7,8 +7,6 @@ const walletApi = async (req, res) => {
     const { walletAddress, signature, nonce } = req.body;
     const signerAddress = ethers.utils.verifyMessage(nonce, signature);
 
-    console.log(signature, "signature");
-
     if (signerAddress !== walletAddress) {
       throw new Error("wrong signature");
     }

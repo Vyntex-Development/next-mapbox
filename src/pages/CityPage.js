@@ -11,7 +11,7 @@ import PlaceInfo from "../components/PlaceInfo";
 import useDeploy from "../hooks/useDeploy";
 
 const CityPage = ({ cityDetails, countryDetails }) => {
-  console.log(cityDetails);
+  console.log(countryDetails.fields["Name"].split(" ")[0].toLowerCase());
   const [isInitial, setIsInitial] = useState(false);
   const [text, setText] = useState("");
   const [coordinates, setCoordinates] = useState({});
@@ -23,7 +23,10 @@ const CityPage = ({ cityDetails, countryDetails }) => {
     setIsInitial(true);
     let cityName = cityDetails.fields["city"].toLowerCase();
     const getCoordinates = async () => {
-      let coordinates = await getDestinationCoordinates(cityName);
+      let coordinates = await getDestinationCoordinates(
+        cityName,
+        countryDetails.fields["Name"].split(" ")[0].toLowerCase()
+      );
       setCoordinates({
         lat: coordinates[1],
         lng: coordinates[0],
