@@ -301,25 +301,6 @@ const SildeModal = ({
                     </div>
                   )}
                 </div>
-                {/* <div>
-                  <h4>Saved DAOs:</h4>
-                  {allFavorites.length === 0 && (
-                    <span>No currently saved DAOS</span>
-                  )}
-                  {allFavorites.length > 0 &&
-                    allFavorites.map((fav) => {
-                      return (
-                        <LinkButton
-                          key={fav.id}
-                          href={fav.url}
-                          type="cities-link"
-                          onClick={closeModalHandler}
-                        >
-                          {fav.place}
-                        </LinkButton>
-                      );
-                    })}
-                </div> */}
                 {!verified && !user?.verified && (
                   <div className={classes.LinkWrapper}>
                     <div className={classes.dashboardInfoWrapper}>
@@ -342,7 +323,7 @@ const SildeModal = ({
               </div>
             ) : (
               <div className="wrapper">
-                <h2>You’re almost done!</h2>
+                <h2>You're almost done!</h2>
                 <p>
                   Sumbit a name of your city and start engaging your local DAOs
                   communities!
@@ -396,7 +377,7 @@ const SildeModal = ({
                   )}
                 </div>
                 <div className={`${classes.importantNote} ${classes.Yellow}`}>
-                  Please note! You won’t be able to change your address in the
+                  Please note! You won't be able to change your address in the
                   next
                   <span> 6 months.</span>
                 </div>
