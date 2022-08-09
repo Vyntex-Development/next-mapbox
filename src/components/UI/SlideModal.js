@@ -323,7 +323,7 @@ const SildeModal = ({
               </div>
             ) : (
               <div className="wrapper">
-                <h2>You're almost done!</h2>
+                <h2>You&apos;re almost done!</h2>
                 <p>
                   Sumbit a name of your city and start engaging your local DAOs
                   communities!
@@ -377,13 +377,13 @@ const SildeModal = ({
                   )}
                 </div>
                 <div className={`${classes.importantNote} ${classes.Yellow}`}>
-                  Please note! You won't be able to change your address in the
-                  next
+                  Please note! You won&apos;t be able to change your address in
+                  the next
                   <span> 6 months.</span>
                 </div>
                 {error && (
                   <div className={`${classes.importantNote} ${classes.Red}`}>
-                    Country doesn't match the IP address
+                    Country doesn&apos;t match the IP address
                   </div>
                 )}
                 <div className={classes.radioButtonWrapper}>
