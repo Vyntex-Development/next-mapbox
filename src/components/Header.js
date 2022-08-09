@@ -13,6 +13,7 @@ import FavoritesContext from "../../context-store/favorites-context";
 import { connectMetamaskHandler } from "../utils/utils";
 import SildeModal from "./UI/SlideModal";
 import SuccessNotificationBar from "./UI/SuccessNotificationBar";
+import Link from "./UI/Link";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
@@ -41,7 +42,7 @@ const Header = () => {
 
   const connectToMetamask = async () => {
     const { walletAddress, token, userData, signature } =
-      await connectMetamaskHandler(`Hi there from DELOCAL.XZY! Sign this message to prove you have access to this wallet and we'll log you in. This won't cost you any Ether.
+      await connectMetamaskHandler(`Hi there from DELOCAL.XZY! Sign this message to prove you have access to this wallet and we'll log you in. This won't cost you any ETH.
     To stop hackers using your wallet, here's a unique message ID they can't guess:`);
     setAddress(walletAddress || "");
     setSignature(signature || "");
@@ -65,6 +66,11 @@ const Header = () => {
           <Logo />
         </div>
         <div className={classes.linksContainer}>
+          {user?.address && (
+            <Link type="transparent" href={`/favorites/${user.id}`}>
+              Favorites
+            </Link>
+          )}
           <Button onClick={linkButtonHandler} type="blue" id="connect">
             {!isAuth ? "CONNECT WALLET" : "DASHBOARD"}
           </Button>

@@ -11,7 +11,6 @@ import PlaceInfo from "../components/PlaceInfo";
 import useDeploy from "../hooks/useDeploy";
 
 const CityPage = ({ cityDetails, countryDetails }) => {
-  console.log(countryDetails.fields["Name"].split(" ")[0].toLowerCase());
   const [isInitial, setIsInitial] = useState(false);
   const [text, setText] = useState("");
   const [coordinates, setCoordinates] = useState({});

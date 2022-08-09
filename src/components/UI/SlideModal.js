@@ -1,7 +1,6 @@
 import ReactDOM from "react-dom";
 import LinkButton from "./Link";
 import { useState, useEffect, useRef, useContext } from "react";
-//import { twitterInputConfig } from "../../config/formConfig";
 import supabase from "../../supabase/supabase";
 import AuthContext from "../../../context-store/auth-context";
 import classes from "./SlideModal.module.css";
@@ -13,6 +12,7 @@ import {
   setNewAddress,
   connectMetamaskHandler,
   setTwitterHandle,
+  setIpUserdetails,
 } from "../../utils/utils";
 import { infoConfig } from "../../config/formConfig";
 import Form from "../Form";
@@ -44,8 +44,7 @@ const SildeModal = ({
   const [usernameError, setUsernameError] = useState(false);
   const [updatedSignature, setUpdatedSignature] = useState("");
   const [enablePostStep, setEnablePostStep] = useState(false);
-  //const router = useRouter();
-  //".json?types=address&types=place&access_token="
+
   const {
     destinationChangeHadler,
     handleItemClickedHandler,
@@ -62,16 +61,21 @@ const SildeModal = ({
     user,
     submitAddress,
     hasAddress,
-    minutesDiff,
+    timeInfo,
     updateAddress,
     onRecommendation,
     onDeploy,
-    enableDeploy,
+    ipData,
   } = useContext(AuthContext);
 
   useEffect(() => {
     if (verified) closeModalHandler();
+    // if (search) setError(false);
   }, [verified]);
+
+  useEffect(() => {
+    if (search) setError(false);
+  }, [search]);
 
   const modalWrapperRef = useRef();
 
@@ -80,9 +84,8 @@ const SildeModal = ({
   };
 
   const changeAddressHandler = async () => {
-    //262974
     let sixMonths = 262974;
-    if (minutesDiff < sixMonths) {
+    if (timeInfo.timeDifference < sixMonths) {
       setError(true);
       return;
     }
@@ -173,23 +176,31 @@ const SildeModal = ({
   };
 
   const searchHandler = async () => {
+    const countryOfUser = search
+      .split(",")
+      [search.split(",").length - 1].trim();
+
     if (!isChecked) {
       setNotCheckedError(true);
+      return;
+    }
+
+    if (countryOfUser !== ipData.country_name) {
+      setError(true);
       return;
     }
 
     onRecommendation(city);
 
     if (user.address) {
-      // updateAddress({ address: search, path: router.pathname });
       updateAddress({ address: search });
     }
 
     const userAddress = await setNewAddress(search, walletAddress, user);
-
+    await setIpUserdetails(user.id, ipData.country_name, ipData.short_code);
     setUserAddress(userAddress || search);
 
-    //onClose();
+    setError(false);
     updateAddress({ address: userAddress || search });
     setNotCheckedError(false);
     onSubmit(true);
@@ -284,11 +295,13 @@ const SildeModal = ({
                   </Button>
                   {error && (
                     <div className={classes.importantNote}>
-                      Adress can be changed only six months after registration.
+                      Your address can only be changed every 6 months. The next
+                      time you can change your address is on{" "}
+                      {timeInfo.dateOfNextAvailableAddressChange}
                     </div>
                   )}
                 </div>
-                <div>
+                {/* <div>
                   <h4>Saved DAOs:</h4>
                   {allFavorites.length === 0 && (
                     <span>No currently saved DAOS</span>
@@ -306,7 +319,7 @@ const SildeModal = ({
                         </LinkButton>
                       );
                     })}
-                </div>
+                </div> */}
                 {!verified && !user?.verified && (
                   <div className={classes.LinkWrapper}>
                     <div className={classes.dashboardInfoWrapper}>
@@ -387,6 +400,11 @@ const SildeModal = ({
                   next
                   <span> 6 months.</span>
                 </div>
+                {error && (
+                  <div className={`${classes.importantNote} ${classes.Red}`}>
+                    Country doesn't match the IP address
+                  </div>
+                )}
                 <div className={classes.radioButtonWrapper}>
                   <label className={classes.checkboxContainer}>
                     <input type="checkbox" onChange={checkboxHandler} />

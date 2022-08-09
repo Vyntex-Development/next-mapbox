@@ -22,7 +22,10 @@ const Autocomplete = () => {
   const [cityOption, setCityOption] = useState(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [ipSearch, setIpSearch] = useState(false);
   const [deploy, setDeploy] = useState(false);
+  // const [deployOptionName, setDeployOptionName] = useState(null);
+
   const {
     login,
     isAuth,
@@ -30,6 +33,7 @@ const Autocomplete = () => {
     onRecommendation,
     user,
     enableDeploy,
+    ipData,
   } = useContext(AuthContext);
   const [address, setAddress] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -50,17 +54,26 @@ const Autocomplete = () => {
   const deployHandler = () => {
     !isAuth ? setShowModal(true) : setShowAddressModal(true);
     !isAuth ? setDeploy(true) : setDeploy(true);
+    // setDeployOptionName(cityOption);
   };
 
   const getRecommendedCity = (rec) => {
-    const cityIsoContextObject = rec.context.find((ctx) =>
-      ctx.id.includes("country")
-    );
+    let cityIsoContextObject;
+    if (rec.context) {
+      cityIsoContextObject = rec?.context?.find((ctx) =>
+        ctx.id.includes("country")
+      );
+      setIpSearch(false);
+    } else {
+      cityIsoContextObject = rec;
+      setIpSearch(true);
+    }
+
     const { short_code: iso } = cityIsoContextObject;
 
     return {
       iso: iso,
-      recName: rec.txt,
+      recName: rec.txt || rec.text,
     };
   };
 
@@ -83,11 +96,9 @@ const Autocomplete = () => {
 
   useEffect(() => {
     // if (searchResult && (user?.path === "/" || !user?.path)) {
-
     if (searchResult) {
       setOptions(true);
       let { city, country } = airtableData;
-
       if (place && place.place_type[0] === "country") {
         setCountryOption({
           name: country.fields["Name"],
@@ -98,15 +109,17 @@ const Autocomplete = () => {
       }
 
       if (airtableData && airtableData.value === false) {
-        setCityOption({
-          name: recommendation
-            ? `${getRecommendedCityName(recommendation)} - ${
-                airtableData.country_name
-              }`
-            : `${place?.text} - ${airtableData.country_name}`,
-          flag: airtableData.country.records?.[0].fields["Flag"],
-          txt: "deploy",
-        });
+        ipSearch
+          ? setCityOption(null)
+          : setCityOption({
+              name: recommendation
+                ? `${getRecommendedCityName(recommendation)} - ${
+                    airtableData.country_name
+                  }`
+                : `${place?.text} - ${airtableData.country_name}`,
+              flag: airtableData.country.records?.[0].fields["Flag"],
+              txt: "deploy",
+            });
         setCountryOption({
           name: airtableData.country.records[0].fields["Name"],
           flag: airtableData.country.records?.[0].fields["Flag"],
@@ -114,7 +127,7 @@ const Autocomplete = () => {
           link: airtableData.country.records[0].id,
         });
         setSearchResult(false);
-        onRecommendation("");
+        ipSearch && onRecommendation("");
         return;
       }
 
@@ -141,11 +154,11 @@ const Autocomplete = () => {
       }
 
       setSearchResult(false);
-
       onRecommendation("");
     }
     setSearchResult(false);
     updateReset();
+    onRecommendation("");
   }, [searchResult]);
 
   const searchViaReccomendation = async (recObj) => {
@@ -208,6 +221,7 @@ const Autocomplete = () => {
     let cityExist;
     let countryIso;
     setIsLoading(true);
+    setIpSearch(false);
     if (place) {
       if (place.place_type[0] === "country") {
         cityExist = true;
@@ -414,7 +428,6 @@ const Autocomplete = () => {
           </li>
         )}
       </ul>
-      {/* )} */}
       <SildeModal
         onClose={() => {
           setShowAddressModal(false);

@@ -36,6 +36,17 @@ const Form = ({
   const router = useRouter();
 
   let content;
+  let inputValue;
+
+  if (search) {
+    inputValue = search;
+  } else {
+    if (enabled) {
+      inputValue = user.address;
+    } else {
+      inputValue = "";
+    }
+  }
 
   let { onChangeHandler, data, formConfig, validateInputFields, formIsValid } =
     useForm(config);
@@ -65,6 +76,7 @@ const Form = ({
   };
 
   const performMapboxSearch = async () => {
+    setError(false);
     if (search === "") {
       setResults([]);
       setEnabled(false);
@@ -141,7 +153,7 @@ const Form = ({
     const deplymentCountry = splittedArray(search);
     const userCountry = splittedArray(user?.address);
 
-    if (deplymentCountry.trim() !== userCountry.trim()) {
+    if (search && deplymentCountry.trim() !== userCountry.trim()) {
       setError(true);
       return;
     }
@@ -159,14 +171,13 @@ const Form = ({
             <div className="wrapper">
               <h2>Deploy DAO!</h2>
               <p>
-                Sumbit your DAO’s city name below. You can only deploy a DAO in
-                your local area.
+                Check this is the correct region you want to deploy a DAO for.
               </p>
               <div className={classes.AutocompleteWrapper}>
                 <input
                   className={classes.input}
                   type="text"
-                  value={search}
+                  value={inputValue}
                   onChange={destinationChangeHadler}
                   placeholder="Address"
                   id="input"
@@ -176,7 +187,7 @@ const Form = ({
                   type={enabled ? "blue" : "disabled"}
                   id="submit"
                 >
-                  SUBMIT
+                  DEPLOY
                 </Button>
                 {isVisible && (
                   <ul className={classes.results} id="list">
@@ -225,8 +236,7 @@ const Form = ({
             <div className="wrapper">
               <h2>DAO Details!</h2>
               <p>
-                Sumbit your DAO’s details below. At least one of the following
-                fields must be set.
+                Check this is the correct region you want to deploy a DAO for.
               </p>
               <div className={`wrapper ${classes.detailsWrapper}`}>
                 {formConfig.map((c) => {
@@ -240,7 +250,7 @@ const Form = ({
                 type={formIsValid() ? "submit" : "disabled-submit"}
                 id="submit"
               >
-                SUBMIT
+                DEPLOY
               </Button>
             </div>
           )}

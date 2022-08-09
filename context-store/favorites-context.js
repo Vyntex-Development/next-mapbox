@@ -51,7 +51,6 @@ export const FavoritesContextProvider = ({ children }) => {
   }, [isAuth]);
 
   const updateFavorites = async (updateType, url, data, method) => {
-    console.log(updateType);
     if (updateType === "add") {
       await getFavorites(url, data, method);
       setUpdate(true);

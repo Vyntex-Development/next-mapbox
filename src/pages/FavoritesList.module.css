@@ -1,0 +1,15 @@
+.FavoritesList {
+  width: 100%;
+  display: grid;
+  grid-row-gap: 8px;
+  padding: 1.5rem 3.89em;
+}
+
+.FavoritesListWrapper {
+  margin: auto 0;
+}
+
+.FavoritesListWrapper ul li {
+  color: white;
+  list-style: none;
+}

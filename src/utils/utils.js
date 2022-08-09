@@ -189,7 +189,6 @@ export const connectMetamaskHandler = async (str) => {
 
   const { nonce } = await response.json();
   const signature = await signer.signMessage(nonce);
-
   let walletResponse = await fetch("/api/auth/wallet", {
     method: "POST",
     body: JSON.stringify({ walletAddress, nonce, signature }),
@@ -318,4 +317,20 @@ export const setTweetId = async (id, walletAddress) => {
     }),
   });
   const data = await response.json();
+};
+
+export const setIpUserdetails = async (id, ipCountry, ipIso) => {
+  const response = await fetch("/api/users/user-ip", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      id,
+      ipCountry,
+      ipIso,
+    }),
+  });
+  const data = await response.json();
+  return data;
 };

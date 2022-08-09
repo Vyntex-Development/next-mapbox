@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { getUserAddress } from "../src/utils/utils";
+import axios from "axios";
 import jwt from "jsonwebtoken";
 import { useRouter } from "next/router";
 
@@ -13,6 +14,7 @@ const AuthContext = createContext({
   minutesDiff: 0,
   hasRecommendation: false,
   enableDeploy: false,
+  ipData: {},
   login: (token) => {},
   logout: () => {},
   onDeploy: () => {},
@@ -27,10 +29,35 @@ export const AuthContextProvider = ({ children }) => {
   const [enableDeploy, setEnableDeploy] = useState(false);
   const [hasRecommendation, setHasRecommendation] = useState(false);
   const [recommendation, setRecommendation] = useState("");
-  const [minutesDiff, setMinutesDiff] = useState(0);
+  const [timeInfo, setTimeInfo] = useState({
+    timeDifference: 0,
+    dateOfNextAvailableAddressChange: "",
+  });
+  const [ipData, setIpData] = useState({});
   const router = useRouter();
   const isAuth = !!token;
   const hasAddress = !!address;
+
+  const getData = async () => {
+    const { data } = await axios.get("https://geolocation-db.com/json/");
+    const { IPv4, country_name, latitude, longitude, state, country_code } =
+      data;
+    const modifiedIpData = {
+      ...ipData,
+      ipAddress: IPv4,
+      country_name: country_name,
+      lat: latitude,
+      lng: longitude,
+      type: "Feature",
+      text: state,
+      place_type: ["place"],
+      short_code: country_code,
+    };
+    setIpData(modifiedIpData);
+
+    router.pathname === "/" && setHasRecommendation(true);
+    router.pathname === "/" && setRecommendation(modifiedIpData);
+  };
 
   useEffect(() => {
     window.ethereum?.on("accountsChanged", (accounts) => {
@@ -53,6 +80,7 @@ export const AuthContextProvider = ({ children }) => {
       id: user_metadata?.user?.id,
       verified: user_metadata?.user?.verified,
       signature: user_metadata?.user?.signature,
+      ipCountry: user_metadata?.user?.ipCountry,
     });
   };
 
@@ -82,6 +110,7 @@ export const AuthContextProvider = ({ children }) => {
       walletAddress: user?.walletAddress,
       signature: user?.signature,
       id: user?.id,
+      verified: user?.verified,
       created_at: user.created_at,
     };
     setUser({
@@ -111,11 +140,33 @@ export const AuthContextProvider = ({ children }) => {
     user: user,
     userId: userId,
     hasAddress: hasAddress,
-    minutesDiff: minutesDiff,
+    timeInfo: timeInfo,
     hasRecommendation: hasRecommendation,
+    ipData: ipData,
+  };
+
+  const addMonths = (date, months) => {
+    let newDate = new Date(date);
+    var day = newDate.getDate();
+    newDate.setMonth(newDate.getMonth() + +months);
+    if (newDate.getDate() != day) newDate.setDate(0);
+    return newDate;
+  };
+
+  const padTo2Digits = (num) => {
+    return num.toString().padStart(2, "0");
+  };
+
+  const formatDate = (date) => {
+    return [
+      padTo2Digits(date.getDate()),
+      padTo2Digits(date.getMonth() + 1),
+      date.getFullYear(),
+    ].join("/");
   };
 
   useEffect(() => {
+    getData();
     if (localStorage.getItem("token")) {
       setLoading(true);
       setToken(localStorage.getItem("token"));
@@ -125,9 +176,16 @@ export const AuthContextProvider = ({ children }) => {
       const { user_metadata } = jwt.decode(jwtToken);
       const { user } = user_metadata;
       let timeOfUserRegistration = new Date(user.created_at) / 1000;
+      addMonths(user.created_at, 6);
+      let dateAfterSixMonths = addMonths(user.created_at, 6);
+      const formatedDate = formatDate(dateAfterSixMonths);
       let currentTime = new Date().getTime() / 1000; //1440516958
       let minutes = Math.floor((currentTime - timeOfUserRegistration) / 60);
-      setMinutesDiff(minutes);
+      setTimeInfo({
+        ...timeInfo,
+        timeDifference: minutes,
+        dateOfNextAvailableAddressChange: formatedDate,
+      });
 
       let userData = {
         walletAddress: user?.walletAddress,
@@ -135,6 +193,7 @@ export const AuthContextProvider = ({ children }) => {
         id: user?.id,
         created_at: user.created_at,
         verified: user.verified,
+        ipCountry: user_metadata?.user?.ipCountry,
         // path: "/",
       };
       setUserId(user?.id);

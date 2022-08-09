@@ -40,10 +40,10 @@ const UsersList = ({ users }) => {
               twitterHandle,
               verified,
               walletAddress,
-              verified_timestamp,
+              created_at,
               tweet_id,
             }) => {
-              const date = new Date(verified_timestamp?.replace(" ", "T"))
+              const date = new Date(created_at?.replace(" ", "T"))
                 .toString()
                 .split("(");
               const modifiedDate = date[0];
@@ -55,7 +55,7 @@ const UsersList = ({ users }) => {
 
                   <span>{walletAddress}</span>
                   <span>{address}</span>
-                  <span>{verified_timestamp ? modifiedDate : ""}</span>
+                  <span>{created_at ? modifiedDate : ""}</span>
 
                   <Link
                     href={`https://twitter.com/${twitterHandle}/status/${tweet_id}`}

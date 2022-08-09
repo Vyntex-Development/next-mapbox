@@ -1,8 +1,14 @@
 import supabase from "../src/supabase/supabase";
 import UsersList from "../src/pages/UsersList";
+import SEO from "../src/components/SEO/SEO";
 
 const users = ({ users }) => {
-  return <UsersList users={users} />;
+  return (
+    <>
+      <SEO title="Users" />
+      <UsersList users={users} />
+    </>
+  );
 };
 
 export default users;
