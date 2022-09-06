@@ -14,7 +14,6 @@ const User = ({ user }) => {
 };
 
 export async function getStaticProps(context) {
-  console.log(context);
   let { data: users } = await supabase.from("users").select("*");
   let user = users.find(
     (user) => user.id.toString() === context.params.userId.toString()

@@ -33,7 +33,7 @@ const TwitterVerification = ({
   const openTwitter = async () => {
     navigate &&
       window.open(
-        `https://twitter.com/intent/tweet?hashtags=vyntex_&original_referer=https%3A%2F%2Fsaurabhnemade.github.io%2F&ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5Evyntex_&text=Verifying%20my%20identity%20for%20%40vyntex_%20with%20sig%3A%20%20${
+        `https://twitter.com/intent/tweet?hashtags=StateWorks_&original_referer=https%3A%2F%2Fsaurabhnemade.github.io%2F&ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5EStateWorks_&text=Verifying%20my%20identity%20for%20%40StateWorks_%20with%20sig%3A%20%20${
           updatedSignature || user.signature
         }%20`,
         "popup",
