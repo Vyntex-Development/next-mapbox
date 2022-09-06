@@ -6,15 +6,14 @@ const FavoritesList = ({ allFavorites, user }) => {
     <>
       <div className={`${classes.FavoritesListWrapper}`}>
         <ul className={`${classes.FavoritesList} container`}>
-          <h3>Favorites</h3>
-          {/* <h3>List of my favorites</h3>
+          <h3>List of my favorites</h3>
           {allFavorites.map((favorite, i) => {
             return (
               <Link key={i} type="blue" href={`/${favorite.url}`}>
                 <li>{favorite.place}</li>
               </Link>
             );
-          })} */}
+          })}
         </ul>
       </div>
     </>
