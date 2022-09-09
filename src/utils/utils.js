@@ -267,7 +267,7 @@ export const setTwitterHandle = async (twitterHandle, walletAddress) => {
 
 export const getclientID = async () => {
   const id = await fetchDataFromTwitter(
-    `https://api.twitter.com/2/users/by/username/Vyntex_`
+    `https://api.twitter.com/2/users/by/username/StateWorks_`
   );
   return id;
 };
