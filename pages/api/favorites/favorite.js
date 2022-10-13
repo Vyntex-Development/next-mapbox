@@ -3,7 +3,7 @@ import supabase from "../../../src/supabase/supabase";
 const favoriteApi = async (req, res) => {
   const { place, url, user_id } = req.body;
   //   const nonce = uuidv4();
-  console.log("nesto");
+  console.log("nesto asdasd");
 
   let { data, error } = await supabase
     .from("favorite")
