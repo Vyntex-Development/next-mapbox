@@ -2,7 +2,6 @@ import supabase from "../../../src/supabase/supabase";
 
 const favoriteApi = async (req, res) => {
   const { place, url, userId } = req.body;
-  //   const nonce = uuidv4();
 
   console.log(userId, "User id in favorite");
 
