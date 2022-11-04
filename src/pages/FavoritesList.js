@@ -2,6 +2,7 @@ import classes from "./FavoritesList.module.css";
 import Link from "../components/UI/Link";
 
 const FavoritesList = ({ allFavorites, user }) => {
+  console.log(allFavorites);
   return (
     <>
       <div className={`${classes.FavoritesListWrapper}`}>

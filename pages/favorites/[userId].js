@@ -5,6 +5,7 @@ import FavoritesContext from "../../context-store/favorites-context";
 import FavoritesList from "../../src/pages/FavoritesList";
 const User = ({ user }) => {
   const { allFavorites } = useContext(FavoritesContext);
+  console.log(allFavorites);
   return (
     <>
       <SEO title="Favorites" />

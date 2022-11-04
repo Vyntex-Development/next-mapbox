@@ -1,13 +1,14 @@
 import supabase from "../../../src/supabase/supabase";
 
 const favoriteApi = async (req, res) => {
-  const { place, url, user_id } = req.body;
+  const { place, url, userId } = req.body;
   //   const nonce = uuidv4();
-  console.log("nesto asdasd");
+
+  console.log(userId, "User id in favorite");
 
   let { data, error } = await supabase
     .from("favorite")
-    .insert({ place, url, user_id });
+    .insert({ place, url, userId });
 
   if (error) {
     res.status(400).json({ error: error.message });

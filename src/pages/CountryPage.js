@@ -50,7 +50,7 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
         "/api/favorites/removeFavorite",
         {
           place: countryDetails.fields["Name"],
-          user_id: userId,
+          userId: userId,
         },
         "POST"
       );
@@ -65,7 +65,7 @@ const CountryPage = ({ countryDetails, listOfCities }) => {
       {
         place: countryDetails.fields["Name"],
         url: `${countryDetails.id}`,
-        user_id: userId,
+        userId: userId,
       },
       "POST"
     );

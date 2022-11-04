@@ -31,7 +31,7 @@ export const FavoritesContextProvider = ({ children }) => {
       { user_id: user_metadata.user.id },
       "POST"
     );
-    setAllFavorites(favorites);
+    setAllFavorites(favorites ? favorites : []);
     setUserId(user_metadata.user.id);
   };
 

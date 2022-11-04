@@ -55,7 +55,7 @@ const CityPage = ({ cityDetails, countryDetails }) => {
       updateFavorites(
         "remove",
         "/api/favorites/removeFavorite",
-        { place: cityDetails?.fields["city"], user_id: userId },
+        { place: cityDetails?.fields["city"], userId: userId },
         "POST"
       );
       setText("ADD TO FAVORITES");
@@ -69,7 +69,7 @@ const CityPage = ({ cityDetails, countryDetails }) => {
       {
         place: cityDetails?.fields["city"],
         url: `${countryDetails.id}/${cityDetails?.id}`,
-        user_id: userId,
+        userId: userId,
       },
       "POST"
     );
